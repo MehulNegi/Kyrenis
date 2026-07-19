@@ -7,7 +7,7 @@ const HERO_STATS = [
   { label: "Medicines Tracked", value: "109", suffix: "SKUs" },
   { label: "Batch Scan Logs", value: "1,694", suffix: "records" },
   { label: "Active Anomalies", value: "15", suffix: "flagged" },
-  { label: "Distribution Hubs", value: "05", suffix: "cities" },
+  { label: "Distribution Hubs", value: "5", suffix: "cities" },
 ];
 
 export default function Landing() {

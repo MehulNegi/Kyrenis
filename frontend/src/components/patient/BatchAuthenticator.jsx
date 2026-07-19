@@ -8,7 +8,7 @@ const PRESETS = [
     label: "Sample · Genuine strip",
     testid: "consumer-sample-clean",
     payload: {
-      qr_string: "(01)08900000000019(10)CRO241001(17)261231",
+      qr_string: "(01)89000000000014(10)CRO241001(17)261231",
       batch_number: "CRO241001",
       package_declared_mrp: 32.5,
     },
@@ -18,7 +18,7 @@ const PRESETS = [
     testid: "consumer-sample-recall",
     tone: "danger",
     payload: {
-      qr_string: "(01)08900000000026(10)PCM240721(17)261231",
+      qr_string: "(01)89000000000021(10)PCM240721(17)261231",
       batch_number: "PCM240721",
       package_declared_mrp: 30,
     },
@@ -28,7 +28,7 @@ const PRESETS = [
     testid: "consumer-sample-anomaly",
     tone: "danger",
     payload: {
-      qr_string: "(01)08900000000033(10)SAT240001(17)261231",
+      qr_string: "(01)89000000000038(10)SAT240001(17)261231",
       batch_number: "SAT240001",
       package_declared_mrp: 178,
     },

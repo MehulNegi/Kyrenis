@@ -3,8 +3,8 @@ import { api, formatApiErrorDetail } from "@/lib/api";
 import { toast } from "sonner";
 import { ScanLine, Package, ShieldCheck, AlertTriangle, CheckCircle2 } from "lucide-react";
 
-const SAMPLE_QR = "(01)08900000000019(10)PCM240721(17)261231";
-const SAMPLE_OCR = "BATCH:PCM240721 MFG:2024-07 EXP:2026-12 MRP:32.50";
+const SAMPLE_QR = "(01)89000000000014(10)CRO241001(17)261231";
+const SAMPLE_OCR = "BATCH:CRO241001 EXP:2026-12 MFG:2024-10 MRP:32.50";
 
 export default function StockIntake() {
   const [distributors, setDistributors] = useState([]);
@@ -42,19 +42,19 @@ export default function StockIntake() {
 
   const loadSample = (variant) => {
     if (variant === "clean") {
-      set("qr_string", "(01)08900000000019(10)CRO241001(17)261231");
-      set("ocr_text", "BATCH:CRO241001 MFG:2024-10 EXP:2026-12 MRP:32.50");
+      set("qr_string", "(01)89000000000014(10)CRO241001(17)261231");
+      set("ocr_text", "BATCH:CRO241001 EXP:2026-12 MFG:2024-10 MRP:32.50");
       set("package_declared_mrp", "32.50");
       if (medicines[0]) set("medicine_id", medicines[0].id);
     } else if (variant === "recall") {
-      set("qr_string", "(01)08900000000026(10)PCM240721(17)261231");
-      set("ocr_text", "BATCH:PCM240721 MFG:2024-07 EXP:2026-12 MRP:30.00");
+      set("qr_string", "(01)89000000000021(10)PCM240721(17)261231");
+      set("ocr_text", "BATCH:PCM240721 EXP:2026-12 MFG:2024-07 MRP:30.00");
       set("package_declared_mrp", "30.00");
       const med = medicines.find((m) => m.brand_name.includes("Dolo")) || medicines[1];
       if (med) set("medicine_id", med.id);
     } else if (variant === "mismatch") {
-      set("qr_string", "(01)08900000000019(10)ABC000111(17)261231");
-      set("ocr_text", "BATCH:XYZ000999 MFG:2024-07 EXP:2026-12 MRP:32.50");
+      set("qr_string", "(01)89000000000038(10)ABC000111(17)261231");
+      set("ocr_text", "BATCH:XYZ000999 EXP:2026-12 MFG:2024-07 MRP:32.50");
       set("package_declared_mrp", "32.50");
       if (medicines[0]) set("medicine_id", medicines[0].id);
     }

@@ -114,14 +114,20 @@ def _yy_mm_from_gs1(yymmdd: str) -> str | None:
 def _yy_mm_from_ocr(text: str) -> str | None:
     if not text:
         return None
-    # matches YYYY-MM or MM/YY etc
-    m = re.search(r"(20\d{2})[/\-.](\d{1,2})", text)
+    # Prefer EXP-anchored capture — else fall back to LAST YYYY-MM/YY-MM in text
+    m = re.search(r"EXP[:\s]*([0-9]{2,4})[/\-.]([0-9]{2,4})", text, re.IGNORECASE)
     if m:
-        return f"{m.group(1)}-{int(m.group(2)):02d}"
-    m = re.search(r"(\d{2})[/\-.](20\d{2})", text)
-    if m:
-        return f"{m.group(2)}-{int(m.group(1)):02d}"
-    m = re.search(r"(\d{2})[/\-.](\d{2})", text)
+        a, b = m.group(1), m.group(2)
+        if len(a) == 4:
+            return f"{a}-{int(b):02d}"
+        if len(b) == 4:
+            return f"{b}-{int(a):02d}"
+        return f"20{b}-{int(a):02d}"
+    matches = re.findall(r"(20\d{2})[/\-.](\d{1,2})", text)
+    if matches:
+        y, mo = matches[-1]
+        return f"{y}-{int(mo):02d}"
+    m = re.search(r"(\d{2})[/\-.](\d{2})\b", text)
     if m:
         return f"20{m.group(2)}-{int(m.group(1)):02d}"
     return None

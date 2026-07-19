@@ -100,7 +100,7 @@ class TestStockIntake:
     def test_intake_recall_hit_blocked(self, auth_session, dist_and_med):
         d, m = dist_and_med
         p = self._payload(
-            "(01)08900000000019(10)PCM240721(17)261231",
+            "(01)89000000000021(10)PCM240721(17)261231",
             "BATCH: PCM240721 EXP: 12/2026",
             "PCM240721",
         )
@@ -118,7 +118,7 @@ class TestStockIntake:
     def test_intake_mismatch_check1_fails(self, auth_session, dist_and_med):
         d, m = dist_and_med
         p = self._payload(
-            "(01)08900000000019(10)AAA12345(17)261231",
+            "(01)89000000000038(10)AAA12345(17)261231",
             "BATCH: BBB98765 EXP: 12/2026",
             "AAA12345",
         )
@@ -135,9 +135,9 @@ class TestStockIntake:
     def test_intake_clean_writes_inventory(self, auth_session, dist_and_med):
         d, m = dist_and_med
         p = self._payload(
-            "(01)08900000000019(10)CLEAN99999(17)261231",
-            "BATCH: CLEAN99999 EXP: 12/2026",
-            "CLEAN99999",
+            "(01)89000000000014(10)CLEAN9999(17)261231",
+            "BATCH: CLEAN9999 EXP: 12/2026",
+            "CLEAN9999",
         )
         p["distributor_id"] = d
         p["medicine_id"] = m
@@ -146,7 +146,7 @@ class TestStockIntake:
         j = r.json()
         assert j["verification"]["status"] == "Valid"
         assert j["inventory_written"] is True
-        assert j["inventory_batch"]["batch_number"] == "CLEAN99999"
+        assert j["inventory_batch"]["batch_number"] == "CLEAN9999"
         # telemetry hash present
         assert len(j["telemetry"]["cryptographic_telemetry_hash"]) == 64
 
@@ -221,7 +221,7 @@ class TestPOS:
 class TestConsumer:
     def test_verify_recall_red(self, anon_session):
         r = anon_session.post(f"{API}/consumer/verify-batch", json={
-            "qr_string": "(01)08900000000019(10)PCM240721(17)261231"
+            "qr_string": "(01)89000000000021(10)PCM240721(17)261231"
         })
         assert r.status_code == 200
         v = r.json()

@@ -24,16 +24,16 @@ export default function Telemetry() {
     (async () => {
       try {
         const [v, s, a, r] = await Promise.all([
-          api.get("/pharmacy/telemetry/volumetric"),
-          api.get("/pharmacy/telemetry/spatial"),
-          api.get("/pharmacy/security-alerts"),
-          api.get("/pharmacy/recalls"),
+          api.get("/pharmacy/telemetry/volumetric").catch(() => ({ data: { volumetric: [], threshold: 40000 } })),
+          api.get("/pharmacy/telemetry/spatial").catch(() => ({ data: { spatial_anomalies: [] } })),
+          api.get("/pharmacy/security-alerts").catch(() => ({ data: { alerts: [] } })),
+          api.get("/pharmacy/recalls").catch(() => ({ data: { recalls: [] } })),
         ]);
-        setVolumetric(v.data.volumetric);
-        setThreshold(v.data.threshold);
-        setSpatial(v.data.spatial_anomalies);
-        setAlerts(a.data.alerts);
-        setRecalls(r.data.recalls);
+        setVolumetric(v?.data?.volumetric ?? []);
+        setThreshold(v?.data?.threshold ?? 40000);
+        setSpatial(s?.data?.spatial_anomalies ?? []);
+        setAlerts(a?.data?.alerts ?? []);
+        setRecalls(r?.data?.recalls ?? []);
       } catch (e) {
         toast.error(formatApiErrorDetail(e?.response?.data?.detail) || e.message);
       }
