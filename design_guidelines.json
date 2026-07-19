@@ -1,0 +1,146 @@
+{
+  "theme_strategy": {
+    "default_theme": "dark",
+    "theme_toggle": false,
+    "rationale": "Strictly adhering to the requested dark cybersecurity aesthetic. High-contrast, glowing accents, and jet black backgrounds to emphasize security and telemetry data."
+  },
+  "typography": {
+    "fonts": {
+      "headings": "Cabinet Grotesk, sans-serif",
+      "body": "IBM Plex Sans, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "hierarchy": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tighter font-bold",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight font-semibold",
+      "h3": "text-xl sm:text-2xl font-medium",
+      "h4": "text-lg sm:text-xl font-medium",
+      "body": "text-base leading-relaxed",
+      "labels": "text-xs tracking-[0.2em] uppercase font-mono"
+    },
+    "rules": [
+      "DO NOT use generic fonts like Inter, Roboto, or Open Sans for headings.",
+      "Always apply tight tracking (tracking-tight or tracking-tighter) for headings > 32px.",
+      "Overlines/Labels must use uppercase, tiny text, and wide spacing.",
+      "Use mono font (JetBrains Mono) for data, telemetry readouts, batch IDs, and numerical dashboards."
+    ]
+  },
+  "colors": {
+    "palette": {
+      "background_canvas": "#000000",
+      "panel_sidebar": "#1F2326",
+      "interactive_header": "#1E2B4E",
+      "text_border_grey": "#E2E8F0",
+      "text_high_contrast": "#FFFFFF",
+      "accent_safe": "#10B981",
+      "accent_danger": "#EF4444"
+    },
+    "mapping": {
+      "bg_base": "bg-[#000000]",
+      "bg_panel": "bg-[#1F2326]",
+      "bg_header": "bg-[#1E2B4E]",
+      "text_primary": "text-[#FFFFFF]",
+      "text_secondary": "text-[#E2E8F0]",
+      "border_subtle": "border-[#E2E8F0]/20",
+      "border_focus": "border-[#1E2B4E]",
+      "status_safe": "text-[#10B981] bg-[#10B981]/10 border-[#10B981]/20",
+      "status_danger": "text-[#EF4444] bg-[#EF4444]/10 border-[#EF4444]/20"
+    },
+    "rules": [
+      "Apply colors functionally: #10B981 ONLY for Genuine/Safe/In-Stock/Verified. #EF4444 ONLY for Counterfeit, Recalls, Anomalies, and Low Stock.",
+      "NO generic full-screen gradients. Use matte, flat surfaces or subtle glows behind anomalous data.",
+      "Do NOT use pure transparent backgrounds for any overlays, headers, or dropdowns. Use solid #1F2326 or #1E2B4E."
+    ]
+  },
+  "visual_enhancers": {
+    "surfaces": [
+      "Grid Borders (The Technical Look): Expose the skeleton. Use border-collapse style layouts for telemetry grids.",
+      "Retro-Futurism / Terminal: Use for the spatial teleportation anomaly banners. Deep black backgrounds, high contrast borders, and monospace fonts.",
+      "Bento Grid / Flat Solid: Use for primary panels. Flat #1F2326 background, 1px subtle #E2E8F0/20 border, sharp or slightly rounded (max 4px) corners."
+    ],
+    "shadows": [
+      "Replace soft shadows with 1px solid strokes or inner glows. Use tactical minimalism.",
+      "No muddy gray transparency. If glassmorphism is absolutely needed, use heavy blur with solid background opacity."
+    ]
+  },
+  "layouts": {
+    "spacing_system": {
+      "philosophy": "Generous Spacing. Avoid cramped dashboards. Give breathing room.",
+      "padding_scale": "p-4, p-6, p-8, p-12",
+      "gap_scale": "gap-4, gap-6, gap-8"
+    },
+    "grids": {
+      "dashboard_bento": "grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6. Use col-span-2 or col-span-3 for main charts (Telemetry Insights).",
+      "landing_split": "grid-cols-1 md:grid-cols-2 min-h-screen. Left: Pharmacy Portal, Right: Patient Trust Hub. Full height."
+    }
+  },
+  "components_and_views": {
+    "header_and_logo": {
+      "description": "Sticky top navigation bar featuring the official inline SVG logo alongside brand text.",
+      "logo_specs": "Build an inline <svg> replacing generic icons. Specifications: 4 camera viewfinder/scanner corner brackets framing a central vertical medical capsule. Top half of capsule has vertical barcode lines. Bottom half is solid with a cut-out checkmark. Render in stark white (#FFFFFF) on the #1E2B4E header.",
+      "typography": "Next to logo: 'KYRENIS' in bold #FFFFFF (Cabinet Grotesk), tagline 'SCAN-VERIFY-TRUST' below it in smaller #E2E8F0."
+    },
+    "landing_gateway": {
+      "description": "Split screen layout. Two massive interactive zones. Left: Pharmacy Portal (technical, structural). Right: Patient Trust Hub (approachable but secure)."
+    },
+    "auth_gateway": {
+      "description": "Centered terminal-style card. Include 'Autofill Test Credentials' button prominently in #1E2B4E."
+    },
+    "pharmacy_hub": {
+      "description": "4 Sub-tabs navigation.",
+      "tabs": {
+        "stock_intake": "Form with visual 2D DataMatrix QR Output, OCR Text inputs, and DistributorNode selector.",
+        "pos_simulator": "Checkout interface showing FIFO deduction logic in real-time.",
+        "replenishment": "Governance panel. Highlight expiring items (60 days) in amber/crimson. Big 'Auto-Generate PO' action.",
+        "telemetry": "Dashboard with Volumetric Saturation & Spatial Teleportation charts. Use Recharts. Show crimson anomaly banners."
+      }
+    },
+    "patient_trust_hub": {
+      "description": "2 Sub-views.",
+      "tabs": {
+        "batch_authenticator": "Massive input area leading to a Giant Green Shield (Safe) or Red Warning Shield (Counterfeit).",
+        "openfda_directory": "Accordion or dense grid of warnings, adverse_reactions, and dosage panels."
+      }
+    }
+  },
+  "icons_and_assets": {
+    "library": "lucide-react (or @phosphor-icons/react for dense technical grids if added).",
+    "image_urls": {
+      "landing_bg": {
+        "url": "https://images.unsplash.com/photo-1510915228340-29c85a43dcfe?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwxfHxkYXJrJTIwY3liZXJzZWN1cml0eSUyMG5ldHdvcmt8ZW58MHx8fHwxNzg0NDczNTA2fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Dark cybersecurity network / operator - use at low opacity (10-20%) as a background texture for the landing page or auth gateway."
+      },
+      "pharmacy_abstract": {
+        "url": "https://images.pexels.com/photos/8940480/pexels-photo-8940480.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Clean glass test tubes / laboratory. Can be used as a subtle visual for the Pharmacy Portal side of the landing page."
+      }
+    },
+    "rules": "Never use placeholder images. If no image fits, use pure CSS typography and layouts."
+  },
+  "motion": {
+    "rules": [
+      "No 'transition-all'. Target specific properties (e.g., transition-colors, transition-transform).",
+      "Hover states: Slight lift (-translate-y-1) and highlight border color.",
+      "Interactive feedback: Use scale down on click (active:scale-95).",
+      "Respect prefers-reduced-motion."
+    ]
+  },
+  "accessibility": {
+    "testing": "All interactive and key informational elements MUST include a `data-testid` attribute (e.g., data-testid='pos-checkout-btn').",
+    "contrast": "Ensure text against #000000 or #1F2326 meets high contrast ratios. Use the provided #FFFFFF and #E2E8F0.",
+    "focus": "Focus states must have a sharp 2px outline in #1E2B4E or #E2E8F0."
+  },
+  "libraries": {
+    "charts": "recharts (for Volumetric Saturation & Spatial Teleportation)",
+    "ui": "lucide-react, shadcn/ui components (heavily customized to match flat cybersecurity aesthetic, rip out standard shadows and border-radius)"
+  },
+  "universal_agent_guidelines": [
+    "DO NOT build a generic SaaS app. This is Kyrenis, an OS with a strict, dark, tactical cybersecurity identity.",
+    "Implement the custom inline SVG logo EXACTLY as described in the requirements.",
+    "Avoid standard Vercel/Stripe aesthetics. Replace soft shadows with sharp 1px borders.",
+    "Do NOT use Space Grotesk. Use Cabinet Grotesk for headings and JetBrains Mono for data/technical readouts.",
+    "Ensure the telemetry dashboard actually visualizes 'Volumetric Saturation' and 'Spatial Teleportation' using charts (Recharts) with deep navy and crimson accents.",
+    "Do NOT center align the app container. Maintain a robust left-aligned grid hierarchy.",
+    "Include `data-testid` on all buttons, forms, tabs, and critical status indicators."
+  ]
+}
