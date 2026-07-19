@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Html5Qrcode } from "html5-qrcode";
+import { Html5Qrcode, Html5QrcodeScannerState } from "html5-qrcode";
 import { Camera, StopCircle, AlertTriangle } from "lucide-react";
 
 /**
@@ -54,11 +54,19 @@ export default function CameraScanner({ onDetected }) {
   };
 
   const stop = async () => {
-    if (scannerRef.current) {
-      try {
-        await scannerRef.current.stop();
-        await scannerRef.current.clear();
-      } catch {}
+    const s = scannerRef.current;
+    if (!s) {
+      setRunning(false);
+      return;
+    }
+    try {
+      const state = s.getState?.();
+      if (state === Html5QrcodeScannerState.SCANNING || state === Html5QrcodeScannerState.PAUSED) {
+        await s.stop();
+      }
+      await s.clear();
+    } catch (e) {
+      // swallow — scanner may not be running or already cleared
     }
     setRunning(false);
   };

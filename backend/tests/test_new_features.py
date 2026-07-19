@@ -3,7 +3,7 @@ import os
 import requests
 import pytest
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://scan-verify-trust.preview.emergentagent.com").rstrip("/")
 API = f"{BASE_URL}/api"
 
 STAFF_EMAIL = "chemist@kyrenis.in"
@@ -109,7 +109,12 @@ class TestEmailDispatchFireAndForget:
             "package_declared_mrp": 45.0, "quantity": 100,
             "mfg_date": "2024-01-01", "expiry_date": "2026-12-31", "scan_city": "Mumbai",
         }
+        import time as _t
+        t0 = _t.time()
         r = auth_session.post(f"{API}/pharmacy/intake", json=payload)
+        elapsed = _t.time() - t0
         assert r.status_code == 200
         j = r.json()
         assert j["inventory_written"] is False
+        # Regression: email dispatch must be non-blocking (asyncio.create_task)
+        assert elapsed < 3.0, f"Intake response too slow ({elapsed:.2f}s) — email dispatch appears to be blocking"

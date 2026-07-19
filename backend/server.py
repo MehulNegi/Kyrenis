@@ -11,6 +11,7 @@ import os
 import uuid
 import logging
 import hashlib
+import asyncio
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List, Any
 
@@ -302,10 +303,7 @@ async def stock_intake(payload: IntakePayload, request: Request):
         await db.security_alerts.insert_one(alert_doc)
         alert_doc["detail"] = alert.get("message", "")
         alert_doc.pop("_id", None)
-        try:
-            await dispatch_alert_email(alert_doc)
-        except Exception as e:
-            logger.warning("email dispatch skipped: %s", e)
+        asyncio.create_task(dispatch_alert_email(alert_doc))
 
     if verification["status"] != "Valid":
         # persist critical alert record from pipeline
@@ -329,10 +327,7 @@ async def stock_intake(payload: IntakePayload, request: Request):
         await db.security_alerts.insert_one(alert_doc)
         alert_doc["detail"] = alert_meta.get("detail", "")
         alert_doc.pop("_id", None)
-        try:
-            await dispatch_alert_email(alert_doc)
-        except Exception as e:
-            logger.warning("email dispatch skipped: %s", e)
+        asyncio.create_task(dispatch_alert_email(alert_doc))
         return {
             "verification": verification,
             "inventory_written": False,
