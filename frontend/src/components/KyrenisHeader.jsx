@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import KyrenisLogo from "./KyrenisLogo";
 import { useAuth } from "@/lib/auth";
 import { LogOut } from "lucide-react";
@@ -7,6 +7,9 @@ import { LogOut } from "lucide-react";
 export default function KyrenisHeader({ variant = "default" }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isPatientSurface = location.pathname.startsWith("/patient");
+  const showUserPill = user && user.designated_role === "PHARMACY_STAFF" && !isPatientSurface;
 
   return (
     <header
@@ -47,7 +50,7 @@ export default function KyrenisHeader({ variant = "default" }) {
               {variant}
             </span>
           )}
-          {user && user.designated_role === "PHARMACY_STAFF" && (
+          {user && user.designated_role === "PHARMACY_STAFF" && !isPatientSurface && (
             <>
               <div className="hidden md:flex flex-col items-end mr-1">
                 <span className="text-white text-sm font-medium" data-testid="header-user-email">

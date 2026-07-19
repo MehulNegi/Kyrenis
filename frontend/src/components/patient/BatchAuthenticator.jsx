@@ -46,32 +46,39 @@ export default function BatchAuthenticator() {
 
   const set = (k, v) => setPayload((p) => ({ ...p, [k]: v }));
 
-  const submit = async (e) => {
-    e?.preventDefault?.();
+  const runVerify = async (data) => {
     setBusy(true);
     setVerdict(null);
     try {
-      const { data } = await api.post("/consumer/verify-batch", {
-        qr_string: payload.qr_string,
-        batch_number: payload.batch_number,
-        package_declared_mrp: payload.package_declared_mrp
-          ? parseFloat(payload.package_declared_mrp)
-          : undefined,
-      });
-      setVerdict(data);
+      const body = {
+        qr_string: data.qr_string || "",
+        batch_number: data.batch_number || "",
+        package_declared_mrp:
+          data.package_declared_mrp !== "" && data.package_declared_mrp != null
+            ? parseFloat(data.package_declared_mrp)
+            : undefined,
+      };
+      const res = await api.post("/consumer/verify-batch", body);
+      setVerdict(res.data);
     } catch (e) {
       toast.error(formatApiErrorDetail(e?.response?.data?.detail) || e.message);
     }
     setBusy(false);
   };
 
+  const submit = (e) => {
+    e?.preventDefault?.();
+    runVerify(payload);
+  };
+
   const runPreset = (preset) => {
-    setPayload({
+    const next = {
       qr_string: preset.payload.qr_string,
       batch_number: preset.payload.batch_number,
       package_declared_mrp: String(preset.payload.package_declared_mrp),
-    });
-    setTimeout(submit, 60);
+    };
+    setPayload(next);
+    runVerify(next);
   };
 
   const shield = verdict?.shield || null;
