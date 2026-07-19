@@ -1,53 +1,45 @@
-import { useEffect } from "react";
-import "@/App.css";
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-import { HOME } from "@/constants/testIds";
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          data-testid={HOME.emergentLink}
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+import { Toaster } from "sonner";
+import "@/App.css";
+import { AuthProvider, ProtectedRoute } from "@/lib/auth";
+import Landing from "@/pages/Landing";
+import PharmacyAuth from "@/pages/PharmacyAuth";
+import PharmacyDashboard from "@/pages/PharmacyDashboard";
+import PatientHub from "@/pages/PatientHub";
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/pharmacy/auth" element={<PharmacyAuth />} />
+            <Route
+              path="/pharmacy"
+              element={
+                <ProtectedRoute>
+                  <PharmacyDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/patient" element={<PatientHub />} />
+          </Routes>
+          <Toaster
+            position="bottom-right"
+            theme="dark"
+            toastOptions={{
+              style: {
+                background: "#1F2326",
+                border: "1px solid rgba(226,232,240,0.15)",
+                color: "#E2E8F0",
+                fontFamily: "JetBrains Mono, monospace",
+                fontSize: 12,
+              },
+            }}
+          />
+        </AuthProvider>
       </BrowserRouter>
     </div>
   );
