@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { api, formatApiErrorDetail } from "@/lib/api";
 import { toast } from "sonner";
-import { ScanLine, Package, ShieldCheck, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { ScanLine, Package, ShieldCheck, AlertTriangle, CheckCircle2, RotateCcw } from "lucide-react";
+import CameraScanner from "@/components/CameraScanner";
 
 const SAMPLE_QR = "(01)89000000000014(10)CRO241001(17)261231";
 const SAMPLE_OCR = "BATCH:CRO241001 EXP:2026-12 MFG:2024-10 MRP:32.50";
@@ -96,11 +97,38 @@ export default function StockIntake() {
           the 4-step verification pipeline.
         </p>
 
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap items-center">
           <SampleChip label="Sample · Clean" onClick={() => loadSample("clean")} testid="sample-clean" />
           <SampleChip label="Sample · Recalled" onClick={() => loadSample("recall")} testid="sample-recall" tone="danger" />
           <SampleChip label="Sample · Mismatch" onClick={() => loadSample("mismatch")} testid="sample-mismatch" tone="danger" />
+          <button
+            type="button"
+            data-testid="intake-reset-demo-btn"
+            onClick={async () => {
+              try {
+                const { data } = await api.post("/pharmacy/reset-demo");
+                const c = data.cleared;
+                toast.success(
+                  `Demo reset · alerts:${c.security_alerts} · telemetry:${c.scan_telemetry} · inv:${c.inventory_batches} · POs:${c.purchase_orders}`
+                );
+                setResult(null);
+              } catch (e) {
+                toast.error(formatApiErrorDetail(e?.response?.data?.detail) || e.message);
+              }
+            }}
+            className="ml-auto inline-flex items-center gap-2 border border-[#E2E8F0]/25 px-3 py-1.5 font-mono text-[10px] tracking-[0.25em] uppercase text-[#E2E8F0]/70 hover:text-white hover:border-[#EF4444] transition-colors"
+          >
+            <RotateCcw size={12} />
+            Reset Demo
+          </button>
         </div>
+
+        <CameraScanner
+          onDetected={(text) => {
+            set("qr_string", text);
+            toast.success("QR captured — verify fields, then fire the pipeline");
+          }}
+        />
 
         <Field label="Raw 2D DataMatrix QR Output" testid="intake-qr">
           <textarea
@@ -150,9 +178,7 @@ export default function StockIntake() {
             >
               <option value="">Select SKU…</option>
               {medicines.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.brand_name} — {m.generic_composition}
-                </option>
+                <option key={m.id} value={m.id}>{`${m.brand_name} — ${m.generic_composition}`}</option>
               ))}
             </select>
           </Field>

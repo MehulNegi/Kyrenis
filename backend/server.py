@@ -36,6 +36,7 @@ from verification import (
     compute_telemetry_hash,
 )
 from seed_data import seed_all
+from email_dispatch import dispatch_alert_email
 
 # ---------------- Setup ----------------
 mongo_url = os.environ["MONGO_URL"]
@@ -287,36 +288,51 @@ async def stock_intake(payload: IntakePayload, request: Request):
 
     # persist as security alerts + refuse inventory write on critical anomalies
     for alert in triggered_alerts:
-        await db.security_alerts.insert_one(
-            {
-                "id": str(uuid.uuid4()),
-                "target_batch_number": batch_no,
-                "target_medicine_name": None,
-                "alert_type": alert["alert_type"],
-                "severity": alert["severity"],
-                "triggering_telemetry_json": alert,
-                "resolved_status": False,
-                "created_at": _iso(now),
-            }
-        )
+        alert_doc = {
+            "id": str(uuid.uuid4()),
+            "target_batch_number": batch_no,
+            "target_medicine_name": None,
+            "alert_type": alert["alert_type"],
+            "severity": alert["severity"],
+            "triggering_telemetry_json": alert,
+            "resolved_status": False,
+            "demo_generated": True,
+            "created_at": _iso(now),
+        }
+        await db.security_alerts.insert_one(alert_doc)
+        alert_doc["detail"] = alert.get("message", "")
+        alert_doc.pop("_id", None)
+        try:
+            await dispatch_alert_email(alert_doc)
+        except Exception as e:
+            logger.warning("email dispatch skipped: %s", e)
 
     if verification["status"] != "Valid":
         # persist critical alert record from pipeline
         alert_meta = verification.get("final_alert") or {}
-        await db.security_alerts.insert_one(
-            {
-                "id": str(uuid.uuid4()),
-                "target_batch_number": batch_no,
-                "target_medicine_name": alert_meta.get("medicine"),
-                "alert_type": "Metadata Mismatch"
-                if "Metadata" in alert_meta.get("title", "")
-                else "Recall Hit",
-                "severity": alert_meta.get("level", "Critical"),
-                "triggering_telemetry_json": alert_meta,
-                "resolved_status": False,
-                "created_at": _iso(now),
-            }
+        alert_type = (
+            "Metadata Mismatch" if "Metadata" in alert_meta.get("title", "")
+            else "Recall Hit" if "Recall" in alert_meta.get("title", "")
+            else "Invalid Checksum"
         )
+        alert_doc = {
+            "id": str(uuid.uuid4()),
+            "target_batch_number": batch_no,
+            "target_medicine_name": alert_meta.get("medicine"),
+            "alert_type": alert_type,
+            "severity": alert_meta.get("level", "Critical"),
+            "triggering_telemetry_json": alert_meta,
+            "resolved_status": False,
+            "demo_generated": True,
+            "created_at": _iso(now),
+        }
+        await db.security_alerts.insert_one(alert_doc)
+        alert_doc["detail"] = alert_meta.get("detail", "")
+        alert_doc.pop("_id", None)
+        try:
+            await dispatch_alert_email(alert_doc)
+        except Exception as e:
+            logger.warning("email dispatch skipped: %s", e)
         return {
             "verification": verification,
             "inventory_written": False,
@@ -608,6 +624,119 @@ async def recalls(request: Request):
     await require_pharmacy_staff(request, db)
     docs = await db.cdsco_recalls.find({}, {"_id": 0}).sort("date_published", -1).to_list(100)
     return {"recalls": docs}
+
+
+@api.post("/pharmacy/reset-demo")
+async def reset_demo(request: Request):
+    """Purge only demo-generated intake artefacts so the CLEAN sample stays green
+    across repeat demonstrations. Preserves original seed data (marked demo_generated=None)."""
+    user = await require_pharmacy_staff(request, db)
+    pharmacy_id = user.get("associated_pharmacy_id")
+
+    alerts_del = await db.security_alerts.delete_many({"demo_generated": True})
+    telemetry_del = await db.scan_telemetry.delete_many({"pharmacy_id": pharmacy_id, "batch_number": {"$in": ["CRO241001", "ABC000111", "PCM240721", "XYZ000999"]}})
+    # remove inventory batches created by demo intakes (batch numbers from samples)
+    inv_del = await db.inventory_batches.delete_many({
+        "pharmacy_id": pharmacy_id,
+        "batch_number": {"$in": ["CRO241001", "ABC000111", "PCM240721"]}
+    })
+    po_del = await db.purchase_orders.delete_many({"pharmacy_id": pharmacy_id})
+    return {
+        "cleared": {
+            "security_alerts": alerts_del.deleted_count,
+            "scan_telemetry": telemetry_del.deleted_count,
+            "inventory_batches": inv_del.deleted_count,
+            "purchase_orders": po_del.deleted_count,
+        }
+    }
+
+
+@api.get("/pharmacy/telemetry/timeline")
+async def telemetry_timeline(request: Request, hours: int = 168):
+    """Return a 7-day hourly histogram of scan telemetry activity, split by
+    status_badge (Valid vs Anomaly_Flagged) — powers the timeline heat-map."""
+    await require_pharmacy_staff(request, db)
+    hours = max(24, min(hours, 24 * 30))
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+    pipeline = [
+        {"$match": {"timestamp": {"$gte": cutoff}}},
+        {"$project": {
+            "hour": {"$substr": ["$timestamp", 0, 13]},  # YYYY-MM-DDTHH
+            "status_badge": 1,
+            "quantity": {"$ifNull": ["$quantity", 0]},
+        }},
+        {"$group": {
+            "_id": {"hour": "$hour", "status": "$status_badge"},
+            "count": {"$sum": 1},
+            "units": {"$sum": "$quantity"},
+        }},
+        {"$sort": {"_id.hour": 1}},
+    ]
+    docs = await db.scan_telemetry.aggregate(pipeline).to_list(2000)
+    by_hour: dict[str, dict] = {}
+    for d in docs:
+        h = d["_id"]["hour"]
+        entry = by_hour.setdefault(h, {"hour": h, "valid": 0, "anomaly": 0, "valid_units": 0, "anomaly_units": 0})
+        if d["_id"]["status"] == "Anomaly_Flagged":
+            entry["anomaly"] += d["count"]
+            entry["anomaly_units"] += d["units"]
+        else:
+            entry["valid"] += d["count"]
+            entry["valid_units"] += d["units"]
+    timeline = sorted(by_hour.values(), key=lambda x: x["hour"])
+    return {"timeline": timeline, "window_hours": hours}
+
+
+@api.get("/pharmacy/export/audit-log.csv")
+async def export_audit_log(request: Request):
+    """Regulator-ready CSV audit-log export: telemetry + security alerts + recalls."""
+    from fastapi.responses import StreamingResponse
+    import csv
+    from io import StringIO
+
+    await require_pharmacy_staff(request, db)
+    telemetry = await db.scan_telemetry.find({}, {"_id": 0}).sort("timestamp", -1).to_list(5000)
+    alerts = await db.security_alerts.find({}, {"_id": 0}).to_list(1000)
+
+    buf = StringIO()
+    writer = csv.writer(buf)
+    writer.writerow([
+        "record_type", "timestamp", "batch_number", "scanned_gtin", "city",
+        "quantity", "status_badge", "alert_type", "severity", "cryptographic_telemetry_hash",
+    ])
+    for t in telemetry:
+        writer.writerow([
+            "telemetry",
+            t.get("timestamp", ""),
+            t.get("batch_number", ""),
+            t.get("scanned_gtin", ""),
+            t.get("city", ""),
+            t.get("quantity", 0),
+            t.get("status_badge", ""),
+            "",
+            "",
+            t.get("cryptographic_telemetry_hash", ""),
+        ])
+    for a in alerts:
+        writer.writerow([
+            "security_alert",
+            a.get("created_at", ""),
+            a.get("target_batch_number", ""),
+            "",
+            "",
+            "",
+            "",
+            a.get("alert_type", ""),
+            a.get("severity", ""),
+            "",
+        ])
+    buf.seek(0)
+    filename = f"kyrenis-audit-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M')}.csv"
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 @api.get("/pharmacy/pos/receipts")

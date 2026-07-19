@@ -1,0 +1,42 @@
+{
+  "summary": "Iteration-3 validation of Kyrenis Pharmacy OS enhancements. All 5 new deliverables verified end-to-end: (1) POST /api/pharmacy/reset-demo returns {cleared:{security_alerts,scan_telemetry,inventory_batches,purchase_orders}} counts, requires PHARMACY_STAFF (401 anon), and preserves seed data (109 meds, 5 recalls, 5 distributors, >=15 seeded security_alerts survive). (2) GET /api/pharmacy/telemetry/timeline?hours=168 returns {timeline:[{hour,valid,anomaly,valid_units,anomaly_units}], window_hours:168} with buckets sorted ascending. (3) GET /api/pharmacy/export/audit-log.csv streams CSV (text/csv; charset=utf-8) with correct Content-Disposition attachment (kyrenis-audit-YYYYMMDD-HHMM.csv) and exact header row match. (4) Frontend: CameraScanner card, Start/Stop buttons, Reset Demo button (toast fires with counts) all render and interact correctly on Stock Intake. (5) Telemetry tab renders telemetry-timeline-panel + timeline-chart (area chart with valid/anomaly series) and telemetry-export-csv anchor pointing to the correct URL — anchor fetch returns 200 with valid CSV. Regressions: <span> inside <option> hydration warning is CLEARED on both intake-medicine-input and pos-medicine-select (no <span> children, zero hydration console warnings). Email dispatch fire-and-forget verified — recall intake still returns HTTP 200 / inventory_written=false without hanging or 5xx. Full pytest suite 32/32 GREEN (24 original + 8 new).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "CameraScanner", "issue": "Clicking [data-testid='camera-scanner-stop'] when the scanner never successfully started (e.g. no camera / permission denied — the exact headless case the requirement mentioned) raises an UNHANDLED runtime error 'Cannot stop, scanner is not running or paused.' from html5-qrcode. The React DevServer error overlay then blocks the entire page until dismissed. The Stop handler should try/catch (or check scanner.getState() === RUNNING/PAUSED) before calling scanner.stop(). Reproduce: open Stock Intake → click Start Scan (permission denied silently) → click Stop → red 'Uncaught runtime errors' overlay appears.", "selector": "[data-testid='camera-scanner-stop']", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_kyrenis_api.py",
+    "/app/backend/tests/test_new_features.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Guard CameraScanner Stop handler with try/catch or state check so a stop-without-start does not raise an uncaught error (blocks page in dev overlay).",
+    "(Carry-over from iter-2, not addressed) Pharmacy /logout button no-op and /patient header auth-pill leak when JWT cookie present."
+  ],
+  "critical_code_review_comments": [
+    "email_dispatch.py: httpx call wrapped in try/except → non-blocking as specified. Good. Consider making the call fully background (asyncio.create_task) so a slow Emergent proxy never adds 15s latency to intake response — currently the await inside stock_intake sits inline.",
+    "server.py reset-demo: only deletes when demo_generated=True on alerts (good — seed alerts survive) but scan_telemetry cleanup is scoped by an inline list ['CRO241001','ABC000111','PCM240721','XYZ000999'] — hard-coded sample list will drift if new sample batches are added. Consider adding a demo_generated flag on telemetry rows too.",
+    "audit-log.csv: telemetry limited to 5000 rows and alerts to 1000 — fine for demo but a regulator export usually needs a full dump or pagination; document the caps or expose ?limit=.",
+    "telemetry_timeline: aggregation on stringified timestamp substr($timestamp,0,13) works but ignores rows where timestamp is not ISO-8601 — enforce ISO on write.",
+    "CameraScanner: no try/catch around scanner.stop() → the only real UI defect from this iteration."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_new_features.py (new — 8 tests covering reset-demo, telemetry timeline, audit CSV, fire-and-forget email)"
+  ],
+  "success_rate": {"backend": "100% (32/32 pytest)", "frontend": "~95% (all 5 new features render + integrate correctly; one uncaught runtime error on stop-without-start)"},
+  "test_credentials": "chemist@kyrenis.in / password (via [data-testid='auth-autofill-btn']).",
+  "seed_data_creation": "None. Reset-demo endpoint self-cleans between test iterations.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend suite lives at /app/backend/tests/{test_kyrenis_api.py,test_new_features.py} — 32 tests, all green. All new endpoints (reset-demo, telemetry/timeline, export/audit-log.csv) auth-guarded and returning correct payloads. CSV endpoint is fetchable through the browser session cookie (verified via page.request.get). Only outstanding item: CameraScanner Stop button needs a try/catch guard (html5-qrcode throws when not in RUNNING/PAUSED state).",
+  "rca_of_the_issue": {
+    "camera_stop_uncaught": "html5-qrcode throws 'Cannot stop, scanner is not running or paused.' whenever .stop() is invoked outside the RUNNING/PAUSED FSM state. CameraScanner.jsx invokes scanner.stop() unconditionally in the Stop button handler; when the user clicks Start but camera permission is denied (or headless / no camera), the scanner is never marked RUNNING, so the subsequent Stop click bubbles an uncaught promise rejection into React's error overlay. Fix: wrap in try/catch or check scanner.getState() === Html5QrcodeScannerState.SCANNING before calling stop()."
+  }
+}

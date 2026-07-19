@@ -10,8 +10,12 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  AreaChart,
+  Area,
+  CartesianGrid,
+  Legend,
 } from "recharts";
-import { Radar, AlertTriangle, MapPin, Waves } from "lucide-react";
+import { Radar, AlertTriangle, MapPin, Waves, Download, Activity } from "lucide-react";
 
 export default function Telemetry() {
   const [volumetric, setVolumetric] = useState([]);
@@ -19,21 +23,25 @@ export default function Telemetry() {
   const [spatial, setSpatial] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [recalls, setRecalls] = useState([]);
+  const [timeline, setTimeline] = useState([]);
+  const BACKEND = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
     (async () => {
       try {
-        const [v, s, a, r] = await Promise.all([
+        const [v, s, a, r, t] = await Promise.all([
           api.get("/pharmacy/telemetry/volumetric").catch(() => ({ data: { volumetric: [], threshold: 40000 } })),
           api.get("/pharmacy/telemetry/spatial").catch(() => ({ data: { spatial_anomalies: [] } })),
           api.get("/pharmacy/security-alerts").catch(() => ({ data: { alerts: [] } })),
           api.get("/pharmacy/recalls").catch(() => ({ data: { recalls: [] } })),
+          api.get("/pharmacy/telemetry/timeline?hours=168").catch(() => ({ data: { timeline: [] } })),
         ]);
         setVolumetric(v?.data?.volumetric ?? []);
         setThreshold(v?.data?.threshold ?? 40000);
         setSpatial(s?.data?.spatial_anomalies ?? []);
         setAlerts(a?.data?.alerts ?? []);
         setRecalls(r?.data?.recalls ?? []);
+        setTimeline(t?.data?.timeline ?? []);
       } catch (e) {
         toast.error(formatApiErrorDetail(e?.response?.data?.detail) || e.message);
       }
@@ -53,6 +61,24 @@ export default function Telemetry() {
 
   return (
     <div className="flex flex-col gap-6" data-testid="telemetry-view">
+      {/* CSV export bar */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <p className="k-label">// Network Telemetry Grid</p>
+          <p className="text-[#E2E8F0]/60 text-sm mt-1">
+            Live signals across {volumetric.length} tracked batches · {alerts.length} unresolved anomalies.
+          </p>
+        </div>
+        <a
+          href={`${BACKEND}/api/pharmacy/export/audit-log.csv`}
+          data-testid="telemetry-export-csv"
+          className="inline-flex items-center gap-2 border border-[#10B981]/50 text-[#10B981] px-4 py-2 font-mono text-[10px] tracking-[0.25em] uppercase hover:bg-[#10B981]/10 transition-colors"
+        >
+          <Download size={12} />
+          Export Audit CSV
+        </a>
+      </div>
+
       {/* Volumetric Saturation Banner */}
       {exceededBatches.length > 0 && (
         <div
@@ -71,6 +97,74 @@ export default function Telemetry() {
           </div>
         </div>
       )}
+
+      {/* Timeline area chart */}
+      <div className="k-panel p-6 md:p-8" data-testid="telemetry-timeline-panel">
+        <div className="flex items-center gap-3 mb-6">
+          <Activity size={18} className="text-[#10B981]" />
+          <h2 className="font-display text-white text-xl">Scan Activity · Last 7 Days</h2>
+        </div>
+        {timeline.length === 0 ? (
+          <p className="text-[#E2E8F0]/50 text-sm">No recent scan activity.</p>
+        ) : (
+          <div className="h-[220px]" data-testid="timeline-chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={timeline} margin={{ top: 10, right: 12, bottom: 24, left: 8 }}>
+                <defs>
+                  <linearGradient id="k-safe" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10B981" stopOpacity={0.55} />
+                    <stop offset="100%" stopColor="#10B981" stopOpacity={0.05} />
+                  </linearGradient>
+                  <linearGradient id="k-anom" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#EF4444" stopOpacity={0.55} />
+                    <stop offset="100%" stopColor="#EF4444" stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid stroke="rgba(226,232,240,0.08)" vertical={false} />
+                <XAxis
+                  dataKey="hour"
+                  tick={{ fill: "#E2E8F0", fontFamily: "JetBrains Mono", fontSize: 9 }}
+                  tickFormatter={(h) => (typeof h === "string" ? h.slice(5) : h)}
+                  interval={Math.max(Math.floor(timeline.length / 12), 1)}
+                />
+                <YAxis
+                  tick={{ fill: "#E2E8F0", fontFamily: "JetBrains Mono", fontSize: 10 }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "#1F2326",
+                    border: "1px solid rgba(226,232,240,0.2)",
+                    fontFamily: "JetBrains Mono",
+                    fontSize: 12,
+                    color: "#E2E8F0",
+                  }}
+                />
+                <Legend
+                  wrapperStyle={{ fontFamily: "JetBrains Mono", fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#E2E8F0" }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="valid"
+                  name="Valid Scans"
+                  stroke="#10B981"
+                  strokeWidth={2}
+                  fill="url(#k-safe)"
+                  stackId="1"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="anomaly"
+                  name="Anomaly Flagged"
+                  stroke="#EF4444"
+                  strokeWidth={2}
+                  fill="url(#k-anom)"
+                  stackId="1"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-6">
         {/* Volumetric chart */}

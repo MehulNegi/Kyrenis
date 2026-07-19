@@ -96,9 +96,7 @@ export default function POSBilling() {
                 const s = stockByMed[m.id];
                 const inStock = (s?.total || 0) > 0;
                 return (
-                  <option key={m.id} value={m.id} disabled={!inStock}>
-                    {m.brand_name} · {m.generic_composition} · stock {s?.total || 0}
-                  </option>
+                  <option key={m.id} value={m.id} disabled={!inStock}>{`${m.brand_name} · ${m.generic_composition} · stock ${s?.total || 0}`}</option>
                 );
               })}
             </select>
