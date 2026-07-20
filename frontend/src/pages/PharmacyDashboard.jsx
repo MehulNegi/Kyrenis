@@ -5,14 +5,16 @@ import POSBilling from "@/components/pharmacy/POSBilling";
 import Replenishment from "@/components/pharmacy/Replenishment";
 import Telemetry from "@/components/pharmacy/Telemetry";
 import SalesHistory from "@/components/pharmacy/SalesHistory";
-import { ScanLine, ShoppingCart, PackageSearch, BarChart3, Receipt } from "lucide-react";
+import SecurityRecalls from "@/components/pharmacy/SecurityRecalls";
+import { ScanLine, ShoppingCart, PackageSearch, BarChart3, Receipt, ShieldAlert } from "lucide-react";
 
 const TABS = [
-  { key: "intake", label: "Batch Intake", icon: ScanLine, testid: "tab-intake" },
+  { key: "intake", label: "Stock Intake", icon: ScanLine, testid: "tab-intake" },
   { key: "pos", label: "POS Billing", icon: ShoppingCart, testid: "tab-pos" },
-  { key: "replenishment", label: "Replenishment", icon: PackageSearch, testid: "tab-replenishment" },
   { key: "sales", label: "Sales History", icon: Receipt, testid: "tab-sales" },
-  { key: "telemetry", label: "Analytics", icon: BarChart3, testid: "tab-telemetry" },
+  { key: "replenishment", label: "Replenishment", icon: PackageSearch, testid: "tab-replenishment" },
+  { key: "telemetry", label: "Telemetry", icon: BarChart3, testid: "tab-telemetry" },
+  { key: "security", label: "Security & Recalls", icon: ShieldAlert, testid: "tab-security" },
 ];
 
 export default function PharmacyDashboard() {
@@ -62,9 +64,10 @@ export default function PharmacyDashboard() {
         <div className="pb-24">
           {active === "intake" && <StockIntake />}
           {active === "pos" && <POSBilling />}
-          {active === "replenishment" && <Replenishment />}
           {active === "sales" && <SalesHistory />}
+          {active === "replenishment" && <Replenishment />}
           {active === "telemetry" && <Telemetry />}
+          {active === "security" && <SecurityRecalls />}
         </div>
       </div>
     </div>
