@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import KyrenisLogo from "@/components/KyrenisLogo";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 import { Terminal, LogIn, UserPlus, Zap, ArrowLeft } from "lucide-react";
 
 export default function PharmacyAuth() {
@@ -151,11 +152,19 @@ export default function PharmacyAuth() {
                 onClick={autofill}
                 disabled={busy}
                 data-testid="auth-autofill-btn"
-                className="w-full mb-6 py-3 border border-[#10B981]/50 text-[#10B981] font-mono text-xs tracking-[0.25em] uppercase inline-flex items-center justify-center gap-2 hover:bg-[#10B981]/10 disabled:opacity-50 transition-colors"
+                className="w-full mb-4 py-3 border border-[#10B981]/50 text-[#10B981] font-mono text-xs tracking-[0.25em] uppercase inline-flex items-center justify-center gap-2 hover:bg-[#10B981]/10 disabled:opacity-50 transition-colors"
               >
                 <Zap size={14} />
                 Autofill Test Pharmacy Credentials
               </button>
+
+              <GoogleSignInButton flow="pharmacy" testid="pharmacy-google-signin" />
+
+              <div className="flex items-center gap-3 my-5">
+                <div className="flex-1 h-px bg-[#E2E8F0]/15" />
+                <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-[#E2E8F0]/50">or continue with password</span>
+                <div className="flex-1 h-px bg-[#E2E8F0]/15" />
+              </div>
 
               <form onSubmit={submit} className="flex flex-col gap-4" data-testid="auth-form">
                 <Field

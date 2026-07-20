@@ -60,24 +60,49 @@ def extract_token(request: Request) -> str | None:
 
 
 async def require_user(request: Request, db) -> dict:
+    # Try JWT access token first (email/password login)
     token = extract_token(request)
-    if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    try:
-        payload = decode_token(token)
-        if payload.get("type") != "access":
-            raise HTTPException(status_code=401, detail="Invalid token type")
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    if token:
+        try:
+            payload = decode_token(token)
+            if payload.get("type") == "access":
+                user = await db.users.find_one({"id": payload["sub"]}, {"_id": 0})
+                if user:
+                    user.pop("password_hash", None)
+                    return user
+        except jwt.ExpiredSignatureError:
+            pass
+        except jwt.InvalidTokenError:
+            pass
 
-    user = await db.users.find_one({"id": payload["sub"]})
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-    user.pop("password_hash", None)
-    user.pop("_id", None)
-    return user
+    # Fall back to Emergent session_token (Google OAuth)
+    session_token = request.cookies.get("session_token")
+    if not session_token:
+        auth_header = request.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer "):
+            candidate = auth_header[7:]
+            # only treat as session if not a JWT (JWTs contain dots)
+            if candidate.count(".") != 2:
+                session_token = candidate
+
+    if session_token:
+        session = await db.user_sessions.find_one({"session_token": session_token}, {"_id": 0})
+        if session:
+            expires_at = session.get("expires_at")
+            if isinstance(expires_at, str):
+                try:
+                    expires_at = datetime.fromisoformat(expires_at)
+                except Exception:
+                    expires_at = None
+            if expires_at and expires_at.tzinfo is None:
+                expires_at = expires_at.replace(tzinfo=timezone.utc)
+            if expires_at and expires_at >= datetime.now(timezone.utc):
+                user = await db.users.find_one({"id": session["user_id"]}, {"_id": 0})
+                if user:
+                    user.pop("password_hash", None)
+                    return user
+
+    raise HTTPException(status_code=401, detail="Not authenticated")
 
 
 async def require_pharmacy_staff(request: Request, db) -> dict:

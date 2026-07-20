@@ -9,6 +9,12 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    // CRITICAL: If returning from OAuth callback, skip the /me check.
+    // AuthCallback will exchange the session_id and establish the session first.
+    if (window.location.hash?.includes("session_id=")) {
+      setUser(false);
+      return;
+    }
     (async () => {
       try {
         const { data } = await api.get("/auth/me");
@@ -63,7 +69,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function ProtectedRoute({ children }) {
+export function ProtectedRoute({ children, allowRoles = ["PHARMACY_STAFF"] }) {
   const { user } = useAuth();
   const loc = useLocation();
   if (user === null) {
@@ -73,7 +79,14 @@ export function ProtectedRoute({ children }) {
       </div>
     );
   }
-  if (!user || user.designated_role !== "PHARMACY_STAFF") {
+  if (!user) {
+    return <Navigate to="/pharmacy/auth" state={{ from: loc }} replace />;
+  }
+  if (!allowRoles.includes(user.designated_role)) {
+    // A pending Google user landing on /pharmacy → route to onboarding
+    if (user.designated_role === "PENDING_ONBOARDING") {
+      return <Navigate to="/pharmacy/onboarding" replace />;
+    }
     return <Navigate to="/pharmacy/auth" state={{ from: loc }} replace />;
   }
   return children;

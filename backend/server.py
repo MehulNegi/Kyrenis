@@ -184,10 +184,151 @@ async def login(payload: LoginRequest, response: Response):
 
 
 @api.post("/auth/logout")
-async def logout(response: Response):
+async def logout(response: Response, request: Request):
+    # Clear JWT cookies
     response.delete_cookie("access_token", path="/", samesite="none", secure=True)
     response.delete_cookie("refresh_token", path="/", samesite="none", secure=True)
+    # Also invalidate any active Google session
+    session_token = request.cookies.get("session_token")
+    if session_token:
+        await db.user_sessions.delete_many({"session_token": session_token})
+    response.delete_cookie("session_token", path="/", samesite="none", secure=True)
     return {"ok": True}
+
+
+# ---------------- Google (Emergent-managed) Auth ----------------
+# REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
+class GoogleSessionPayload(BaseModel):
+    session_id: str
+    flow: Optional[str] = "pharmacy"  # "pharmacy" or "patient"
+
+
+@api.post("/auth/google/session")
+async def google_session(payload: GoogleSessionPayload, response: Response):
+    """Exchange an Emergent OAuth session_id for a persistent session_token.
+    Creates/updates the local user; new users default to PENDING_ONBOARDING and
+    must complete /auth/complete-onboarding before they can access pharmacy routes."""
+    if not payload.session_id or len(payload.session_id) > 512:
+        raise HTTPException(status_code=400, detail="Invalid session_id")
+
+    try:
+        async with httpx.AsyncClient(timeout=15) as http_client:
+            r = await http_client.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": payload.session_id},
+            )
+        if r.status_code != 200:
+            raise HTTPException(status_code=401, detail="Session exchange failed")
+        data = r.json()
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Auth provider unreachable: {e}")
+
+    email = (data.get("email") or "").lower().strip()
+    if not email:
+        raise HTTPException(status_code=400, detail="Google response missing email")
+
+    session_token = data.get("session_token")
+    if not session_token:
+        raise HTTPException(status_code=500, detail="Missing session_token from auth provider")
+
+    now = datetime.now(timezone.utc)
+    existing = await db.users.find_one({"email": email}, {"_id": 0})
+    is_new_user = existing is None
+
+    if existing:
+        # Preserve role and pharmacy attachment; just update google metadata
+        await db.users.update_one(
+            {"email": email},
+            {
+                "$set": {
+                    "name": data.get("name") or existing.get("name", ""),
+                    "picture": data.get("picture") or existing.get("picture", ""),
+                    "auth_provider": existing.get("auth_provider") or "google",
+                    "last_login_at": _iso(now),
+                }
+            },
+        )
+        user = await db.users.find_one({"email": email}, {"_id": 0})
+    else:
+        user_id = str(uuid.uuid4())
+        initial_role = "PENDING_ONBOARDING" if payload.flow == "pharmacy" else "CONSUMER_GUEST"
+        user = {
+            "id": user_id,
+            "user_id": user_id,
+            "email": email,
+            "name": data.get("name") or "",
+            "picture": data.get("picture") or "",
+            "designated_role": initial_role,
+            "auth_provider": "google",
+            "associated_pharmacy_id": None,
+            "created_at": _iso(now),
+            "last_login_at": _iso(now),
+        }
+        await db.users.insert_one(user)
+
+    # Persist session (7 days)
+    expires_at = now + timedelta(days=7)
+    await db.user_sessions.insert_one(
+        {
+            "id": str(uuid.uuid4()),
+            "user_id": user["id"],
+            "session_token": session_token,
+            "created_at": _iso(now),
+            "expires_at": expires_at,
+        }
+    )
+
+    response.set_cookie(
+        "session_token",
+        session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=60 * 60 * 24 * 7,
+        path="/",
+    )
+    user.pop("password_hash", None)
+    user.pop("_id", None)
+    return {"user": user, "is_new_user": is_new_user, "needs_onboarding": user.get("designated_role") == "PENDING_ONBOARDING"}
+
+
+class OnboardingPayload(BaseModel):
+    pharmacy_name: str = Field(min_length=2, max_length=120)
+    license_number: str = Field(min_length=2, max_length=60)
+    location_city: str = Field(min_length=2, max_length=60)
+    postal_code: Optional[str] = ""
+
+
+@api.post("/auth/complete-onboarding")
+async def complete_onboarding(payload: OnboardingPayload, request: Request):
+    user = await require_user(request, db)
+    if user.get("designated_role") == "PHARMACY_STAFF":
+        return {"user": user, "already_onboarded": True}
+
+    pharmacy_id = str(uuid.uuid4())
+    await db.pharmacies.insert_one(
+        {
+            "id": pharmacy_id,
+            "name": payload.pharmacy_name.strip(),
+            "license_number": payload.license_number.strip(),
+            "location_city": payload.location_city.strip(),
+            "postal_code": (payload.postal_code or "").strip(),
+            "created_at": _iso(datetime.now(timezone.utc)),
+        }
+    )
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": {
+            "designated_role": "PHARMACY_STAFF",
+            "associated_pharmacy_id": pharmacy_id,
+            "onboarded_at": _iso(datetime.now(timezone.utc)),
+        }},
+    )
+    updated = await db.users.find_one({"id": user["id"]}, {"_id": 0})
+    updated.pop("password_hash", None)
+    return {"user": updated, "pharmacy_id": pharmacy_id}
 
 
 @api.get("/auth/me")

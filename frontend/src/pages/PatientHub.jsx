@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import KyrenisHeader from "@/components/KyrenisHeader";
 import BatchAuthenticator from "@/components/patient/BatchAuthenticator";
 import OpenFDADirectory from "@/components/patient/OpenFDADirectory";
-import { ShieldCheck, BookOpen } from "lucide-react";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
+import { useAuth } from "@/lib/auth";
+import { ShieldCheck, BookOpen, UserCheck } from "lucide-react";
 
 const TABS = [
   { key: "auth", label: "Batch Authenticator", icon: ShieldCheck, testid: "patient-tab-auth" },
@@ -11,6 +13,8 @@ const TABS = [
 
 export default function PatientHub() {
   const [active, setActive] = useState("auth");
+  const { user } = useAuth();
+  const isIdentified = user && (user.designated_role === "CONSUMER_GUEST" || user.auth_provider === "google");
   return (
     <div className="min-h-screen bg-black text-[#E2E8F0]" data-testid="patient-hub">
       <KyrenisHeader variant="Patient Trust Hub · Guest" />
@@ -26,11 +30,32 @@ export default function PatientHub() {
               so anyone can confirm authenticity and pull clinical safety data before taking a dose.
             </p>
           </div>
-          <div className="flex items-center gap-2 border border-[#E2E8F0]/15 px-4 py-2">
-            <span className="w-1.5 h-1.5 bg-[#10B981]" />
-            <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#E2E8F0]/70">
-              Anonymous Guest Session
-            </span>
+          <div className="flex flex-col items-end gap-2">
+            {isIdentified ? (
+              <div className="flex items-center gap-2 border border-[#10B981]/50 px-4 py-2" data-testid="patient-identified-pill">
+                <UserCheck size={14} className="text-[#10B981]" />
+                <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-[#10B981]">
+                  Identified · {user.name || user.email}
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 border border-[#E2E8F0]/15 px-4 py-2">
+                <span className="w-1.5 h-1.5 bg-[#10B981]" />
+                <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#E2E8F0]/70">
+                  Anonymous Guest Session
+                </span>
+              </div>
+            )}
+            {!isIdentified && (
+              <div className="w-[240px]" data-testid="patient-google-signin-wrap">
+                <GoogleSignInButton
+                  flow="patient"
+                  label="Identify with Google · optional"
+                  testid="patient-google-signin"
+                  className="!py-2 !text-xs"
+                />
+              </div>
+            )}
           </div>
         </div>
 
