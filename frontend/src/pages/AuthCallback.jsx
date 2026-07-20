@@ -64,7 +64,7 @@ export default function AuthCallback() {
         </div>
         {!error ? (
           <>
-            <p className="k-label">// Handshake in progress</p>
+            <p className="k-label">Signing you in</p>
             <h1 className="font-display text-white text-2xl mt-4">Establishing secure session…</h1>
             <p className="text-[#E2E8F0]/60 mt-3 text-sm">
               Kyrenis is exchanging your Google credentials for a signed session token.
@@ -77,7 +77,7 @@ export default function AuthCallback() {
           </>
         ) : (
           <>
-            <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#EF4444]">// Auth Failed</p>
+            <p className="text-[11px] tracking-[0.14em] text-[#EF4444]">Sign-in failed</p>
             <h1 className="font-display text-white text-2xl mt-4">Could not complete sign-in</h1>
             <p className="text-[#E2E8F0]/70 mt-3 text-sm break-words" data-testid="auth-callback-error">
               {error}

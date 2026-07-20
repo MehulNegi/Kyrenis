@@ -9,6 +9,8 @@ import PharmacyDashboard from "@/pages/PharmacyDashboard";
 import PatientHub from "@/pages/PatientHub";
 import AuthCallback from "@/pages/AuthCallback";
 import PharmacyOnboarding from "@/pages/PharmacyOnboarding";
+import About from "@/pages/About";
+import Contact from "@/pages/Contact";
 
 // Synchronous session_id detection prevents race with global AuthProvider./me
 function AppRouter() {
@@ -38,6 +40,8 @@ function AppRouter() {
       />
       <Route path="/patient" element={<PatientHub />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
     </Routes>
   );
 }

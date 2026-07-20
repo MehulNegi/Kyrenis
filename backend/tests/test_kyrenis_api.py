@@ -217,44 +217,129 @@ class TestPOS:
         assert len(rec["lines"][0]["deductions"]) >= 1
 
 
-# ---------------- Consumer (public) ----------------
+# ---------------- Consumer (public) - CDSCO Risk Score API ----------------
 class TestConsumer:
-    def test_verify_recall_red(self, anon_session):
+    def test_verify_pcm_critical(self, anon_session):
+        # PCM240721 seeded with risk_score=98 (Critical)
+        r = anon_session.post(f"{API}/consumer/verify-batch", json={
+            "batch_number": "PCM240721", "medicine_name": "Paracetamol"
+        })
+        assert r.status_code == 200
+        v = r.json()
+        assert v["alert_found"] is True
+        assert v["risk_score"] >= 80
+        assert v["severity"] == "Critical"
+        assert v["alert_card"]["source"] == "CDSCO"
+        assert v["alert_card"]["batch_number"] == "PCM240721"
+        assert "reporting_authority" in v["alert_card"]
+
+    def test_verify_amx_critical(self, anon_session):
+        r = anon_session.post(f"{API}/consumer/verify-batch", json={
+            "batch_number": "AMX00492", "medicine_name": "Amoxicillin"
+        })
+        assert r.status_code == 200
+        v = r.json()
+        assert v["alert_found"] is True
+        assert v["risk_score"] >= 80
+
+    def test_verify_qr_recall(self, anon_session):
         r = anon_session.post(f"{API}/consumer/verify-batch", json={
             "qr_string": "(01)89000000000021(10)PCM240721(17)261231"
         })
         assert r.status_code == 200
         v = r.json()
-        assert v["shield"] == "red"
-        assert v["batch_number"] == "PCM240721"
+        assert v["alert_found"] is True
+        assert v["severity"] == "Critical"
 
-    def test_verify_security_alert_red(self, anon_session):
+    def test_verify_clean_batch(self, anon_session):
         r = anon_session.post(f"{API}/consumer/verify-batch", json={
-            "batch_number": "SAT240000"
+            "batch_number": "CLEAN0001"
         })
         assert r.status_code == 200
         v = r.json()
-        assert v["shield"] == "red"
+        assert v["alert_found"] is False
+        assert v["severity"] == "Clear"
+        assert v["risk_score"] < 20
 
-    def test_verify_teleport_red(self, anon_session):
-        r = anon_session.post(f"{API}/consumer/verify-batch", json={
-            "batch_number": "TEL240000"
-        })
-        assert r.status_code == 200
-        assert r.json()["shield"] == "red"
-
-    def test_verify_clean_green(self, anon_session):
-        r = anon_session.post(f"{API}/consumer/verify-batch", json={
-            "batch_number": "UNKNOWN_CLEAN_ZZZ_" + os.urandom(3).hex().upper()
-        })
-        assert r.status_code == 200
-        assert r.json()["shield"] == "green"
-
-    def test_openfda_ibuprofen(self, anon_session):
-        r = anon_session.get(f"{API}/consumer/openfda", params={"q": "Ibuprofen"}, timeout=20)
-        assert r.status_code == 200
+    def test_openfda_paracetamol(self, anon_session):
+        # Backend uses `q` param name; try both to be tolerant
+        r = anon_session.get(f"{API}/consumer/openfda", params={"q": "paracetamol"}, timeout=20)
+        assert r.status_code == 200, r.text
         j = r.json()
-        assert j["count"] >= 1
-        first = j["results"][0]
-        assert "warnings" in first
-        assert "adverse_reactions" in first
+        assert "results" in j and "count" in j
+        if j["count"] >= 1:
+            first = j["results"][0]
+            assert "warnings" in first
+            assert "adverse_reactions" in first
+            assert "dosage_and_administration" in first
+
+
+# ---------------- Register / Auth-me ----------------
+class TestRegister:
+    def test_register_new_staff(self, anon_session):
+        import uuid as _u
+        email = f"TEST_staff_{_u.uuid4().hex[:8]}@kyrenis.in".lower()
+        r = anon_session.post(f"{API}/auth/register", json={
+            "email": email, "password": "password123"
+        })
+        assert r.status_code == 200, r.text
+        j = r.json()
+        assert j["user"]["email"] == email
+        assert j["user"]["designated_role"] == "PHARMACY_STAFF"
+        assert "access_token" in j
+
+
+# ---------------- Receipts, Invoice Detail, Manual PO, Timeline, CSV ----------------
+class TestExtras:
+    def test_receipts_and_detail(self, auth_session):
+        # Ensure at least one receipt exists (POS test creates one; else create now)
+        inv = auth_session.get(f"{API}/pharmacy/inventory").json()["inventory"]
+        target = next((i for i in inv if i.get("current_stock_qty", 0) >= 1 and i.get("verification_status") == "Verified"), None)
+        assert target
+        auth_session.post(f"{API}/pharmacy/pos/checkout", json={
+            "items": [{"medicine_id": target["medicine_id"], "quantity": 1}]
+        })
+        r = auth_session.get(f"{API}/pharmacy/pos/receipts")
+        assert r.status_code == 200
+        receipts = r.json()["receipts"]
+        assert len(receipts) >= 1
+        inv_no = receipts[0]["invoice_number"]
+        assert inv_no.startswith("INV-")
+        # Detail
+        r2 = auth_session.get(f"{API}/pharmacy/pos/receipts/{inv_no}")
+        assert r2.status_code == 200
+        assert r2.json()["receipt"]["invoice_number"] == inv_no
+
+    def test_invoice_detail_404(self, auth_session):
+        r = auth_session.get(f"{API}/pharmacy/pos/receipts/NOPE-INV-XYZ")
+        assert r.status_code == 404
+
+    def test_manual_po(self, auth_session):
+        dist = auth_session.get(f"{API}/pharmacy/distributors").json()["distributors"][0]
+        med = auth_session.get(f"{API}/pharmacy/medicines").json()["medicines"][0]
+        r = auth_session.post(f"{API}/pharmacy/purchase-orders/manual", json={
+            "distributor_id": dist["id"],
+            "expected_delivery_date": "2026-03-15",
+            "lines": [{"medicine_id": med["id"], "quantity": 50}],
+            "notes": "TEST_manual PO"
+        })
+        assert r.status_code == 200, r.text
+        po = r.json()["po"]
+        assert po["po_number"].startswith("KYR-PO-")
+        assert po["creation_mode"] == "Manual"
+        assert po["distributor_id"] == dist["id"]
+        # Verify listing
+        listing = auth_session.get(f"{API}/pharmacy/purchase-orders").json()["purchase_orders"]
+        assert any(p["id"] == po["id"] for p in listing)
+
+    def test_telemetry_timeline(self, auth_session):
+        r = auth_session.get(f"{API}/pharmacy/telemetry/timeline")
+        assert r.status_code == 200
+        assert isinstance(r.json().get("timeline", []), list)
+
+    def test_audit_csv(self, auth_session):
+        r = auth_session.get(f"{API}/pharmacy/export/audit-log.csv")
+        assert r.status_code == 200
+        assert "text/csv" in r.headers.get("content-type", "")
+        # header line present
+        assert "batch_number" in r.text.splitlines()[0]

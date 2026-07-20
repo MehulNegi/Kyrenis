@@ -512,23 +512,42 @@ def random_batch() -> str:
 async def pos_checkout(payload: POSCheckoutPayload, request: Request):
     user = await require_pharmacy_staff(request, db)
     pharmacy_id = user.get("associated_pharmacy_id")
+    today_iso = datetime.now(timezone.utc).date().isoformat()
 
     receipt_lines: list[dict] = []
-    grand_total = 0.0
+    subtotal = 0.0
     for item in payload.items:
         remaining = item.quantity
         med = await db.medicines.find_one({"id": item.medicine_id}, {"_id": 0})
         if not med:
             raise HTTPException(status_code=404, detail=f"Medicine not found: {item.medicine_id}")
+
+        # Expiry lock — cannot dispense stock that is already expired
+        expired_only = await db.inventory_batches.find_one(
+            {
+                "pharmacy_id": pharmacy_id,
+                "medicine_id": item.medicine_id,
+                "current_stock_qty": {"$gt": 0},
+                "expiry_date": {"$lt": today_iso},
+            },
+            {"_id": 0},
+        )
         batches = await db.inventory_batches.find(
             {
                 "pharmacy_id": pharmacy_id,
                 "medicine_id": item.medicine_id,
                 "current_stock_qty": {"$gt": 0},
                 "verification_status": "Verified",
+                "expiry_date": {"$gte": today_iso},
             },
             {"_id": 0},
         ).sort("expiry_date", 1).to_list(200)
+
+        if not batches and expired_only:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Billing locked — all on-hand stock of {med['brand_name']} has expired.",
+            )
 
         deductions = []
         for b in batches:
@@ -547,7 +566,7 @@ async def pos_checkout(payload: POSCheckoutPayload, request: Request):
                     "mrp": b["package_declared_mrp"],
                 }
             )
-            grand_total += take * b["package_declared_mrp"]
+            subtotal += take * b["package_declared_mrp"]
             remaining -= take
 
         if remaining > 0:
@@ -564,12 +583,27 @@ async def pos_checkout(payload: POSCheckoutPayload, request: Request):
             }
         )
 
+    gst_rate = 0.12  # 12% GST default for pharmaceuticals
+    taxable = round(subtotal / (1 + gst_rate), 2)
+    gst_amount = round(subtotal - taxable, 2)
+    cgst = round(gst_amount / 2, 2)
+    sgst = round(gst_amount - cgst, 2)
+
+    invoice_number = f"INV-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
     receipt = {
         "id": str(uuid.uuid4()),
+        "invoice_number": invoice_number,
         "pharmacy_id": pharmacy_id,
         "user_id": user["id"],
         "lines": receipt_lines,
-        "grand_total": round(grand_total, 2),
+        "subtotal": round(subtotal, 2),
+        "taxable_value": taxable,
+        "gst_rate": gst_rate,
+        "cgst": cgst,
+        "sgst": sgst,
+        "gst_total": gst_amount,
+        "grand_total": round(subtotal, 2),
+        "status": "Paid",
         "timestamp": _iso(datetime.now(timezone.utc)),
     }
     await db.pos_receipts.insert_one({**receipt})
@@ -683,6 +717,93 @@ async def list_pos(request: Request):
         "created_at", -1
     ).to_list(50)
     return {"purchase_orders": docs}
+
+
+class ManualPOLine(BaseModel):
+    medicine_id: str
+    quantity: int = Field(ge=1)
+
+
+class ManualPOPayload(BaseModel):
+    distributor_id: str
+    expected_delivery_date: str
+    lines: List[ManualPOLine]
+    notes: Optional[str] = ""
+
+
+@api.post("/pharmacy/purchase-orders/manual")
+async def create_manual_po(payload: ManualPOPayload, request: Request):
+    user = await require_pharmacy_staff(request, db)
+    pharmacy_id = user.get("associated_pharmacy_id")
+    if not payload.lines:
+        raise HTTPException(status_code=400, detail="At least one line item is required")
+
+    distributor = await db.distributors.find_one({"id": payload.distributor_id}, {"_id": 0})
+    if not distributor:
+        raise HTTPException(status_code=404, detail="Distributor not found")
+
+    lines_out = []
+    total = 0.0
+    for l in payload.lines:
+        med = await db.medicines.find_one({"id": l.medicine_id}, {"_id": 0})
+        if not med:
+            raise HTTPException(status_code=404, detail=f"Medicine not found: {l.medicine_id}")
+        unit = float(med.get("expected_mrp_baseline", 0) or 0) * 0.7
+        lines_out.append({
+            "medicine_id": med["id"],
+            "brand_name": med["brand_name"],
+            "generic_composition": med["generic_composition"],
+            "reorder_qty": l.quantity,
+            "expected_unit_price": unit,
+        })
+        total += unit * l.quantity
+
+    po = {
+        "id": str(uuid.uuid4()),
+        "po_number": f"KYR-PO-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}",
+        "pharmacy_id": pharmacy_id,
+        "distributor_id": distributor["id"],
+        "distributor_name": distributor["company_name"],
+        "expected_delivery_date": payload.expected_delivery_date,
+        "notes": (payload.notes or "").strip()[:400],
+        "generated_by": user["id"],
+        "creation_mode": "Manual",
+        "lines": lines_out,
+        "estimated_total": round(total, 2),
+        "status": "Draft",
+        "created_at": _iso(datetime.now(timezone.utc)),
+    }
+    await db.purchase_orders.insert_one({**po})
+    return {"po": _clean(po)}
+
+
+# ---------------- Sales & Invoice History ----------------
+@api.get("/pharmacy/pos/receipts")
+async def list_receipts(request: Request, q: Optional[str] = None):
+    user = await require_pharmacy_staff(request, db)
+    pharmacy_id = user.get("associated_pharmacy_id")
+    query: dict = {"pharmacy_id": pharmacy_id}
+    if q:
+        q_norm = sanitize_string(q, 80)
+        query["$or"] = [
+            {"invoice_number": {"$regex": q_norm, "$options": "i"}},
+            {"lines.medicine.brand_name": {"$regex": q_norm, "$options": "i"}},
+            {"lines.medicine.generic_composition": {"$regex": q_norm, "$options": "i"}},
+        ]
+    docs = await db.pos_receipts.find(query, {"_id": 0}).sort("timestamp", -1).to_list(200)
+    return {"receipts": docs}
+
+
+@api.get("/pharmacy/pos/receipts/{invoice_number}")
+async def get_receipt(invoice_number: str, request: Request):
+    user = await require_pharmacy_staff(request, db)
+    pharmacy_id = user.get("associated_pharmacy_id")
+    doc = await db.pos_receipts.find_one(
+        {"pharmacy_id": pharmacy_id, "invoice_number": invoice_number}, {"_id": 0}
+    )
+    if not doc:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    return {"receipt": doc}
 
 
 # ---------------- Telemetry ----------------
@@ -875,8 +996,9 @@ async def export_audit_log(request: Request):
     )
 
 
-@api.get("/pharmacy/pos/receipts")
-async def list_receipts(request: Request):
+@api.get("/pharmacy/pos/receipts-legacy")
+async def list_receipts_legacy(request: Request):
+    """Deprecated — kept for backwards compat. Use /pharmacy/pos/receipts."""
     user = await require_pharmacy_staff(request, db)
     docs = await db.pos_receipts.find(
         {"pharmacy_id": user.get("associated_pharmacy_id")}, {"_id": 0}
@@ -887,84 +1009,83 @@ async def list_receipts(request: Request):
 # ---------------- Consumer Trust Hub ----------------
 @api.post("/consumer/verify-batch")
 async def consumer_verify(payload: ConsumerVerifyPayload):
+    from cdsco_repository import risk_bucket, normalize_batch
+    from verification import parse_gs1_datamatrix
+
     qr = sanitize_string(payload.qr_string or "", 1024)
     ocr = sanitize_string(payload.ocr_text or "", 1024)
     manual_batch = sanitize_string((payload.batch_number or "").upper(), 60)
 
-    # Consumers only get Check 3 + Check 4 + active security alerts (no internal inventory)
-    from verification import parse_gs1_datamatrix, _yy_mm_from_gs1  # local import for reuse
-
     parsed = parse_gs1_datamatrix(qr) if qr else {}
     gtin = parsed.get("01", "").lstrip("0")
-    batch = (parsed.get("10", "") or manual_batch or "").upper()
+    batch_raw = parsed.get("10", "") or manual_batch or ""
+    expiry = parsed.get("17", "") or ""
+    serial = parsed.get("21", "") or ""
+    batch_norm = normalize_batch(batch_raw)
 
-    verdict = {
-        "shield": "green",
-        "title": "Genuine — Batch Cleared",
-        "detail": "No recalls or anomalies logged against this batch.",
-        "batch_number": batch or None,
-        "checks": [],
+    # Look up product context for the display card if available
+    product_ctx = None
+    if gtin:
+        product_ctx = await db.medicines.find_one({"global_gtin": gtin.zfill(14)}, {"_id": 0})
+    if not product_ctx and batch_norm:
+        # medicine lookup by inventory batch fallback
+        inv = await db.inventory_batches.find_one({"batch_number": batch_raw}, {"_id": 0})
+        if inv:
+            product_ctx = await db.medicines.find_one({"id": inv["medicine_id"]}, {"_id": 0})
+
+    hit = None
+    if batch_norm:
+        hit = await db.cdsco_recalls.find_one({"batch_normalised": batch_norm}, {"_id": 0})
+
+    if hit:
+        severity, headline = risk_bucket(hit["risk_score"])
+        return {
+            "risk_score": hit["risk_score"],
+            "severity": severity,
+            "headline": headline,
+            "alert_found": True,
+            "alert_card": {
+                "product_name": hit["product_name"],
+                "generic_composition": hit.get("generic_composition", ""),
+                "batch_number": hit["batch_number"],
+                "manufacturer": hit["manufacturer"],
+                "alert_category": hit["alert_category"],
+                "failure_reason": hit["failure_reason"],
+                "reporting_authority": hit["reporting_authority"],
+                "reporting_lab": hit.get("reporting_lab", ""),
+                "reporting_date": hit["reporting_date"],
+                "source": "CDSCO",
+            },
+            "parsed_payload": {
+                "gtin": gtin or None,
+                "batch_number": batch_raw or None,
+                "expiry": expiry or None,
+                "serial": serial or None,
+            },
+        }
+
+    # No match — score in the 0–10 band
+    score = 5
+    severity, headline = risk_bucket(score)
+    return {
+        "risk_score": score,
+        "severity": severity,
+        "headline": headline,
+        "alert_found": False,
+        "message": "No CDSCO recall, NSQ, spurious, or theft alert records were found for this batch.",
+        "product_context": (
+            {
+                "brand_name": product_ctx["brand_name"],
+                "generic_composition": product_ctx["generic_composition"],
+            } if product_ctx else None
+        ),
+        "parsed_payload": {
+            "gtin": gtin or None,
+            "batch_number": batch_raw or None,
+            "expiry": expiry or None,
+            "serial": serial or None,
+        },
     }
-
-    # Check 3 – CDSCO recall
-    recall = await db.cdsco_recalls.find_one({"target_batch_number": batch}) if batch else None
-    if recall:
-        verdict.update(
-            {
-                "shield": "red",
-                "title": "Warning — CDSCO Recall Active",
-                "detail": recall.get("hazard_classification"),
-                "medicine": recall.get("target_medicine_name"),
-                "date_published": recall.get("date_published"),
-            }
-        )
-        verdict["checks"].append({"name": "CDSCO Recall Registry", "passed": False})
-        return verdict
-    verdict["checks"].append({"name": "CDSCO Recall Registry", "passed": True})
-
-    # Check active security alerts
-    alert = await db.security_alerts.find_one(
-        {"target_batch_number": batch, "resolved_status": False}
-    ) if batch else None
-    if alert:
-        verdict.update(
-            {
-                "shield": "red",
-                "title": f"Warning — {alert.get('alert_type')} Alert Locked",
-                "detail": f"Severity {alert.get('severity')}. Batch is under active investigation.",
-                "medicine": alert.get("target_medicine_name"),
-            }
-        )
-        verdict["checks"].append({"name": "Network Security Alerts", "passed": False})
-        return verdict
-    verdict["checks"].append({"name": "Network Security Alerts", "passed": True})
-
-    # Check 4 – MRP baseline (only if gtin + declared mrp available)
-    if gtin and payload.package_declared_mrp is not None:
-        med = await db.medicines.find_one({"global_gtin": gtin.zfill(14)}, {"_id": 0})
-        if med:
-            baseline = float(med.get("expected_mrp_baseline", 0) or 0)
-            if baseline > 0:
-                deviation = abs(payload.package_declared_mrp - baseline) / baseline * 100
-                if deviation > 20:
-                    verdict["checks"].append(
-                        {
-                            "name": "MRP Baseline",
-                            "passed": False,
-                            "detail": f"Package MRP deviates {deviation:.1f}% from baseline",
-                        }
-                    )
-                    verdict.update(
-                        {
-                            "shield": "amber",
-                            "title": "Caution — Suspicious MRP Variance",
-                            "detail": f"Declared ₹{payload.package_declared_mrp} vs baseline ₹{baseline}",
-                        }
-                    )
-                    return verdict
-                verdict["checks"].append({"name": "MRP Baseline", "passed": True})
-
-    return verdict
 
 
 @api.get("/consumer/openfda")

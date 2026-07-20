@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime, timezone, timedelta
 
 from auth_utils import hash_password
+from cdsco_repository import CDSCO_ENTRIES, normalize_batch
 
 random.seed(42)
 
@@ -153,9 +154,19 @@ def _iso(dt: datetime) -> str:
 
 async def seed_all(db) -> dict:
     """Idempotent seed. Returns counts. Skips if marker doc exists."""
-    marker = await db.seed_marker.find_one({"key": "kyrenis_v1"})
+    marker = await db.seed_marker.find_one({"key": "kyrenis_v2"})
     if marker:
         return {"skipped": True, **marker.get("counts", {})}
+    # Purge legacy v1 data so the v2 schema (with CDSCO intelligence categories) is clean
+    await db.seed_marker.delete_many({})
+    await db.pharmacies.delete_many({})
+    await db.users.delete_many({})
+    await db.distributors.delete_many({})
+    await db.medicines.delete_many({})
+    await db.inventory_batches.delete_many({})
+    await db.cdsco_recalls.delete_many({})
+    await db.scan_telemetry.delete_many({})
+    await db.security_alerts.delete_many({})
 
     now = datetime.now(timezone.utc)
 
@@ -246,44 +257,28 @@ async def seed_all(db) -> dict:
             )
     await db.inventory_batches.insert_many(inventory_docs)
 
-    # ---------- CDSCO Recalls ----------
-    recall_docs = [
-        {
+    # ---------- CDSCO Regulatory Intelligence Repository ----------
+    from datetime import datetime as _dt
+    recall_docs = []
+    for entry in CDSCO_ENTRIES:
+        recall_docs.append({
             "id": str(uuid.uuid4()),
-            "target_medicine_name": "Paracetamol 650mg",
-            "target_batch_number": "PCM240721",
-            "hazard_classification": "Spurious Content – Not Of Standard Quality",
-            "date_published": "2025-11-04",
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "target_medicine_name": "Amoxicillin 500mg",
-            "target_batch_number": "AMX00492",
-            "hazard_classification": "Failed Dissolution Test – Sub-Therapeutic",
-            "date_published": "2025-10-18",
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "target_medicine_name": "Ranitidine 150mg",
-            "target_batch_number": "RTC90021",
-            "hazard_classification": "NDMA Impurity Above Safe Limits",
-            "date_published": "2025-09-02",
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "target_medicine_name": "Losartan 50mg",
-            "target_batch_number": "LSR00815",
-            "hazard_classification": "Nitrosamine Contamination – Recall Class II",
-            "date_published": "2025-12-11",
-        },
-        {
-            "id": str(uuid.uuid4()),
-            "target_medicine_name": "Metformin HCl 500mg",
-            "target_batch_number": "MET55003",
-            "hazard_classification": "Suspected Counterfeit Foil Packaging",
-            "date_published": "2026-01-08",
-        },
-    ]
+            "alert_category": entry["alert_category"],
+            "product_name": entry["product_name"],
+            "generic_composition": entry.get("generic_composition", ""),
+            "target_medicine_name": entry["product_name"],
+            "batch_number": entry["batch_number"],
+            "batch_normalised": normalize_batch(entry["batch_number"]),
+            "target_batch_number": entry["batch_number"],
+            "manufacturer": entry["manufacturer"],
+            "failure_reason": entry["failure_reason"],
+            "hazard_classification": entry["failure_reason"],
+            "reporting_authority": entry["reporting_authority"],
+            "reporting_lab": entry["reporting_lab"],
+            "reporting_date": entry["reporting_date"],
+            "date_published": entry["reporting_date"],
+            "risk_score": entry["risk_score"],
+        })
     await db.cdsco_recalls.insert_many(recall_docs)
 
     # ---------- Scan Telemetry Logs (500+) ----------
@@ -423,6 +418,6 @@ async def seed_all(db) -> dict:
         "security_alerts": len(security_alerts),
     }
     await db.seed_marker.insert_one(
-        {"key": "kyrenis_v1", "created_at": _iso(now), "counts": counts}
+        {"key": "kyrenis_v2", "created_at": _iso(now), "counts": counts}
     )
     return counts

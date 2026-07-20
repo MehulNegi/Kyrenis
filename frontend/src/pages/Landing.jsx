@@ -1,213 +1,263 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import KyrenisLogo from "@/components/KyrenisLogo";
-import { ArrowUpRight, ShieldCheck, ScanLine, Boxes, Activity } from "lucide-react";
+import {
+  ArrowRight,
+  ShieldCheck,
+  ScanLine,
+  Boxes,
+  BarChart3,
+  BadgeCheck,
+  Building2,
+} from "lucide-react";
 
-const HERO_STATS = [
-  { label: "Medicines Tracked", value: "109", suffix: "SKUs" },
-  { label: "Batch Scan Logs", value: "1,694", suffix: "records" },
-  { label: "Active Anomalies", value: "15", suffix: "flagged" },
-  { label: "Distribution Hubs", value: "5", suffix: "cities" },
+const CATEGORY_STATS = [
+  { label: "CDSCO Alert Categories Monitored", value: "4", suffix: "NSQ · Recall · Spurious · Theft" },
+  { label: "Batches In Repository", value: "21+", suffix: "Refreshed against monthly advisories" },
+  { label: "Medicine Catalog", value: "109", suffix: "Retail SKUs with baseline MRP" },
+  { label: "Distribution Nodes", value: "5", suffix: "Cities across India" },
+];
+
+const CAPABILITIES = [
+  {
+    icon: ScanLine,
+    title: "Batch Risk Verification",
+    body: "Every batch is matched against CDSCO NSQ, Recall, Spurious and Theft/Diversion datasets. Kyrenis returns a regulatory risk score — never an authenticity claim.",
+  },
+  {
+    icon: Boxes,
+    title: "Retail Operations",
+    body: "Inventory, First-In-First-Out point-of-sale billing with GST breakdown, replenishment governance, expiry-aware dispensing and printable invoices for regulator audits.",
+  },
+  {
+    icon: BarChart3,
+    title: "Analytics & Reporting",
+    body: "Scan activity, risk-alert distribution, verification trends and recall intelligence — presented as internal analytics for your pharmacy, without inflated surveillance claims.",
+  },
 ];
 
 export default function Landing() {
   return (
     <div className="min-h-screen bg-black text-[#E2E8F0]" data-testid="landing-page">
-      {/* Top bar (no header component so landing feels like an OS bootscreen) */}
-      <div className="border-b border-[#E2E8F0]/10">
+      {/* Header */}
+      <header className="border-b border-[#E2E8F0]/10">
         <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 md:px-10 py-5">
-          <div className="flex items-center gap-4 text-white">
-            <KyrenisLogo size={44} />
+          <Link to="/" className="flex items-center gap-4 text-white">
+            <KyrenisLogo size={40} />
             <div className="flex flex-col">
               <span
-                className="font-display font-bold text-[22px] leading-none"
-                style={{ letterSpacing: "0.35em" }}
+                className="font-display font-bold text-[20px] leading-none"
+                style={{ letterSpacing: "0.32em" }}
               >
                 KYRENIS
               </span>
-              <span
-                className="font-mono text-[#E2E8F0]/70 mt-1"
-                style={{ fontSize: "9px", letterSpacing: "0.32em" }}
-              >
-                SCAN&nbsp;·&nbsp;VERIFY&nbsp;·&nbsp;TRUST
+              <span className="text-[10px] text-[#E2E8F0]/70 mt-1 tracking-[0.14em]">
+                Regulatory Intelligence Platform
               </span>
             </div>
-          </div>
-          <div className="hidden md:flex items-center gap-6 font-mono text-[10px] tracking-[0.3em] uppercase text-[#E2E8F0]/60">
-            <span>Kyrenis OS · v1.0</span>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-[#10B981]" />
-              Network Live
-            </span>
-          </div>
+          </Link>
+          <nav className="hidden md:flex items-center gap-8 text-sm text-[#E2E8F0]/80">
+            <Link to="/about" className="hover:text-white transition-colors" data-testid="landing-nav-about">
+              About
+            </Link>
+            <Link to="/contact" className="hover:text-white transition-colors" data-testid="landing-nav-contact">
+              Contact
+            </Link>
+            <Link
+              to="/pharmacy/auth"
+              className="border border-[#E2E8F0]/25 px-4 py-2 hover:text-white hover:border-white transition-colors"
+              data-testid="landing-nav-pharmacy-signin"
+            >
+              Pharmacy sign-in
+            </Link>
+          </nav>
         </div>
-      </div>
+      </header>
 
-      {/* Hero split */}
+      {/* Hero */}
       <main className="max-w-[1440px] mx-auto px-6 md:px-10">
-        <section className="pt-16 pb-10">
-          <p className="k-label mb-6" data-testid="landing-boot-tag">
-            // Boot Sequence · Select Access Layer
+        <section className="pt-20 pb-16">
+          <p className="text-[11px] tracking-[0.28em] uppercase text-[#10B981] mb-5" data-testid="landing-eyebrow">
+            CDSCO-Powered Regulatory Intelligence
           </p>
           <h1
-            className="font-display font-bold text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.02] tracking-tighter max-w-4xl"
+            className="font-display font-bold text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight max-w-5xl"
             data-testid="landing-headline"
           >
-            The pharmacy operating system engineered to
-            <span className="text-[#10B981]"> scan</span>,
-            <span className="text-white"> verify</span>, and
-            <span className="text-[#E2E8F0]"> hold the supply chain accountable</span>
-            <span className="k-caret text-[#10B981]">_</span>
+            Verify medicine batches against India's regulatory record — <span className="text-[#E2E8F0]/70">without guessing authenticity.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-[#E2E8F0]/70 text-base md:text-lg leading-relaxed">
-            Kyrenis unifies retail inventory, POS billing, CDSCO recall intelligence and
-            network-wide counterfeit telemetry into one auditable interface — with a public
-            trust channel for patients to authenticate every foil, every strip, every batch.
+          <p className="mt-6 max-w-2xl text-[#E2E8F0]/75 text-base md:text-lg leading-relaxed">
+            Kyrenis is a regulatory intelligence platform that cross-references any medicine
+            batch against the Central Drugs Standard Control Organisation's NSQ, Spurious,
+            Recall and Diversion advisories, producing a transparent risk score for pharmacies,
+            distributors, and consumers.
           </p>
+
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Link
+              to="/pharmacy/auth"
+              data-testid="landing-cta-pharmacy"
+              className="inline-flex items-center gap-3 bg-white text-[#1E2B4E] px-6 py-4 text-sm font-medium hover:bg-[#E2E8F0] active:scale-[0.98] transition-all"
+            >
+              Enter Pharmacy Console
+              <ArrowRight size={16} />
+            </Link>
+            <Link
+              to="/patient"
+              data-testid="landing-cta-patient"
+              className="inline-flex items-center gap-3 border border-[#E2E8F0]/30 text-white px-6 py-4 text-sm hover:border-white hover:bg-[#1E2B4E] transition-all"
+            >
+              Verify a Medicine Batch
+              <ArrowRight size={16} />
+            </Link>
+          </div>
         </section>
 
-        {/* Split gateway */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12" data-testid="landing-gateway-grid">
+        {/* Two-card gateway */}
+        <section
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-16"
+          data-testid="landing-gateway-grid"
+        >
           <GatewayCard
-            testid="gateway-pharmacy"
             href="/pharmacy/auth"
-            eyebrow="Layer 01"
-            title="Pharmacy Portal"
-            subtitle="Enterprise Inventory System"
-            body="Sign in with staff credentials to unlock intake, POS FIFO billing, replenishment governance and the anomaly telemetry grid."
-            actionLabel="Open Pharmacy Portal"
-            variant="navy"
-            icon={<Boxes size={24} />}
+            testid="gateway-pharmacy"
+            eyebrow="For Pharmacies"
+            title="Pharmacy Console"
+            body="Sign in to manage inventory, intake, POS billing with GST, replenishment governance, sales history and regulatory alerts."
+            icon={<Building2 size={22} />}
+            action="Sign in"
           />
           <GatewayCard
-            testid="gateway-patient"
             href="/patient"
-            eyebrow="Layer 02"
-            title="Patient Trust Hub"
-            subtitle="Instant Drug Verification · Anonymous"
-            body="No sign-up. Paste a batch code or scan the QR on your medicine strip to verify authenticity and pull real-time OpenFDA safety data."
-            actionLabel="Enter Trust Hub"
-            variant="green"
-            icon={<ShieldCheck size={24} />}
+            testid="gateway-patient"
+            eyebrow="For Consumers"
+            title="Batch Verification Portal"
+            body="No account required. Enter a batch code or scan the GS1 barcode on your medicine strip to check its CDSCO regulatory status."
+            icon={<BadgeCheck size={22} />}
+            action="Verify a batch"
+            variant="light"
           />
         </section>
 
-        {/* Stats + capability strip */}
-        <section className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-16" data-testid="landing-stats-grid">
-          {HERO_STATS.map((s) => (
+        {/* Category stats */}
+        <section
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-16"
+          data-testid="landing-stats"
+        >
+          {CATEGORY_STATS.map((s) => (
             <div
               key={s.label}
-              className="k-panel p-5"
-              data-testid={`landing-stat-${s.label.replace(/\s+/g, "-").toLowerCase()}`}
+              className="k-panel p-6"
+              data-testid={`landing-stat-${s.label.replace(/\W+/g, "-").toLowerCase()}`}
             >
-              <p className="k-label">{s.label}</p>
-              <p className="font-mono text-[28px] md:text-[32px] text-white leading-none mt-3">
+              <p className="text-[11px] text-[#E2E8F0]/60 tracking-[0.14em]">{s.label}</p>
+              <p className="font-display text-[32px] md:text-[36px] text-white leading-none mt-4">
                 {s.value}
               </p>
-              <p className="text-[#E2E8F0]/50 text-xs mt-2">{s.suffix}</p>
+              <p className="text-[#E2E8F0]/55 text-xs mt-3 leading-snug">{s.suffix}</p>
             </div>
           ))}
         </section>
 
-        <section className="pb-24 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <CapabilityCell
-            icon={<ScanLine size={20} />}
-            title="4-Step Verification Pipeline"
-            body="OCR ↔ GS1 DataMatrix cross-check, Mod-10 checksum, CDSCO recall query, MRP deviation flag — every intake, without exception."
-          />
-          <CapabilityCell
-            icon={<Activity size={20} />}
-            title="Anomaly Telemetry"
-            body="Volumetric saturation + spatial teleportation engines fire alerts the moment counterfeit clone rings cross detection thresholds."
-          />
-          <CapabilityCell
-            icon={<ShieldCheck size={20} />}
-            title="Privacy Hashing"
-            body="GTIN + Batch + Pharmacy ID are SHA-256 hashed at intake; cross-network correlation runs on hashes, never raw commercial data."
-          />
+        {/* Capability strip */}
+        <section
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 pb-24"
+          data-testid="landing-capabilities"
+        >
+          {CAPABILITIES.map((c) => (
+            <div key={c.title} className="k-panel p-6 flex flex-col gap-4">
+              <span className="inline-flex items-center justify-center w-11 h-11 border border-[#E2E8F0]/25 text-[#E2E8F0]">
+                <c.icon size={20} />
+              </span>
+              <h3 className="font-display text-white text-xl">{c.title}</h3>
+              <p className="text-[#E2E8F0]/70 text-sm leading-relaxed">{c.body}</p>
+            </div>
+          ))}
         </section>
       </main>
 
       <footer className="border-t border-[#E2E8F0]/10">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-6 flex items-center justify-between text-[#E2E8F0]/50 font-mono text-[10px] tracking-[0.3em] uppercase">
-          <span>© Kyrenis Systems</span>
-          <span data-testid="landing-footer-hash">SHA256 · 3a9f8c7b…</span>
+        <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[#E2E8F0]/55 text-xs">
+          <div>
+            © {new Date().getFullYear()} Kyrenis Systems · CDSCO-Powered Regulatory Intelligence for Medicine Batch Verification
+          </div>
+          <div className="flex gap-6">
+            <Link to="/about" className="hover:text-white transition-colors">About</Link>
+            <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
+            <Link to="/patient" className="hover:text-white transition-colors">Verify a Batch</Link>
+          </div>
         </div>
       </footer>
     </div>
   );
 }
 
-function GatewayCard({ eyebrow, title, subtitle, body, actionLabel, href, testid, variant, icon }) {
-  const isNavy = variant === "navy";
-  const accent = isNavy ? "#1E2B4E" : "#10B981";
+function GatewayCard({ href, testid, eyebrow, title, body, icon, action, variant }) {
+  const isLight = variant === "light";
   return (
     <Link
       to={href}
       data-testid={testid}
-      className="group relative overflow-hidden border transition-transform hover:-translate-y-1"
+      className={`group relative overflow-hidden border transition-transform hover:-translate-y-1 ${
+        isLight ? "bg-white text-[#1E2B4E]" : ""
+      }`}
       style={{
-        background: isNavy ? "#1F2326" : "#1F2326",
-        borderColor: "rgba(226, 232, 240, 0.15)",
+        background: isLight ? "#FFFFFF" : "#1F2326",
+        borderColor: isLight ? "transparent" : "rgba(226, 232, 240, 0.15)",
       }}
     >
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{
-          background: isNavy
-            ? "linear-gradient(135deg, rgba(30,43,78,0.55), transparent 55%)"
-            : "linear-gradient(135deg, rgba(16,185,129,0.15), transparent 55%)",
-        }}
-      />
-      <div className="relative p-8 md:p-10 min-h-[320px] flex flex-col justify-between">
+      <div className="p-8 md:p-10 min-h-[320px] flex flex-col justify-between">
         <div>
           <div className="flex items-center justify-between mb-6">
-            <span className="k-label">{eyebrow}</span>
             <span
-              className="inline-flex items-center justify-center w-10 h-10 border"
-              style={{
-                borderColor: accent,
-                color: accent,
-              }}
+              className={`text-[11px] tracking-[0.14em] ${
+                isLight ? "text-[#1E2B4E]/70" : "text-[#E2E8F0]/60"
+              }`}
+            >
+              {eyebrow}
+            </span>
+            <span
+              className={`inline-flex items-center justify-center w-11 h-11 border ${
+                isLight ? "border-[#1E2B4E]/25 text-[#1E2B4E]" : "border-[#E2E8F0]/25 text-white"
+              }`}
             >
               {icon}
             </span>
           </div>
-          <h2 className="font-display font-bold text-white text-3xl md:text-4xl tracking-tight">
+          <h2
+            className={`font-display font-bold text-3xl md:text-4xl tracking-tight ${
+              isLight ? "text-[#1E2B4E]" : "text-white"
+            }`}
+          >
             {title}
           </h2>
-          <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-[#E2E8F0]/60 mt-2">
-            {subtitle}
+          <p
+            className={`mt-6 leading-relaxed max-w-md text-[15px] ${
+              isLight ? "text-[#1E2B4E]/80" : "text-[#E2E8F0]/75"
+            }`}
+          >
+            {body}
           </p>
-          <p className="text-[#E2E8F0]/75 mt-6 leading-relaxed max-w-md">{body}</p>
         </div>
         <div
-          className="mt-8 inline-flex items-center justify-between gap-3 border-t pt-5"
-          style={{ borderColor: "rgba(226,232,240,0.15)" }}
+          className={`mt-8 inline-flex items-center justify-between gap-3 border-t pt-5 ${
+            isLight ? "border-[#1E2B4E]/15" : "border-[#E2E8F0]/15"
+          }`}
         >
-          <span className="font-mono text-xs tracking-[0.25em] uppercase text-white">
-            {actionLabel}
+          <span className={`text-sm font-medium ${isLight ? "text-[#1E2B4E]" : "text-white"}`}>
+            {action}
           </span>
           <span
-            className="inline-flex items-center justify-center w-9 h-9 border transition-colors group-hover:bg-white group-hover:text-[#1E2B4E]"
-            style={{ borderColor: accent, color: accent }}
+            className={`inline-flex items-center justify-center w-9 h-9 border ${
+              isLight
+                ? "border-[#1E2B4E]/30 text-[#1E2B4E] group-hover:bg-[#1E2B4E] group-hover:text-white"
+                : "border-[#E2E8F0]/25 text-white group-hover:bg-white group-hover:text-[#1E2B4E]"
+            } transition-colors`}
           >
-            <ArrowUpRight size={18} />
+            <ArrowRight size={18} />
           </span>
         </div>
       </div>
     </Link>
-  );
-}
-
-function CapabilityCell({ icon, title, body }) {
-  return (
-    <div className="k-panel p-6 flex flex-col gap-3" data-testid={`landing-capability-${title.split(" ")[0].toLowerCase()}`}>
-      <span className="inline-flex items-center justify-center w-9 h-9 border border-[#E2E8F0]/25 text-[#E2E8F0]">
-        {icon}
-      </span>
-      <h3 className="font-display font-medium text-white text-lg mt-1">{title}</h3>
-      <p className="text-[#E2E8F0]/65 text-sm leading-relaxed">{body}</p>
-    </div>
   );
 }

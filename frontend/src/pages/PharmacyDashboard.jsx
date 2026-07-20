@@ -4,13 +4,15 @@ import StockIntake from "@/components/pharmacy/StockIntake";
 import POSBilling from "@/components/pharmacy/POSBilling";
 import Replenishment from "@/components/pharmacy/Replenishment";
 import Telemetry from "@/components/pharmacy/Telemetry";
-import { ScanLine, ShoppingCart, PackageSearch, Radar } from "lucide-react";
+import SalesHistory from "@/components/pharmacy/SalesHistory";
+import { ScanLine, ShoppingCart, PackageSearch, BarChart3, Receipt } from "lucide-react";
 
 const TABS = [
-  { key: "intake", label: "Stock Intake", icon: ScanLine, testid: "tab-intake" },
+  { key: "intake", label: "Batch Intake", icon: ScanLine, testid: "tab-intake" },
   { key: "pos", label: "POS Billing", icon: ShoppingCart, testid: "tab-pos" },
   { key: "replenishment", label: "Replenishment", icon: PackageSearch, testid: "tab-replenishment" },
-  { key: "telemetry", label: "Telemetry", icon: Radar, testid: "tab-telemetry" },
+  { key: "sales", label: "Sales History", icon: Receipt, testid: "tab-sales" },
+  { key: "telemetry", label: "Analytics", icon: BarChart3, testid: "tab-telemetry" },
 ];
 
 export default function PharmacyDashboard() {
@@ -22,20 +24,14 @@ export default function PharmacyDashboard() {
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 pt-10">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
           <div>
-            <p className="k-label">// Layer 01 · Enterprise Operations</p>
-            <h1 className="font-display font-bold text-white text-3xl md:text-4xl tracking-tighter mt-3">
+            <p className="k-label">Pharmacy Console</p>
+            <h1 className="font-display font-bold text-white text-3xl md:text-4xl tracking-tight mt-3">
               Retail Operations Hub
             </h1>
-            <p className="text-[#E2E8F0]/60 mt-2 max-w-2xl">
-              Every intake ships through the 4-step verification pipeline. Every POS
-              transaction respects First-In-First-Out expiry. Every anomaly is escalated.
+            <p className="text-[#E2E8F0]/65 mt-2 max-w-2xl">
+              Batch intake, First-In-First-Out point-of-sale billing, replenishment governance,
+              sales history and CDSCO regulatory analytics — all in one console.
             </p>
-          </div>
-          <div className="flex items-center gap-2 border border-[#E2E8F0]/15 px-4 py-2">
-            <span className="w-1.5 h-1.5 bg-[#10B981]" />
-            <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#E2E8F0]/70">
-              Network Live · Ingest OK
-            </span>
           </div>
         </div>
 
@@ -51,10 +47,10 @@ export default function PharmacyDashboard() {
               role="tab"
               aria-selected={active === key}
               data-testid={testid}
-              className={`inline-flex items-center gap-2 px-4 py-3 text-xs font-mono uppercase tracking-[0.25em] transition-colors ${
+              className={`inline-flex items-center gap-2 px-4 py-3 text-sm transition-colors ${
                 active === key
                   ? "bg-[#1E2B4E] text-white"
-                  : "text-[#E2E8F0]/70 hover:text-white"
+                  : "text-[#E2E8F0]/75 hover:text-white"
               }`}
             >
               <Icon size={14} />
@@ -67,6 +63,7 @@ export default function PharmacyDashboard() {
           {active === "intake" && <StockIntake />}
           {active === "pos" && <POSBilling />}
           {active === "replenishment" && <Replenishment />}
+          {active === "sales" && <SalesHistory />}
           {active === "telemetry" && <Telemetry />}
         </div>
       </div>

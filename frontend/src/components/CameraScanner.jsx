@@ -74,7 +74,7 @@ export default function CameraScanner({ onDetected }) {
   return (
     <div className="border border-[#E2E8F0]/15 p-4 flex flex-col gap-3" data-testid="camera-scanner">
       <div className="flex items-center justify-between">
-        <p className="k-label">// Live Camera Scan</p>
+        <p className="k-label">Live camera scan</p>
         {running ? (
           <button
             type="button"

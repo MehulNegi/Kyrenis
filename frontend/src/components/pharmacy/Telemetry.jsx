@@ -171,7 +171,7 @@ export default function Telemetry() {
         <div className="k-panel p-6 md:p-8" data-testid="volumetric-chart-panel">
           <div className="flex items-center gap-3 mb-6">
             <Waves size={18} className="text-[#10B981]" />
-            <h2 className="font-display text-white text-xl">Volumetric Saturation · Top Batches</h2>
+            <h2 className="font-display text-white text-xl">Batch Volume Distribution</h2>
           </div>
           <div className="h-[340px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -227,7 +227,7 @@ export default function Telemetry() {
         <div className="k-panel p-6 md:p-8" data-testid="spatial-panel">
           <div className="flex items-center gap-3 mb-6">
             <MapPin size={18} className="text-[#EF4444]" />
-            <h2 className="font-display text-white text-xl">Spatial Teleportation</h2>
+            <h2 className="font-display text-white text-xl">Verification Trends by City</h2>
           </div>
           {spatial.length === 0 ? (
             <p className="text-[#E2E8F0]/50 text-sm">No spatial anomalies within 12h window.</p>
@@ -259,7 +259,7 @@ export default function Telemetry() {
         <div className="k-panel p-6 md:p-8" data-testid="security-alerts-panel">
           <div className="flex items-center gap-3 mb-6">
             <Radar size={18} className="text-[#EF4444]" />
-            <h2 className="font-display text-white text-xl">Active Security Alerts</h2>
+            <h2 className="font-display text-white text-xl">Risk Alerts</h2>
           </div>
           {alerts.length === 0 ? (
             <p className="text-[#E2E8F0]/50 text-sm">Network clean.</p>
@@ -296,7 +296,7 @@ export default function Telemetry() {
         <div className="k-panel p-6 md:p-8" data-testid="cdsco-panel">
           <div className="flex items-center gap-3 mb-6">
             <AlertTriangle size={18} className="text-[#F59E0B]" />
-            <h2 className="font-display text-white text-xl">CDSCO Recall Registry</h2>
+            <h2 className="font-display text-white text-xl">Recall Intelligence</h2>
           </div>
           <div className="flex flex-col gap-2 max-h-[300px] overflow-auto pr-1">
             {recalls.map((r) => (

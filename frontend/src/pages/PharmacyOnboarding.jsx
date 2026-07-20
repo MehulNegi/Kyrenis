@@ -37,8 +37,8 @@ export default function PharmacyOnboarding() {
     <div className="min-h-screen bg-black text-[#E2E8F0]" data-testid="onboarding-page">
       <KyrenisHeader variant="Pharmacy Onboarding" />
       <main className="max-w-[880px] mx-auto px-6 md:px-10 py-14">
-        <p className="k-label">// One-time · Pharmacy Verification</p>
-        <h1 className="font-display font-bold text-white text-3xl md:text-4xl tracking-tighter mt-3">
+        <p className="k-label">Pharmacy verification</p>
+        <h1 className="font-display font-bold text-white text-3xl md:text-4xl tracking-tight mt-3">
           Welcome{user?.name ? `, ${user.name.split(" ")[0]}` : ""}. Attach your pharmacy.
         </h1>
         <p className="text-[#E2E8F0]/65 mt-3 max-w-xl">

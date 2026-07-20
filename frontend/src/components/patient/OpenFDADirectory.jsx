@@ -104,7 +104,7 @@ function ResultCard({ r, idx }) {
     <div className="k-panel p-6 md:p-8" data-testid={`openfda-result-${idx}`}>
       <div className="flex items-start justify-between flex-wrap gap-2 mb-6">
         <div>
-          <p className="k-label">// {idx + 1}</p>
+          <p className="k-label">Result {idx + 1}</p>
           <h3 className="font-display text-white text-2xl mt-2 tracking-tight">
             {r.brand_name}
           </h3>

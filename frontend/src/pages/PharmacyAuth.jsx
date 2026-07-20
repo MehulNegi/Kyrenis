@@ -78,7 +78,7 @@ export default function PharmacyAuth() {
           style={{ background: "#0a0d10" }}
         >
           <div>
-            <p className="k-label">// Pharmacy Portal · Layer 01</p>
+            <p className="k-label">Pharmacy console sign-in</p>
             <h1 className="font-display font-bold text-white text-5xl mt-6 leading-[1.05] tracking-tighter">
               Every intake, verified in
               <br />
@@ -118,9 +118,7 @@ export default function PharmacyAuth() {
             <div className="k-panel p-8" data-testid="auth-terminal-card">
               <div className="flex items-center gap-2 mb-6">
                 <Terminal size={16} className="text-[#10B981]" />
-                <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#E2E8F0]/70">
-                  kyrenis-os :: auth-gateway
-                </p>
+                <p className="text-[11px] tracking-[0.14em] text-[#E2E8F0]/75">Pharmacy Console Sign-in</p>
               </div>
 
               <div className="flex gap-2 mb-6 border border-[#E2E8F0]/15 p-1" data-testid="auth-mode-tabs">
@@ -152,17 +150,17 @@ export default function PharmacyAuth() {
                 onClick={autofill}
                 disabled={busy}
                 data-testid="auth-autofill-btn"
-                className="w-full mb-4 py-3 border border-[#10B981]/50 text-[#10B981] font-mono text-xs tracking-[0.25em] uppercase inline-flex items-center justify-center gap-2 hover:bg-[#10B981]/10 disabled:opacity-50 transition-colors"
+                className="w-full mb-4 py-3 border border-[#10B981]/50 text-[#10B981] text-sm inline-flex items-center justify-center gap-2 hover:bg-[#10B981]/10 disabled:opacity-50 transition-colors"
               >
                 <Zap size={14} />
-                Autofill Test Pharmacy Credentials
+                Sign in as demo pharmacy
               </button>
 
               <GoogleSignInButton flow="pharmacy" testid="pharmacy-google-signin" />
 
               <div className="flex items-center gap-3 my-5">
                 <div className="flex-1 h-px bg-[#E2E8F0]/15" />
-                <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-[#E2E8F0]/50">or continue with password</span>
+                <span className="text-[11px] text-[#E2E8F0]/55 tracking-[0.14em]">or continue with password</span>
                 <div className="flex-1 h-px bg-[#E2E8F0]/15" />
               </div>
 
@@ -245,8 +243,8 @@ export default function PharmacyAuth() {
                 </button>
               </form>
             </div>
-            <p className="mt-4 text-[10px] font-mono text-[#E2E8F0]/45 tracking-[0.28em] uppercase text-center">
-              // Test creds → chemist@kyrenis.in · password
+            <p className="mt-4 text-[11px] text-[#E2E8F0]/45 text-center">
+              Demo access: chemist@kyrenis.in · password
             </p>
           </div>
         </section>

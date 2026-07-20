@@ -78,11 +78,9 @@ body {
 }
 
 .k-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: rgba(226, 232, 240, 0.65);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: rgba(226, 232, 240, 0.6);
 }
 
 .k-divider {
@@ -90,7 +88,7 @@ body {
     background: linear-gradient(to right, transparent, rgba(226, 232, 240, 0.25), transparent);
 }
 
-/* Scanner viewfinder animation */
+/* Scanner viewfinder animation kept for camera scanner UI only */
 @keyframes k-scan {
     0% { transform: translateY(0%); opacity: 0.9; }
     50% { transform: translateY(100%); opacity: 0.4; }
@@ -99,16 +97,6 @@ body {
 
 .k-scanline {
     animation: k-scan 2.2s ease-in-out infinite;
-}
-
-/* Terminal-style caret blink for hero */
-@keyframes k-blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-}
-
-.k-caret {
-    animation: k-blink 1.1s steps(1) infinite;
 }
 
 /* Selection */

@@ -90,11 +90,11 @@ export default function StockIntake() {
       <form onSubmit={submit} className="k-panel p-6 md:p-8 flex flex-col gap-5" data-testid="intake-form">
         <div className="flex items-center gap-3">
           <ScanLine size={18} className="text-[#10B981]" />
-          <h2 className="font-display text-white text-xl">Intake Scanner Simulation</h2>
+          <h2 className="font-display text-white text-xl">Batch Intake</h2>
         </div>
-        <p className="text-[#E2E8F0]/60 text-sm -mt-2">
-          Paste the raw 2D DataMatrix output and the foil-stamped OCR text. Submitting fires
-          the 4-step verification pipeline.
+        <p className="text-[#E2E8F0]/65 text-sm -mt-2">
+          Enter batch metadata or paste the GS1 DataMatrix payload from the strip. Kyrenis
+          verifies the batch against CDSCO advisories before writing it to inventory.
         </p>
 
         <div className="flex gap-2 flex-wrap items-center">
@@ -242,10 +242,10 @@ export default function StockIntake() {
           type="submit"
           disabled={busy}
           data-testid="intake-submit-btn"
-          className="mt-2 py-3 bg-white text-[#1E2B4E] font-mono text-xs tracking-[0.28em] uppercase hover:bg-[#E2E8F0] active:scale-[0.98] transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2"
+          className="mt-2 py-3 bg-white text-[#1E2B4E] text-sm font-medium hover:bg-[#E2E8F0] active:scale-[0.98] transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2"
         >
           <ShieldCheck size={14} />
-          Fire 4-Step Verification
+          Verify & Add to Inventory
         </button>
       </form>
 
@@ -303,7 +303,7 @@ function VerificationResult({ result }) {
   return (
     <div className="k-panel p-6 md:p-8 flex flex-col gap-5" data-testid="intake-result">
       <div className="flex items-center justify-between">
-        <p className="k-label">// Pipeline Output</p>
+        <p className="k-label">Verification result</p>
         <span
           className="font-mono text-[10px] tracking-[0.28em] uppercase px-3 py-1 border"
           style={{ borderColor: `${accent}66`, color: accent }}

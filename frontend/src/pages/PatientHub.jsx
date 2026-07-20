@@ -21,28 +21,28 @@ export default function PatientHub() {
       <div className="max-w-[1240px] mx-auto px-6 md:px-10 pt-10">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
           <div>
-            <p className="k-label">// Layer 02 · Consumer Trust Channel</p>
-            <h1 className="font-display font-bold text-white text-3xl md:text-4xl tracking-tighter mt-3">
-              Verify the strip in your hand.
+            <p className="k-label">Consumer Verification</p>
+            <h1 className="font-display font-bold text-white text-3xl md:text-4xl tracking-tight mt-3">
+              Check the regulatory status of a medicine batch.
             </h1>
-            <p className="text-[#E2E8F0]/60 mt-2 max-w-2xl">
-              Kyrenis exposes the same forensic layer used by pharmacies — anonymously —
-              so anyone can confirm authenticity and pull clinical safety data before taking a dose.
+            <p className="text-[#E2E8F0]/65 mt-2 max-w-2xl">
+              Enter a batch number or scan the GS1 barcode on your strip. Kyrenis searches CDSCO's
+              NSQ, Recall, Spurious and Theft advisories and reports what has been recorded.
             </p>
           </div>
           <div className="flex flex-col items-end gap-2">
             {isIdentified ? (
               <div className="flex items-center gap-2 border border-[#10B981]/50 px-4 py-2" data-testid="patient-identified-pill">
                 <UserCheck size={14} className="text-[#10B981]" />
-                <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-[#10B981]">
-                  Identified · {user.name || user.email}
+                <span className="text-[11px] tracking-[0.14em] text-[#10B981]">
+                  Signed in as {user.name || user.email}
                 </span>
               </div>
             ) : (
               <div className="flex items-center gap-2 border border-[#E2E8F0]/15 px-4 py-2">
                 <span className="w-1.5 h-1.5 bg-[#10B981]" />
-                <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#E2E8F0]/70">
-                  Anonymous Guest Session
+                <span className="text-[11px] tracking-[0.14em] text-[#E2E8F0]/70">
+                  No sign-in required
                 </span>
               </div>
             )}
@@ -50,7 +50,7 @@ export default function PatientHub() {
               <div className="w-[240px]" data-testid="patient-google-signin-wrap">
                 <GoogleSignInButton
                   flow="patient"
-                  label="Identify with Google · optional"
+                  label="Sign in with Google · optional"
                   testid="patient-google-signin"
                   className="!py-2 !text-xs"
                 />
@@ -71,10 +71,10 @@ export default function PatientHub() {
               role="tab"
               aria-selected={active === key}
               data-testid={testid}
-              className={`inline-flex items-center gap-2 px-4 py-3 text-xs font-mono uppercase tracking-[0.25em] transition-colors ${
+              className={`inline-flex items-center gap-2 px-4 py-3 text-sm transition-colors ${
                 active === key
                   ? "bg-[#1E2B4E] text-white"
-                  : "text-[#E2E8F0]/70 hover:text-white"
+                  : "text-[#E2E8F0]/75 hover:text-white"
               }`}
             >
               <Icon size={14} />
