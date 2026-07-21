@@ -41,10 +41,7 @@ export default function KyrenisHeader({ variant = "default" }) {
           </div>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm text-[#E2E8F0]/80">
-          <Link to="/about" className="hover:text-white transition-colors" data-testid="nav-about">About</Link>
-          <Link to="/contact" className="hover:text-white transition-colors" data-testid="nav-contact">Contact</Link>
-        </nav>
+        
 
         <div className="flex items-center gap-4">
           {variant !== "default" && (

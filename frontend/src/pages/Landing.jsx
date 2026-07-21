@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import KyrenisLogo from "@/components/KyrenisLogo";
+import { api } from "@/lib/api";
 import {
   ArrowRight,
-  ShieldCheck,
   ScanLine,
   Boxes,
   BarChart3,
@@ -11,18 +11,11 @@ import {
   Building2,
 } from "lucide-react";
 
-const CATEGORY_STATS = [
-  { label: "CDSCO Alert Categories Monitored", value: "4", suffix: "NSQ · Recall · Spurious · Theft" },
-  { label: "Batches In Repository", value: "21+", suffix: "Refreshed against monthly advisories" },
-  { label: "Medicine Catalog", value: "109", suffix: "Retail SKUs with baseline MRP" },
-  { label: "Distribution Nodes", value: "5", suffix: "Cities across India" },
-];
-
 const CAPABILITIES = [
   {
     icon: ScanLine,
     title: "Batch Risk Verification",
-    body: "Every batch is matched against CDSCO NSQ, Recall, Spurious and Theft/Diversion datasets. Kyrenis returns a regulatory risk score — never an authenticity claim.",
+    body: "Every batch is matched against CDSCO NSQ, Recall and Spurious Drug advisories from official surveillance releases. Kyrenis returns a regulatory risk score — never an authenticity claim.",
   },
   {
     icon: Boxes,
@@ -36,13 +29,51 @@ const CAPABILITIES = [
   },
 ];
 
+const numberFmt = (n) => (typeof n === "number" ? n.toLocaleString("en-IN") : "—");
+
 export default function Landing() {
+  const [metrics, setMetrics] = useState(null);
+
+  useEffect(() => {
+    api
+      .get("/public/metrics")
+      .then((r) => setMetrics(r.data))
+      .catch(() => setMetrics(null));
+  }, []);
+
+  const stats = [
+    {
+      key: "categories",
+      label: "Alert Categories Monitored",
+      value:"3",
+      suffix: "NSQ · Recall · Spurious",
+    },
+    {
+      key: "flagged",
+      label: "Flagged Batches Indexed",
+      value: metrics ? numberFmt(metrics.flagged_batches_indexed) : "—",
+      suffix: "Unique batches from integrated CDSCO datasets",
+    },
+    {
+      key: "records",
+      label: "CDSCO Records Indexed",
+      value: metrics ? numberFmt(metrics.cdsco_records_indexed) : "—",
+      suffix: "Total advisories across integrated releases",
+    },
+    {
+      key: "cycle",
+      label: "Advisory Refresh Cycle",
+      value: "Monthly",
+      suffix: "Updated from CDSCO surveillance releases",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-black text-[#E2E8F0]" data-testid="landing-page">
       {/* Header */}
       <header className="border-b border-[#E2E8F0]/10">
         <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 md:px-10 py-5">
-          <Link to="/" className="flex items-center gap-4 text-white">
+          <Link to="/" className="flex items-center gap-4 text-white" data-testid="landing-home-link">
             <KyrenisLogo size={40} />
             <div className="flex flex-col">
               <span
@@ -56,19 +87,20 @@ export default function Landing() {
               </span>
             </div>
           </Link>
-          <nav className="hidden md:flex items-center gap-8 text-sm text-[#E2E8F0]/80">
-            <Link to="/about" className="hover:text-white transition-colors" data-testid="landing-nav-about">
+          <nav className="hidden md:flex items-center gap-10 text-sm text-[#E2E8F0]/80">
+            <Link
+              to="/about"
+              className="hover:text-white transition-colors"
+              data-testid="landing-nav-about"
+            >
               About
             </Link>
-            <Link to="/contact" className="hover:text-white transition-colors" data-testid="landing-nav-contact">
-              Contact
-            </Link>
             <Link
-              to="/pharmacy/auth"
-              className="border border-[#E2E8F0]/25 px-4 py-2 hover:text-white hover:border-white transition-colors"
-              data-testid="landing-nav-pharmacy-signin"
+              to="/contact"
+              className="hover:text-white transition-colors"
+              data-testid="landing-nav-contact"
             >
-              Pharmacy sign-in
+              Contact
             </Link>
           </nav>
         </div>
@@ -77,45 +109,29 @@ export default function Landing() {
       {/* Hero */}
       <main className="max-w-[1440px] mx-auto px-6 md:px-10">
         <section className="pt-20 pb-16">
-          <p className="text-[11px] tracking-[0.28em] uppercase text-[#10B981] mb-5" data-testid="landing-eyebrow">
+          <p
+            className="text-[11px] tracking-[0.28em] uppercase text-[#10B981] mb-5"
+            data-testid="landing-eyebrow"
+          >
             CDSCO-Powered Regulatory Intelligence
           </p>
           <h1
             className="font-display font-bold text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight max-w-5xl"
             data-testid="landing-headline"
           >
-            Verify medicine batches against India's regulatory record — <span className="text-[#E2E8F0]/70">without guessing authenticity.</span>
+            India's Regulatory Intelligence Platform for{" "}
+            <span className="text-[#E2E8F0]/70">medicine batch verification.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-[#E2E8F0]/75 text-base md:text-lg leading-relaxed">
-            Kyrenis is a regulatory intelligence platform that cross-references any medicine
-            batch against the Central Drugs Standard Control Organisation's NSQ, Spurious,
-            Recall and Diversion advisories, producing a transparent risk score for pharmacies,
-            distributors, and consumers.
+            Kyrenis aggregates the Central Drugs Standard Control Organisation's NSQ, Recall and
+            Spurious Drug advisories into a single searchable repository, producing a transparent
+            risk assessment for every medicine batch — for pharmacies, distributors and consumers.
           </p>
-
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Link
-              to="/pharmacy/auth"
-              data-testid="landing-cta-pharmacy"
-              className="inline-flex items-center gap-3 bg-white text-[#1E2B4E] px-6 py-4 text-sm font-medium hover:bg-[#E2E8F0] active:scale-[0.98] transition-all"
-            >
-              Enter Pharmacy Console
-              <ArrowRight size={16} />
-            </Link>
-            <Link
-              to="/patient"
-              data-testid="landing-cta-patient"
-              className="inline-flex items-center gap-3 border border-[#E2E8F0]/30 text-white px-6 py-4 text-sm hover:border-white hover:bg-[#1E2B4E] transition-all"
-            >
-              Verify a Medicine Batch
-              <ArrowRight size={16} />
-            </Link>
-          </div>
         </section>
 
-        {/* Two-card gateway */}
+        {/* Two-card gateway — primary entry points */}
         <section
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-16"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20"
           data-testid="landing-gateway-grid"
         >
           <GatewayCard
@@ -132,26 +148,25 @@ export default function Landing() {
             testid="gateway-patient"
             eyebrow="For Consumers"
             title="Batch Verification Portal"
-            body="No account required. Enter a batch code or scan the GS1 barcode on your medicine strip to check its CDSCO regulatory status."
+            body="No account required. Enter a batch number or scan your medicine strip to check whether the batch appears in CDSCO's regulatory record."
             icon={<BadgeCheck size={22} />}
             action="Verify a batch"
             variant="light"
           />
         </section>
 
-        {/* Category stats */}
+        {/* Real dataset-driven metrics */}
         <section
           className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-16"
           data-testid="landing-stats"
         >
-          {CATEGORY_STATS.map((s) => (
-            <div
-              key={s.label}
-              className="k-panel p-6"
-              data-testid={`landing-stat-${s.label.replace(/\W+/g, "-").toLowerCase()}`}
-            >
+          {stats.map((s) => (
+            <div key={s.key} className="k-panel p-6" data-testid={`landing-stat-${s.key}`}>
               <p className="text-[11px] text-[#E2E8F0]/60 tracking-[0.14em]">{s.label}</p>
-              <p className="font-display text-[32px] md:text-[36px] text-white leading-none mt-4">
+              <p
+                className="font-display text-[32px] md:text-[36px] text-white leading-none mt-4"
+                data-testid={`landing-stat-${s.key}-value`}
+              >
                 {s.value}
               </p>
               <p className="text-[#E2E8F0]/55 text-xs mt-3 leading-snug">{s.suffix}</p>
@@ -179,12 +194,19 @@ export default function Landing() {
       <footer className="border-t border-[#E2E8F0]/10">
         <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[#E2E8F0]/55 text-xs">
           <div>
-            © {new Date().getFullYear()} Kyrenis Systems · CDSCO-Powered Regulatory Intelligence for Medicine Batch Verification
+            © {new Date().getFullYear()} Kyrenis Systems · CDSCO-Powered Regulatory Intelligence
+            for Medicine Batch Verification
           </div>
           <div className="flex gap-6">
-            <Link to="/about" className="hover:text-white transition-colors">About</Link>
-            <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
-            <Link to="/patient" className="hover:text-white transition-colors">Verify a Batch</Link>
+            <Link to="/about" className="hover:text-white transition-colors">
+              About
+            </Link>
+            <Link to="/contact" className="hover:text-white transition-colors">
+              Contact
+            </Link>
+            <Link to="/patient" className="hover:text-white transition-colors">
+              Verify a Batch
+            </Link>
           </div>
         </div>
       </footer>

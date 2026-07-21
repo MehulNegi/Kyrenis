@@ -37,7 +37,7 @@ from verification import (
     compute_telemetry_hash,
 )
 from seed_data import seed_all
-from email_dispatch import dispatch_alert_email
+from email_dispatch import dispatch_alert_email, dispatch_contact_email
 
 # ---------------- Setup ----------------
 mongo_url = os.environ["MONGO_URL"]
@@ -109,7 +109,16 @@ class ConsumerVerifyPayload(BaseModel):
     qr_string: Optional[str] = ""
     ocr_text: Optional[str] = ""
     batch_number: Optional[str] = ""
+    medicine_name: Optional[str] = ""
     package_declared_mrp: Optional[float] = None
+
+
+class ContactEnquiryPayload(BaseModel):
+    name: str = Field(min_length=1, max_length=120)
+    email: EmailStr
+    organisation: Optional[str] = ""
+    category: str = Field(min_length=1, max_length=40)
+    message: str = Field(min_length=1, max_length=4000)
 
 
 # ---------------- Auth Endpoints ----------------
@@ -1009,11 +1018,16 @@ async def list_receipts_legacy(request: Request):
 # ---------------- Consumer Trust Hub ----------------
 @api.post("/consumer/verify-batch")
 async def consumer_verify(payload: ConsumerVerifyPayload):
-    from cdsco_repository import risk_bucket, normalize_batch
+    """Lookup a batch against the integrated CDSCO NSQ / Recall / Spurious dataset.
+
+    - If the batch exists in the dataset → High Risk / Regulatory Alert.
+    - If the batch is not present → Low Risk / No Regulatory Alert Found.
+    No heuristics, no invented alerts — only exact dataset matches are flagged.
+    """
+    from cdsco_repository import lookup_batch, normalize_batch
     from verification import parse_gs1_datamatrix
 
     qr = sanitize_string(payload.qr_string or "", 1024)
-    ocr = sanitize_string(payload.ocr_text or "", 1024)
     manual_batch = sanitize_string((payload.batch_number or "").upper(), 60)
 
     parsed = parse_gs1_datamatrix(qr) if qr else {}
@@ -1021,39 +1035,26 @@ async def consumer_verify(payload: ConsumerVerifyPayload):
     batch_raw = parsed.get("10", "") or manual_batch or ""
     expiry = parsed.get("17", "") or ""
     serial = parsed.get("21", "") or ""
-    batch_norm = normalize_batch(batch_raw)
 
-    # Look up product context for the display card if available
-    product_ctx = None
-    if gtin:
-        product_ctx = await db.medicines.find_one({"global_gtin": gtin.zfill(14)}, {"_id": 0})
-    if not product_ctx and batch_norm:
-        # medicine lookup by inventory batch fallback
-        inv = await db.inventory_batches.find_one({"batch_number": batch_raw}, {"_id": 0})
-        if inv:
-            product_ctx = await db.medicines.find_one({"id": inv["medicine_id"]}, {"_id": 0})
-
-    hit = None
-    if batch_norm:
-        hit = await db.cdsco_recalls.find_one({"batch_normalised": batch_norm}, {"_id": 0})
+    hit = lookup_batch(batch_raw)
 
     if hit:
-        severity, headline = risk_bucket(hit["risk_score"])
         return {
-            "risk_score": hit["risk_score"],
-            "severity": severity,
-            "headline": headline,
+            "risk_score": 95,
+            "severity": "High Risk",
+            "headline": "Regulatory Alert",
             "alert_found": True,
             "alert_card": {
-                "product_name": hit["product_name"],
-                "generic_composition": hit.get("generic_composition", ""),
-                "batch_number": hit["batch_number"],
-                "manufacturer": hit["manufacturer"],
-                "alert_category": hit["alert_category"],
-                "failure_reason": hit["failure_reason"],
-                "reporting_authority": hit["reporting_authority"],
+                "product_name": hit.get("product_name", ""),
+                "batch_number": hit.get("batch_raw") or hit.get("batch_number", ""),
+                "manufacturer": hit.get("manufacturer", ""),
+                "alert_category": hit.get("alert_category", "NSQ"),
+                "failure_reason": hit.get("failure_reason", ""),
+                "reporting_authority": hit.get("reporting_source", "CDSCO"),
                 "reporting_lab": hit.get("reporting_lab", ""),
-                "reporting_date": hit["reporting_date"],
+                "reporting_month": hit.get("reporting_month", ""),
+                # Legacy field kept for existing UI compatibility.
+                "reporting_date": hit.get("reporting_month", ""),
                 "source": "CDSCO",
             },
             "parsed_payload": {
@@ -1064,27 +1065,54 @@ async def consumer_verify(payload: ConsumerVerifyPayload):
             },
         }
 
-    # No match — score in the 0–10 band
-    score = 5
-    severity, headline = risk_bucket(score)
     return {
-        "risk_score": score,
-        "severity": severity,
-        "headline": headline,
+        "risk_score": 5,
+        "severity": "Low Risk",
+        "headline": "No Regulatory Alert Found",
         "alert_found": False,
-        "message": "No CDSCO recall, NSQ, spurious, or theft alert records were found for this batch.",
-        "product_context": (
-            {
-                "brand_name": product_ctx["brand_name"],
-                "generic_composition": product_ctx["generic_composition"],
-            } if product_ctx else None
-        ),
+        "message": "This batch was not found in the integrated CDSCO NSQ, Recall or Spurious Drug datasets.",
         "parsed_payload": {
             "gtin": gtin or None,
             "batch_number": batch_raw or None,
             "expiry": expiry or None,
             "serial": serial or None,
         },
+    }
+
+
+@api.get("/public/metrics")
+async def public_metrics():
+    """Live dataset counts used by the marketing landing page."""
+    from cdsco_repository import dataset_stats
+    s = dataset_stats()
+    return {
+        "alert_categories_monitored": len(s["categories"]) or 3,
+        "categories": s["categories"] or ["NSQ", "Recall", "Spurious"],
+        "flagged_batches_indexed": s["unique_batches"],
+        "cdsco_records_indexed": s["total_records"],
+        "advisory_refresh_cycle": "Monthly",
+    }
+
+
+@api.post("/public/contact")
+async def public_contact(payload: ContactEnquiryPayload):
+    """Route a contact-form enquiry to the internal Kyrenis inbox.
+
+    The destination address is never rendered in the UI — see
+    `email_dispatch._CONTACT_INBOX`."""
+    enquiry = {
+        "name": sanitize_string(payload.name, 120),
+        "email": sanitize_string(payload.email, 200),
+        "organisation": sanitize_string(payload.organisation or "", 200),
+        "category": sanitize_string(payload.category, 40),
+        "message": sanitize_string(payload.message, 4000),
+    }
+    # Fire-and-forget delivery — the API always confirms receipt so demo users
+    # aren't blocked if the email integration is offline. Logs record every send.
+    await dispatch_contact_email(enquiry)
+    return {
+        "submitted": True,
+        "message": "Thank you for contacting Kyrenis. Your enquiry has been submitted successfully.",
     }
 
 

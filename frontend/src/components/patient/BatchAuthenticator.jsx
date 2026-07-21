@@ -1,154 +1,196 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { api, formatApiErrorDetail } from "@/lib/api";
 import { toast } from "sonner";
-import {
-  ShieldCheck,
-  ShieldAlert,
-  AlertTriangle,
-  ScanLine,
-  Keyboard,
-  QrCode,
-} from "lucide-react";
+import CameraScanner from "@/components/CameraScanner";
+import { ShieldCheck, ShieldAlert, Camera, X, History } from "lucide-react";
 
-const SAMPLES = [
-  {
-    label: "Try · Clean batch (XYZ99900)",
-    tone: "safe",
-    testid: "consumer-sample-clean",
-    payload: { batch_number: "XYZ99900" },
-  },
-  {
-    label: "Try · Spurious alert (05240226)",
-    tone: "danger",
-    testid: "consumer-sample-spurious",
-    payload: { batch_number: "05240226" },
-  },
-  {
-    label: "Try · NSQ alert (AZT24118)",
-    tone: "warning",
-    testid: "consumer-sample-nsq",
-    payload: { batch_number: "AZT24118" },
-  },
-  {
-    label: "Try · Recall (PCM240721)",
-    tone: "danger",
-    testid: "consumer-sample-recall",
-    payload: { batch_number: "PCM240721" },
-  },
-];
+const RECENT_KEY = "kyrenis_recent_batches";
+const MAX_RECENT = 5;
+
+function loadRecent() {
+  try {
+    const raw = localStorage.getItem(RECENT_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.slice(0, MAX_RECENT) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveRecent(list) {
+  try {
+    localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, MAX_RECENT)));
+  } catch {
+    /* localStorage may be blocked */
+  }
+}
+
+// Extract a plausible batch identifier out of a scanned code.
+// Handles GS1 DataMatrix payloads that carry AI (10) BatchNumber, and falls
+// back to using the raw scan string if the payload is a plain barcode.
+function parseScanForBatch(text) {
+  if (!text) return "";
+  const gs1 = /\(10\)([A-Za-z0-9\-\/]+)/.exec(text);
+  if (gs1 && gs1[1]) return gs1[1].trim();
+  // If the payload starts with 10 after a GTIN, try FNC1-less form: 01<gtin14>10<batch>...
+  const m = /10([A-Za-z0-9\-\/]{2,20})(?:17|21|11|$)/.exec(text.replace(/[\s()]/g, ""));
+  if (m && m[1]) return m[1].trim();
+  return text.trim();
+}
 
 export default function BatchAuthenticator() {
-  const [mode, setMode] = useState("manual"); // manual | gs1
-  const [manualBatch, setManualBatch] = useState("");
-  const [qrString, setQrString] = useState("");
+  const [batch, setBatch] = useState("");
   const [verdict, setVerdict] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const [recent, setRecent] = useState(loadRecent);
 
-  const runVerify = async (payload) => {
+  useEffect(() => {
+    saveRecent(recent);
+  }, [recent]);
+
+  const runVerify = async (query) => {
+    const b = (query || "").trim();
+    if (!b) {
+      toast.error("Enter a batch number to check.");
+      return;
+    }
     setBusy(true);
     setVerdict(null);
     try {
-      const { data } = await api.post("/consumer/verify-batch", payload);
+      const { data } = await api.post("/consumer/verify-batch", { batch_number: b });
       setVerdict(data);
+      // Push to recent (dedupe, most recent first)
+      setRecent((prev) => [b, ...prev.filter((x) => x.toUpperCase() !== b.toUpperCase())].slice(0, MAX_RECENT));
     } catch (e) {
       toast.error(formatApiErrorDetail(e?.response?.data?.detail) || e.message);
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
   };
 
   const onSubmit = (e) => {
     e?.preventDefault?.();
-    const payload =
-      mode === "manual" ? { batch_number: manualBatch } : { qr_string: qrString };
-    runVerify(payload);
+    runVerify(batch);
   };
 
-  const runSample = (s) => {
-    setMode("manual");
-    setManualBatch(s.payload.batch_number || "");
-    setQrString("");
-    runVerify(s.payload);
+  const handleScan = (decoded) => {
+    const extracted = parseScanForBatch(decoded);
+    setBatch(extracted);
+    setShowCamera(false);
+    toast.success(`Batch captured: ${extracted}. Review and confirm to verify.`);
+  };
+
+  const removeRecent = (val) => {
+    setRecent((prev) => prev.filter((x) => x !== val));
+  };
+
+  const rerunRecent = (val) => {
+    setBatch(val);
+    runVerify(val);
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6" data-testid="batch-authenticator">
-      <form onSubmit={onSubmit} className="k-panel p-6 md:p-8 flex flex-col gap-5" data-testid="consumer-verify-form">
+    <div
+      className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6"
+      data-testid="batch-authenticator"
+    >
+      <form
+        onSubmit={onSubmit}
+        className="k-panel p-6 md:p-8 flex flex-col gap-5"
+        data-testid="consumer-verify-form"
+      >
         <div className="flex items-center gap-3">
-          <ScanLine size={18} className="text-[#10B981]" />
+          <ShieldCheck size={18} className="text-[#10B981]" />
           <h2 className="font-display text-white text-xl">Regulatory Batch Verification</h2>
         </div>
         <p className="text-[#E2E8F0]/65 text-sm -mt-2">
-          Enter your medicine's batch number, or paste the GS1 DataMatrix payload from the strip.
-          Kyrenis checks the CDSCO regulatory intelligence repository for any advisories.
+          Enter the batch number printed on your medicine strip, or scan it using the camera.
+          Kyrenis checks the integrated CDSCO NSQ, Recall and Spurious Drug datasets and reports
+          only what has been recorded by the regulator.
         </p>
 
-        <div className="flex gap-1 border border-[#E2E8F0]/15 p-1" role="tablist" data-testid="consumer-mode-tabs">
-          <TabBtn active={mode === "manual"} onClick={() => setMode("manual")} icon={<Keyboard size={14} />} testid="consumer-mode-manual">
-            Manual · Batch Number
-          </TabBtn>
-          <TabBtn active={mode === "gs1"} onClick={() => setMode("gs1")} icon={<QrCode size={14} />} testid="consumer-mode-gs1">
-            GS1 DataMatrix
-          </TabBtn>
+        <label className="flex flex-col gap-2">
+          <span className="text-[11px] text-[#E2E8F0]/60 tracking-[0.14em]">Batch Number</span>
+          <input
+            value={batch}
+            onChange={(e) => setBatch(e.target.value)}
+            data-testid="consumer-batch-input"
+            placeholder="e.g. SHT7550"
+            className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white text-sm focus:border-[#10B981] focus:outline-none transition-colors"
+          />
+        </label>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            type="button"
+            onClick={() => setShowCamera((v) => !v)}
+            data-testid="consumer-scan-camera-btn"
+            className="inline-flex items-center justify-center gap-2 border border-[#E2E8F0]/30 text-white px-5 py-3 text-sm hover:border-white hover:bg-[#1E2B4E] transition-colors"
+          >
+            <Camera size={14} />
+            {showCamera ? "Close camera" : "Scan Using Camera"}
+          </button>
+          <button
+            type="submit"
+            disabled={busy}
+            data-testid="consumer-verify-btn"
+            className="flex-1 inline-flex items-center justify-center gap-2 bg-white text-[#1E2B4E] px-6 py-3 text-sm font-medium hover:bg-[#E2E8F0] active:scale-[0.98] transition-colors disabled:opacity-50"
+          >
+            {busy ? "Checking CDSCO records…" : "Check Regulatory Status"}
+          </button>
         </div>
 
-        {mode === "manual" ? (
-          <label className="flex flex-col gap-2">
-            <span className="text-[11px] text-[#E2E8F0]/60 tracking-[0.14em]">Batch Number</span>
-            <input
-              value={manualBatch}
-              onChange={(e) => setManualBatch(e.target.value)}
-              data-testid="consumer-batch-input"
-              placeholder="e.g. 05240226"
-              className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white text-sm focus:border-[#10B981] focus:outline-none transition-colors"
-            />
-          </label>
-        ) : (
-          <label className="flex flex-col gap-2">
-            <span className="text-[11px] text-[#E2E8F0]/60 tracking-[0.14em]">GS1 DataMatrix Payload</span>
-            <textarea
-              value={qrString}
-              onChange={(e) => setQrString(e.target.value)}
-              rows={4}
-              data-testid="consumer-qr-input"
-              placeholder="(01)08901234567892(10)05240226(17)261231(21)0000001"
-              className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white text-sm focus:border-[#10B981] focus:outline-none transition-colors font-mono"
-            />
-            <span className="text-[11px] text-[#E2E8F0]/50">
-              Parses GTIN (01), Batch (10), Expiry (17) and Serial (21) if present.
-            </span>
-          </label>
+        {showCamera && (
+          <div data-testid="consumer-camera-wrap">
+            <CameraScanner onDetected={handleScan} />
+            <p className="text-[10px] text-[#E2E8F0]/50 mt-2">
+              Point the camera at the QR code or barcode on your medicine strip. The scanner will
+              capture the batch identifier and fill it above — you can review and edit before
+              running the regulatory check.
+            </p>
+          </div>
         )}
 
-        <button
-          type="submit"
-          disabled={busy}
-          data-testid="consumer-verify-btn"
-          className="mt-2 py-3 bg-white text-[#1E2B4E] text-sm font-medium inline-flex items-center justify-center gap-2 hover:bg-[#E2E8F0] active:scale-[0.98] transition-colors disabled:opacity-50"
-        >
-          {busy ? "Checking CDSCO records…" : "Check Regulatory Status"}
-        </button>
-
-        <div className="border-t border-[#E2E8F0]/10 pt-5 flex flex-col gap-3">
-          <p className="text-[11px] text-[#E2E8F0]/55 tracking-[0.14em]">Try one of these samples</p>
-          <div className="flex flex-wrap gap-2">
-            {SAMPLES.map((s) => (
-              <button
-                key={s.testid}
-                type="button"
-                onClick={() => runSample(s)}
-                data-testid={s.testid}
-                className="border px-3 py-1.5 text-[11px] transition-colors"
-                style={{
-                  borderColor:
-                    s.tone === "danger" ? "#EF444488" : s.tone === "warning" ? "#F59E0B88" : "#10B98188",
-                  color: s.tone === "danger" ? "#EF4444" : s.tone === "warning" ? "#F59E0B" : "#10B981",
-                }}
-              >
-                {s.label}
-              </button>
-            ))}
+        {recent.length > 0 && (
+          <div
+            className="border-t border-[#E2E8F0]/10 pt-5 flex flex-col gap-3"
+            data-testid="consumer-recent-section"
+          >
+            <p className="text-[11px] text-[#E2E8F0]/55 tracking-[0.14em] inline-flex items-center gap-2">
+              <History size={11} />
+              Recent Searches
+            </p>
+            <div className="flex flex-wrap gap-2" data-testid="consumer-recent-list">
+              {recent.map((val, i) => (
+                <div
+                  key={val + "-" + i}
+                  data-testid={`consumer-recent-chip-${i}`}
+                  className="inline-flex items-center gap-1 border border-[#E2E8F0]/20 hover:border-[#10B981]/60 group transition-colors"
+                >
+                  <button
+                    type="button"
+                    onClick={() => rerunRecent(val)}
+                    data-testid={`consumer-recent-run-${i}`}
+                    className="px-3 py-1.5 text-[11px] text-[#E2E8F0]/80 group-hover:text-white font-mono"
+                  >
+                    {val}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeRecent(val)}
+                    aria-label={`Remove ${val}`}
+                    data-testid={`consumer-recent-remove-${i}`}
+                    className="pr-2 pl-1 py-1.5 text-[#E2E8F0]/50 hover:text-[#EF4444]"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </form>
 
       <VerdictPanel verdict={verdict} busy={busy} />
@@ -156,50 +198,40 @@ export default function BatchAuthenticator() {
   );
 }
 
-function TabBtn({ active, onClick, icon, testid, children }) {
-  return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={active}
-      onClick={onClick}
-      data-testid={testid}
-      className={`flex-1 inline-flex items-center justify-center gap-2 py-2 text-sm transition-colors ${
-        active ? "bg-[#1E2B4E] text-white" : "text-[#E2E8F0]/70 hover:text-white"
-      }`}
-    >
-      {icon}
-      {children}
-    </button>
-  );
-}
-
 function VerdictPanel({ verdict, busy }) {
   if (!verdict && !busy) {
     return (
-      <div className="k-panel p-8 flex flex-col items-center justify-center text-center min-h-[420px]" data-testid="consumer-verdict-empty">
+      <div
+        className="k-panel p-8 flex flex-col items-center justify-center text-center min-h-[420px]"
+        data-testid="consumer-verdict-empty"
+      >
         <div className="w-28 h-28 border-2 border-[#E2E8F0]/20 relative overflow-hidden">
           <div className="absolute inset-x-2 h-[2px] bg-[#10B981] k-scanline" />
         </div>
-        <p className="mt-6 text-[11px] tracking-[0.14em] text-[#E2E8F0]/50 uppercase">Awaiting a batch</p>
+        <p className="mt-6 text-[11px] tracking-[0.14em] text-[#E2E8F0]/50 uppercase">
+          Awaiting a batch
+        </p>
         <p className="text-[#E2E8F0]/55 text-sm mt-2 max-w-xs">
-          Enter a batch number or paste a GS1 payload — Kyrenis returns a regulatory risk score
-          along with the CDSCO advisory (if any).
+          Enter a batch number or scan your strip — Kyrenis returns a regulatory risk assessment
+          based only on the integrated CDSCO surveillance datasets.
         </p>
       </div>
     );
   }
   if (busy) {
     return (
-      <div className="k-panel p-8 min-h-[420px] flex flex-col items-center justify-center text-center" data-testid="consumer-verdict-loading">
+      <div
+        className="k-panel p-8 min-h-[420px] flex flex-col items-center justify-center text-center"
+        data-testid="consumer-verdict-loading"
+      >
         <div className="animate-pulse w-16 h-16 border-2 border-[#10B981]/60" />
         <p className="mt-6 text-sm text-[#E2E8F0]/70">Checking the CDSCO regulatory record…</p>
       </div>
     );
   }
-  const sev = verdict.severity;
-  const color = sev === "Critical" ? "#EF4444" : sev === "Quality Risk" ? "#F59E0B" : "#10B981";
-  const Icon = sev === "Clear" ? ShieldCheck : sev === "Quality Risk" ? AlertTriangle : ShieldAlert;
+  const alert = verdict.alert_found;
+  const color = alert ? "#EF4444" : "#10B981";
+  const Icon = alert ? ShieldAlert : ShieldCheck;
   return (
     <div
       className="p-8 min-h-[420px] relative overflow-hidden"
@@ -213,8 +245,12 @@ function VerdictPanel({ verdict, busy }) {
       <div className="relative flex flex-col">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[11px] tracking-[0.14em]" style={{ color }} data-testid="consumer-verdict-severity">
-              {verdict.alert_found ? sev.toUpperCase() : "REGULATORY STATUS"}
+            <p
+              className="text-[11px] tracking-[0.14em]"
+              style={{ color }}
+              data-testid="consumer-verdict-severity"
+            >
+              {alert ? "HIGH RISK" : "LOW RISK"}
             </p>
             <h3
               className="font-display text-white text-2xl md:text-3xl mt-2 leading-tight"
@@ -222,85 +258,90 @@ function VerdictPanel({ verdict, busy }) {
             >
               {verdict.headline}
             </h3>
+            <p
+              className="text-[#E2E8F0]/70 text-sm mt-2"
+              data-testid="consumer-verdict-status"
+            >
+              {alert
+                ? "CDSCO Match Found — this batch appears in an official surveillance advisory."
+                : "CDSCO Match Not Found — this batch does not appear in the integrated datasets."}
+            </p>
           </div>
           <div
             className="w-16 h-16 border-2 flex items-center justify-center shrink-0"
             style={{ borderColor: color, color }}
-            data-testid={`consumer-verdict-icon-${sev.toLowerCase().replace(/\s+/g, "-")}`}
+            data-testid={`consumer-verdict-icon-${alert ? "high" : "low"}`}
           >
             <Icon size={34} />
           </div>
         </div>
 
-        {/* Risk gauge */}
+        {/* Risk gauge — binary presentation per new spec */}
         <div className="mt-6" data-testid="consumer-risk-gauge">
           <div className="flex items-center justify-between text-[11px] text-[#E2E8F0]/60 tracking-[0.14em]">
-            <span>Risk Score</span>
-            <span className="text-white text-sm" data-testid="consumer-risk-score">
-              {verdict.risk_score}/100
+            <span>Risk Level</span>
+            <span
+              className="text-white text-sm"
+              data-testid="consumer-risk-score"
+            >
+              {alert ? "High" : "Low"}
             </span>
           </div>
           <div className="mt-2 h-2 bg-[#0d1013] border border-[#E2E8F0]/12 relative">
             <div
               className="absolute top-0 left-0 h-full transition-all"
               style={{
-                width: `${Math.max(4, Math.min(verdict.risk_score, 100))}%`,
+                width: alert ? "95%" : "8%",
                 background: color,
               }}
             />
           </div>
           <div className="flex justify-between mt-2 text-[10px] text-[#E2E8F0]/45">
-            <span>0 · Clear</span>
-            <span>80 · Quality Risk</span>
-            <span>95+ · Critical</span>
+            <span>No Regulatory Alert Found</span>
+            <span>Regulatory Alert</span>
           </div>
         </div>
 
-        {/* Alert card OR clean context */}
-        {verdict.alert_found ? (
+        {alert ? (
           <div
             className="mt-8 border p-5 grid grid-cols-1 md:grid-cols-2 gap-4"
             style={{ borderColor: `${color}55`, background: `${color}0a` }}
             data-testid="consumer-alert-card"
           >
-            <AlertRow label="Product" value={verdict.alert_card?.product_name} />
-            <AlertRow label="Batch" value={verdict.alert_card?.batch_number} mono />
-            <AlertRow label="Manufacturer" value={verdict.alert_card?.manufacturer} />
-            <AlertRow label="Alert Category" value={`${verdict.alert_card?.alert_category} Drug Alert`} accent={color} />
+            <AlertRow label="Product Name" value={verdict.alert_card?.product_name} full />
+            <AlertRow label="Manufacturer" value={verdict.alert_card?.manufacturer} full />
+            <AlertRow label="Batch Number" value={verdict.alert_card?.batch_number} mono />
+            <AlertRow
+              label="Alert Category"
+              value={verdict.alert_card?.alert_category}
+              accent={color}
+            />
             <AlertRow label="Failure Reason" value={verdict.alert_card?.failure_reason} full />
             <AlertRow
-              label="Reporting Authority"
+              label="Source"
               value={
                 verdict.alert_card?.reporting_lab
-                  ? `${verdict.alert_card?.reporting_authority} · ${verdict.alert_card?.reporting_lab}`
-                  : verdict.alert_card?.reporting_authority
+                  ? `${verdict.alert_card?.source || "CDSCO"} · ${verdict.alert_card?.reporting_lab}`
+                  : verdict.alert_card?.source || "CDSCO"
               }
             />
-            <AlertRow label="Reporting Date" value={verdict.alert_card?.reporting_date} mono />
-            <AlertRow label="Source" value={verdict.alert_card?.source || "CDSCO"} accent="#E2E8F0" />
+            <AlertRow
+              label="Reporting Month"
+              value={verdict.alert_card?.reporting_month || verdict.alert_card?.reporting_date}
+              mono
+            />
           </div>
         ) : (
-          <div className="mt-8 border border-[#10B981]/40 p-5" data-testid="consumer-clean-card">
+          <div
+            className="mt-8 border border-[#10B981]/40 p-5"
+            data-testid="consumer-clean-card"
+          >
             <p className="text-white text-sm">{verdict.message}</p>
-            {verdict.product_context && (
-              <p className="text-[#E2E8F0]/70 text-xs mt-2">
-                Product recognised from GS1: {verdict.product_context.brand_name} · {verdict.product_context.generic_composition}
-              </p>
-            )}
             <p className="text-[#E2E8F0]/55 text-[11px] mt-4">
-              Kyrenis reports what has been recorded by the regulator. A "no alert" result is not a
-              guarantee of authenticity — always buy from a licensed pharmacy.
+              Kyrenis reports what has been recorded by the regulator in the integrated CDSCO
+              surveillance datasets. A "No Regulatory Alert Found" result is not a guarantee of
+              authenticity — always purchase from a licensed pharmacy.
             </p>
-          </div>
-        )}
-
-        {/* Parsed payload */}
-        {(verdict.parsed_payload?.batch_number || verdict.parsed_payload?.gtin) && (
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs" data-testid="consumer-parsed-payload">
-            <ParsedCell label="GTIN" value={verdict.parsed_payload?.gtin} />
-            <ParsedCell label="Batch" value={verdict.parsed_payload?.batch_number} />
-            <ParsedCell label="Expiry" value={verdict.parsed_payload?.expiry} />
-            <ParsedCell label="Serial" value={verdict.parsed_payload?.serial} />
           </div>
         )}
       </div>
@@ -319,15 +360,6 @@ function AlertRow({ label, value, mono, full, accent }) {
       >
         {value}
       </p>
-    </div>
-  );
-}
-
-function ParsedCell({ label, value }) {
-  return (
-    <div className="border border-[#E2E8F0]/12 px-3 py-2">
-      <p className="text-[10px] text-[#E2E8F0]/55">{label}</p>
-      <p className="text-[#E2E8F0]/90 font-mono text-xs mt-1 truncate">{value || "—"}</p>
     </div>
   );
 }

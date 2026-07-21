@@ -19,7 +19,6 @@ export default function StockIntake() {
     quantity: 100,
     mfg_date: "2024-07-01",
     expiry_date: "2026-12-31",
-    scan_city: "Mumbai",
   });
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null);
@@ -99,7 +98,6 @@ export default function StockIntake() {
 
         <div className="flex gap-2 flex-wrap items-center">
           <SampleChip label="Sample · Clean" onClick={() => loadSample("clean")} testid="sample-clean" />
-          <SampleChip label="Sample · Recalled" onClick={() => loadSample("recall")} testid="sample-recall" tone="danger" />
           <SampleChip label="Sample · Mismatch" onClick={() => loadSample("mismatch")} testid="sample-mismatch" tone="danger" />
           <button
             type="button"
@@ -184,7 +182,7 @@ export default function StockIntake() {
           </Field>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <Field label="Declared MRP (₹)" testid="intake-mrp">
             <input
               data-testid="intake-mrp-input"
@@ -204,15 +202,6 @@ export default function StockIntake() {
               onChange={(e) => set("quantity", e.target.value)}
               min={1}
               required
-              className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white font-mono text-sm focus:border-[#10B981] focus:outline-none transition-colors"
-            />
-          </Field>
-          <Field label="Scan City" testid="intake-city">
-            <input
-              data-testid="intake-city-input"
-              type="text"
-              value={form.scan_city}
-              onChange={(e) => set("scan_city", e.target.value)}
               className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white font-mono text-sm focus:border-[#10B981] focus:outline-none transition-colors"
             />
           </Field>

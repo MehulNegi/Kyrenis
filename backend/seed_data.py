@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime, timezone, timedelta
 
 from auth_utils import hash_password
-from cdsco_repository import CDSCO_ENTRIES, normalize_batch
+from cdsco_repository import get_all_records  # normalize_batch no longer used here
 
 random.seed(42)
 
@@ -154,7 +154,7 @@ def _iso(dt: datetime) -> str:
 
 async def seed_all(db) -> dict:
     """Idempotent seed. Returns counts. Skips if marker doc exists."""
-    marker = await db.seed_marker.find_one({"key": "kyrenis_v2"})
+    marker = await db.seed_marker.find_one({"key": "kyrenis_v3"})
     if marker:
         return {"skipped": True, **marker.get("counts", {})}
     # Purge legacy v1 data so the v2 schema (with CDSCO intelligence categories) is clean
@@ -258,28 +258,34 @@ async def seed_all(db) -> dict:
     await db.inventory_batches.insert_many(inventory_docs)
 
     # ---------- CDSCO Regulatory Intelligence Repository ----------
-    from datetime import datetime as _dt
+    # Populate from the integrated CDSCO dataset (real NSQ/Recall/Spurious data).
+    # Cap at 500 rows for the pharmacy Security & Recalls tab so the endpoint
+    # stays fast — the /api/consumer/verify-batch lookup uses the full in-memory
+    # index (thousands of rows) regardless.
     recall_docs = []
-    for entry in CDSCO_ENTRIES:
+    for entry in get_all_records()[:500]:
+        batch_raw = entry.get("batch_raw") or entry.get("batch_number") or ""
         recall_docs.append({
             "id": str(uuid.uuid4()),
-            "alert_category": entry["alert_category"],
-            "product_name": entry["product_name"],
-            "generic_composition": entry.get("generic_composition", ""),
-            "target_medicine_name": entry["product_name"],
-            "batch_number": entry["batch_number"],
-            "batch_normalised": normalize_batch(entry["batch_number"]),
-            "target_batch_number": entry["batch_number"],
-            "manufacturer": entry["manufacturer"],
-            "failure_reason": entry["failure_reason"],
-            "hazard_classification": entry["failure_reason"],
-            "reporting_authority": entry["reporting_authority"],
-            "reporting_lab": entry["reporting_lab"],
-            "reporting_date": entry["reporting_date"],
-            "date_published": entry["reporting_date"],
-            "risk_score": entry["risk_score"],
+            "alert_category": entry.get("alert_category", "NSQ"),
+            "product_name": entry.get("product_name", ""),
+            "generic_composition": "",
+            "target_medicine_name": entry.get("product_name", ""),
+            "batch_number": batch_raw,
+            "batch_normalised": entry.get("batch_number", ""),
+            "target_batch_number": batch_raw,
+            "manufacturer": entry.get("manufacturer", ""),
+            "failure_reason": entry.get("failure_reason", ""),
+            "hazard_classification": entry.get("failure_reason", ""),
+            "reporting_authority": entry.get("reporting_source", "CDSCO Labs"),
+            "reporting_lab": entry.get("reporting_lab", ""),
+            "reporting_date": entry.get("reporting_month", ""),
+            "date_published": entry.get("reporting_month", ""),
+            # No fabricated risk score — dataset presence itself is the flag.
+            "risk_score": 90,
         })
-    await db.cdsco_recalls.insert_many(recall_docs)
+    if recall_docs:
+        await db.cdsco_recalls.insert_many(recall_docs)
 
     # ---------- Scan Telemetry Logs (500+) ----------
     telemetry_docs = []
@@ -418,6 +424,6 @@ async def seed_all(db) -> dict:
         "security_alerts": len(security_alerts),
     }
     await db.seed_marker.insert_one(
-        {"key": "kyrenis_v2", "created_at": _iso(now), "counts": counts}
+        {"key": "kyrenis_v3", "created_at": _iso(now), "counts": counts}
     )
     return counts

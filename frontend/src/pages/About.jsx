@@ -7,12 +7,12 @@ const PILLARS = [
   {
     icon: FileSearch,
     title: "CDSCO Regulatory Intelligence",
-    body: "Kyrenis consolidates monthly advisories published by the Central Drugs Standard Control Organisation — NSQ, Spurious, Recall and Theft/Diversion — into a single searchable repository accessible to pharmacies and the public.",
+    body: "Kyrenis aggregates the monthly NSQ, Recall and Spurious Drug advisories published by the Central Drugs Standard Control Organisation into a single searchable repository accessible to pharmacies and consumers alike.",
   },
   {
     icon: ShieldCheck,
-    title: "NSQ Monitoring",
-    body: "Every reported Not-of-Standard-Quality batch is indexed by product, manufacturer and reporting laboratory. The platform surfaces the failure reason so pharmacies can quarantine affected stock before it is dispensed.",
+    title: "Rapid Batch Risk Assessment",
+    body: "Every reported batch is indexed by product, manufacturer and reporting laboratory. Kyrenis returns a rapid regulatory risk assessment so pharmacies can identify potentially flagged stock before dispensing.",
   },
   {
     icon: Building2,
@@ -22,7 +22,7 @@ const PILLARS = [
   {
     icon: Users,
     title: "Consumer Awareness",
-    body: "The public verification portal lets any patient check the regulatory status of a medicine batch anonymously. Kyrenis never claims a medicine is authentic — it reports what the regulator has recorded.",
+    body: "The public verification portal lets any patient check the regulatory status of a medicine batch anonymously. Kyrenis reports only what the regulator has recorded — it does not make authenticity claims.",
   },
 ];
 
@@ -40,7 +40,9 @@ export default function About() {
               >
                 KYRENIS
               </span>
-              <span className="text-[10px] text-[#E2E8F0]/70">Regulatory Intelligence Platform</span>
+              <span className="text-[10px] text-[#E2E8F0]/70">
+                Regulatory Intelligence Platform
+              </span>
             </div>
           </Link>
           <div className="flex items-center gap-6 text-sm text-[#E2E8F0]/80">
@@ -48,7 +50,9 @@ export default function About() {
               <ArrowLeft size={14} />
               Home
             </Link>
-            <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
+            <Link to="/contact" className="hover:text-white transition-colors">
+              Contact
+            </Link>
           </div>
         </div>
       </header>
@@ -56,17 +60,34 @@ export default function About() {
       <main className="max-w-[1080px] mx-auto px-6 md:px-10 py-20">
         <p className="text-[11px] tracking-[0.28em] uppercase text-[#10B981] mb-4">Our Mission</p>
         <h1 className="font-display font-bold text-white text-4xl md:text-5xl tracking-tight leading-[1.08]">
-          A transparent regulatory intelligence layer for India's medicine supply chain.
+          India's Regulatory Intelligence Platform for Medicine Batch Verification.
         </h1>
         <p className="mt-8 text-[#E2E8F0]/80 text-lg leading-relaxed max-w-3xl">
-          Kyrenis exists to make CDSCO's monthly regulatory advisories usable at the counter — where
-          it matters most. Pharmacists shouldn't need to hunt through PDF bulletins to know if a
-          batch on their shelves is under recall. Patients shouldn't take a strip on trust when a
-          public dataset already flags the concern. Kyrenis closes that gap with a fast,
-          transparent lookup and a set of workflow tools that keep everyday pharmacy operations honest.
+          Kyrenis helps pharmacies and consumers verify medicine batches against official CDSCO
+          surveillance data. We aggregate the NSQ, Recall and Spurious Drug advisories published
+          each month by the Central Drugs Standard Control Organisation, and provide rapid risk
+          assessment for medicine batches — enabling pharmacies to identify potentially flagged
+          stock before it is dispensed.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-14">
+        <div
+          className="mt-10 p-6 md:p-8 border border-[#10B981]/30 bg-[#10B981]/5"
+          data-testid="about-positioning-callout"
+        >
+          <p className="text-[11px] tracking-[0.14em] text-[#10B981]">Product positioning</p>
+          <p className="mt-3 text-white text-lg leading-relaxed">
+            "Kyrenis performs regulatory intelligence checks using official surveillance and
+            advisory datasets."
+          </p>
+          <p className="mt-3 text-[#E2E8F0]/70 text-sm leading-relaxed max-w-3xl">
+            Kyrenis is a regulatory intelligence and risk assessment platform — not a definitive
+            authenticity detector. Presence in a CDSCO advisory yields a "High Risk / Regulatory
+            Alert" result; absence yields "Low Risk / No Regulatory Alert Found". No batch is
+            invented, flagged, or scored outside the integrated datasets.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
           {PILLARS.map((p) => (
             <div key={p.title} className="k-panel p-6 md:p-8">
               <span className="inline-flex items-center justify-center w-11 h-11 border border-[#E2E8F0]/25 text-[#E2E8F0] mb-5">
@@ -82,16 +103,16 @@ export default function About() {
           <h3 className="font-display text-white text-2xl">What Kyrenis is not.</h3>
           <ul className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3 text-[#E2E8F0]/80 text-sm">
             <li className="border-l-2 border-[#EF4444]/70 pl-4">
-              Not a counterfeit-detection guarantee. We report regulatory findings, not chemical composition.
+              Not a counterfeit-detection guarantee. We do not claim certainty about authenticity.
             </li>
             <li className="border-l-2 border-[#EF4444]/70 pl-4">
-              Not a manufacturer API. We do not pull data from private serialisation systems.
+              Not a chemical analysis or laboratory verification service.
             </li>
             <li className="border-l-2 border-[#EF4444]/70 pl-4">
-              Not a blockchain track-and-trace network. Our source of truth is the public CDSCO record.
+              Not a manufacturer API or private serialisation network.
             </li>
             <li className="border-l-2 border-[#EF4444]/70 pl-4">
-              Not an AI-driven medical opinion. Alerts are surfaced verbatim from the regulator.
+              Not an AI-generated medical opinion — alerts are surfaced verbatim from the regulator.
             </li>
           </ul>
         </div>

@@ -219,46 +219,52 @@ class TestPOS:
 
 # ---------------- Consumer (public) - CDSCO Risk Score API ----------------
 class TestConsumer:
-    def test_verify_pcm_critical(self, anon_session):
-        # PCM240721 seeded with risk_score=98 (Critical)
+    # SHT7550 is a real record in the integrated CDSCO NSQ dataset
+    # (Levocetirizine Hydrochloride Tablets IP 5 MG, Syncom Healthcare Ltd).
+    def test_verify_high_risk_match(self, anon_session):
         r = anon_session.post(f"{API}/consumer/verify-batch", json={
-            "batch_number": "PCM240721", "medicine_name": "Paracetamol"
+            "batch_number": "SHT7550", "medicine_name": "Levocetirizine"
         })
         assert r.status_code == 200
         v = r.json()
         assert v["alert_found"] is True
+        assert v["severity"] == "High Risk"
+        assert v["headline"] == "Regulatory Alert"
         assert v["risk_score"] >= 80
-        assert v["severity"] == "Critical"
         assert v["alert_card"]["source"] == "CDSCO"
-        assert v["alert_card"]["batch_number"] == "PCM240721"
-        assert "reporting_authority" in v["alert_card"]
+        assert v["alert_card"]["batch_number"].upper().replace("-", "") == "SHT7550"
+        assert v["alert_card"]["alert_category"] in ("NSQ", "Recall", "Spurious")
 
-    def test_verify_amx_critical(self, anon_session):
+    def test_verify_high_risk_second_batch(self, anon_session):
+        # Second known real batch — Sterile Disposable Syringe (batch 21702S1117)
         r = anon_session.post(f"{API}/consumer/verify-batch", json={
-            "batch_number": "AMX00492", "medicine_name": "Amoxicillin"
+            "batch_number": "21702S1117"
         })
         assert r.status_code == 200
         v = r.json()
         assert v["alert_found"] is True
-        assert v["risk_score"] >= 80
+        assert v["severity"] == "High Risk"
 
-    def test_verify_qr_recall(self, anon_session):
+    def test_verify_qr_extracted_batch(self, anon_session):
+        # GS1 payload embedding a known dataset batch (SHT7550) via AI (10)
         r = anon_session.post(f"{API}/consumer/verify-batch", json={
-            "qr_string": "(01)89000000000021(10)PCM240721(17)261231"
+            "qr_string": "(01)89000000000021(10)SHT7550(17)201130"
         })
         assert r.status_code == 200
         v = r.json()
         assert v["alert_found"] is True
-        assert v["severity"] == "Critical"
+        assert v["severity"] == "High Risk"
 
-    def test_verify_clean_batch(self, anon_session):
+    def test_verify_low_risk_no_match(self, anon_session):
+        # Random batch NOT present in the integrated dataset
         r = anon_session.post(f"{API}/consumer/verify-batch", json={
-            "batch_number": "CLEAN0001"
+            "batch_number": "CLEAN00000000001"
         })
         assert r.status_code == 200
         v = r.json()
         assert v["alert_found"] is False
-        assert v["severity"] == "Clear"
+        assert v["severity"] == "Low Risk"
+        assert v["headline"] == "No Regulatory Alert Found"
         assert v["risk_score"] < 20
 
     def test_openfda_paracetamol(self, anon_session):
