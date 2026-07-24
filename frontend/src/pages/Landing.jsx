@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import KyrenisLogo from "@/components/KyrenisLogo";
 import { api } from "@/lib/api";
+import coverImage from '../assets/coverImage.jpeg';
 import {
   ArrowRight,
   ScanLine,
@@ -93,14 +94,7 @@ export default function Landing() {
               className="hover:text-white transition-colors"
               data-testid="landing-nav-about"
             >
-              About
-            </Link>
-            <Link
-              to="/contact"
-              className="hover:text-white transition-colors"
-              data-testid="landing-nav-contact"
-            >
-              Contact
+              About our Mission
             </Link>
           </nav>
         </div>
@@ -108,26 +102,29 @@ export default function Landing() {
 
       {/* Hero */}
       <main className="max-w-[1440px] mx-auto px-6 md:px-10">
-        <section className="pt-20 pb-16">
-          <p
-            className="text-[11px] tracking-[0.28em] uppercase text-[#10B981] mb-5"
-            data-testid="landing-eyebrow"
-          >
-            CDSCO-Powered Regulatory Intelligence
-          </p>
-          <h1
-            className="font-display font-bold text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight max-w-5xl"
-            data-testid="landing-headline"
-          >
-            India's Regulatory Intelligence Platform for{" "}
-            <span className="text-[#E2E8F0]/70">medicine batch verification.</span>
-          </h1>
-          <p className="mt-6 max-w-2xl text-[#E2E8F0]/75 text-base md:text-lg leading-relaxed">
-            Kyrenis aggregates the Central Drugs Standard Control Organisation's NSQ, Recall and
-            Spurious Drug advisories into a single searchable repository, producing a transparent
-            risk assessment for every medicine batch — for pharmacies, distributors and consumers.
-          </p>
-        </section>
+        <div className="flex flew-row gap-5">
+          <section className="pt-20 pb-16">
+            <p
+              className="text-[11px] tracking-[0.28em] uppercase text-[#00e5ff] mb-5"
+              data-testid="landing-eyebrow"
+            >
+              CDSCO-Powered Regulatory Intelligence
+            </p>
+            <h1
+              className="font-display font-bold text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight max-w-5xl"
+              data-testid="landing-headline"
+            >
+              India's Regulatory Intelligence Platform for{" "}
+              <span className="text-[#00e5ff]/70">medicine batch verification.</span>
+            </h1>
+            <p className="mt-6 max-w-2xl text-[#E2E8F0]/75 text-base md:text-lg leading-relaxed">
+              Kyrenis aggregates the Central Drugs Standard Control Organisation's NSQ, Recall and
+              Spurious Drug advisories into a single searchable repository, producing a transparent
+              risk assessment for every medicine batch — for pharmacies, distributors and consumers.
+            </p>
+          </section>
+          <img src={coverImage} className="hidden md:block w-1/2 h-1/2 mt-10 position-absolute object-contain"/>
+        </div>
 
         {/* Two-card gateway — primary entry points */}
         <section
@@ -192,21 +189,29 @@ export default function Landing() {
       </main>
 
       <footer className="border-t border-[#E2E8F0]/10">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[#E2E8F0]/55 text-xs">
-          <div>
-            © {new Date().getFullYear()} Kyrenis Systems · CDSCO-Powered Regulatory Intelligence
-            for Medicine Batch Verification
+        <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[#E2E8F0]/55 text-xs">
+          <div className="flex flex-col gap-3">
+            <div className="flex flew-row gap-3 items-center">
+              <KyrenisLogo size='40'/>
+              <div className="text-3xl">Kyrenis</div>
+            </div>
+            <div>
+              © {new Date().getFullYear()} Cypher
+            </div>
+            <div>
+              CDSCO-Powered Regulatory Intelligence for Medicine Batch Verification
+            </div>
           </div>
           <div className="flex gap-6">
             <Link to="/about" className="hover:text-white transition-colors">
               About
             </Link>
-            <Link to="/contact" className="hover:text-white transition-colors">
-              Contact
-            </Link>
             <Link to="/patient" className="hover:text-white transition-colors">
               Verify a Batch
             </Link>
+            <a href="https://www.instagram.com/kyrenis.health/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+              Instagram
+            </a>
           </div>
         </div>
       </footer>

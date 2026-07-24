@@ -3,7 +3,7 @@ import { api, formatApiErrorDetail } from "@/lib/api";
 import { toast } from "sonner";
 import { BookOpen, Search, AlertTriangle, Pill, Activity } from "lucide-react";
 
-const QUICK = ["Ibuprofen", "Metformin", "Atorvastatin", "Amoxicillin", "Aspirin"];
+const QUICK = ["Ibuprofen", "Metformin", "Atorvastatin", "Acetaminophen", "Aspirin"];
 
 export default function OpenFDADirectory() {
   const [query, setQuery] = useState("");

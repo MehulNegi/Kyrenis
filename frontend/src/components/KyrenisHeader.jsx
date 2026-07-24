@@ -15,7 +15,7 @@ export default function KyrenisHeader({ variant = "default" }) {
     <header
       className="sticky top-0 z-40 border-b"
       style={{
-        background: "#1E2B4E",
+        background: "black",
         borderColor: "rgba(226, 232, 240, 0.18)",
       }}
       data-testid="kyrenis-header"

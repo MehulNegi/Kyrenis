@@ -50,9 +50,6 @@ export default function About() {
               <ArrowLeft size={14} />
               Home
             </Link>
-            <Link to="/contact" className="hover:text-white transition-colors">
-              Contact
-            </Link>
           </div>
         </div>
       </header>
@@ -89,7 +86,7 @@ export default function About() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
           {PILLARS.map((p) => (
-            <div key={p.title} className="k-panel p-6 md:p-8">
+            <div key={p.title} className="bg-[#1f2326]/50 p-6 md:p-8">
               <span className="inline-flex items-center justify-center w-11 h-11 border border-[#E2E8F0]/25 text-[#E2E8F0] mb-5">
                 <p.icon size={20} />
               </span>
@@ -99,8 +96,8 @@ export default function About() {
           ))}
         </div>
 
-        <div className="k-panel-navy p-8 md:p-10 mt-10">
-          <h3 className="font-display text-white text-2xl">What Kyrenis is not.</h3>
+        <div className="bg-[#1f2326]/50 p-8 md:p-10 mt-10">
+          <h3 className="font-display text-white text-2xl">What Kyrenis is not</h3>
           <ul className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3 text-[#E2E8F0]/80 text-sm">
             <li className="border-l-2 border-[#EF4444]/70 pl-4">
               Not a counterfeit-detection guarantee. We do not claim certainty about authenticity.
@@ -113,6 +110,42 @@ export default function About() {
             </li>
             <li className="border-l-2 border-[#EF4444]/70 pl-4">
               Not an AI-generated medical opinion — alerts are surfaced verbatim from the regulator.
+            </li>
+          </ul>
+        </div>
+
+        <div className="p-8 md:p-10 mt-10 border border-[#10B981]/30 bg-[#10B981]/5 shadow-md shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+          <h3 className="font-display text-white text-2xl">Meet our Team</h3>
+          <ul className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3 text-[#E2E8F0]/80 text-sm">
+            <li className="border-l-2 border-[#10B981]/70 pl-4">
+              <a href="https://www.linkedin.com/in/swasti-nayak-8093053b4/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                Swasti Soumyaa Nayak - Team Lead
+              </a>
+            </li>
+            <li className="border-l-2 border-[#10B981]/70 pl-4">
+              <a href="https://www.linkedin.com/in/mehul-negi/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                Mehul Pundir Negi - Lead Developer
+              </a>
+            </li>
+            <li className="border-l-2 border-[#10B981]/70 pl-4">
+              <a href="https://www.linkedin.com/in/rishabhagrawal124/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                Rishabh Agrawal - Frontend Developer
+              </a>
+            </li>
+            <li className="border-l-2 border-[#10B981]/70 pl-4">
+              <a href="https://x.com/BichaliVin47775" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                Vinay Shambuling Bichchali - UI/UX Designer
+              </a>
+            </li>
+            <li className="border-l-2 border-[#10B981]/70 pl-4">
+              <a href="https://www.linkedin.com/in/vaibhvi-kataria-b1259a423/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                Vaibhvi Kataria - Marketing Lead
+              </a>
+            </li>
+            <li className="border-l-2 border-[#10B981]/70 pl-4">
+              <a href="https://www.linkedin.com/in/rudraksh-sitoke-186b003ba/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                Rudraksh Sitoke - Pitch Lead
+              </a>
             </li>
           </ul>
         </div>
