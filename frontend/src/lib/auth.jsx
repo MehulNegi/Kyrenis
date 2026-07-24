@@ -74,7 +74,7 @@ export function ProtectedRoute({ children, allowRoles = ["PHARMACY_STAFF"] }) {
   const loc = useLocation();
   if (user === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-[#E2E8F0]">
+      <div className="min-h-screen flex items-center justify-center bg-white text-slate-600">
         <p className="font-mono text-xs tracking-[0.3em] uppercase">Authenticating…</p>
       </div>
     );

@@ -31,8 +31,8 @@ export default function OpenFDADirectory() {
     <div className="flex flex-col gap-6" data-testid="openfda-directory">
       <div className="k-panel p-6 md:p-8">
         <div className="flex items-center gap-3 mb-6">
-          <BookOpen size={18} className="text-[#10B981]" />
-          <h2 className="font-display text-white text-xl">OpenFDA Drug Safety Directory</h2>
+          <BookOpen size={18} className="text-emerald-700" />
+          <h2 className="font-display text-slate-900 text-xl">OpenFDA Drug Safety Directory</h2>
         </div>
 
         <form
@@ -42,21 +42,21 @@ export default function OpenFDADirectory() {
           }}
           className="flex gap-3 flex-wrap"
         >
-          <div className="flex-1 min-w-[260px] flex items-center gap-2 border border-[#E2E8F0]/20 px-3 focus-within:border-[#10B981] transition-colors">
-            <Search size={16} className="text-[#E2E8F0]/60" />
+          <div className="flex-1 min-w-[260px] flex items-center gap-2 border border-slate-200 px-3 focus-within:border-emerald-700 transition-colors">
+            <Search size={16} className="text-slate-500" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by generic or brand medicine name (e.g. Ibuprofen)"
               data-testid="openfda-search-input"
-              className="flex-1 py-3 bg-transparent text-white font-mono text-sm focus:outline-none"
+              className="flex-1 py-3 bg-transparent text-slate-900 font-mono text-sm focus:outline-none"
             />
           </div>
           <button
             type="submit"
             disabled={busy || !query}
             data-testid="openfda-search-btn"
-            className="px-5 bg-white text-[#1E2B4E] font-mono text-xs tracking-[0.28em] uppercase hover:bg-[#E2E8F0] active:scale-[0.98] transition-colors disabled:opacity-50"
+            className="px-5 bg-white text-slate-900 font-mono text-xs tracking-[0.28em] uppercase hover:bg-slate-100 active:scale-[0.98] transition-colors disabled:opacity-50"
           >
             {busy ? "Fetching…" : "Query FDA"}
           </button>
@@ -72,7 +72,7 @@ export default function OpenFDADirectory() {
                 run(q);
               }}
               data-testid={`openfda-quick-${q.toLowerCase()}`}
-              className="border border-[#E2E8F0]/20 px-3 py-1.5 font-mono text-[10px] tracking-[0.25em] uppercase text-[#E2E8F0]/70 hover:text-white hover:border-[#10B981] transition-colors"
+              className="border border-slate-200 px-3 py-1.5 font-mono text-[10px] tracking-[0.25em] uppercase text-slate-600 hover:text-slate-900 hover:border-emerald-700 transition-colors"
             >
               {q}
             </button>
@@ -81,7 +81,7 @@ export default function OpenFDADirectory() {
       </div>
 
       {busy && (
-        <div className="k-panel p-6 text-center font-mono text-[10px] tracking-[0.3em] uppercase text-[#E2E8F0]/50">
+        <div className="k-panel p-6 text-center font-mono text-[10px] tracking-[0.3em] uppercase text-slate-400">
           Fetching openFDA label data…
         </div>
       )}
@@ -91,7 +91,7 @@ export default function OpenFDADirectory() {
       ))}
 
       {!busy && searched && results.length === 0 && (
-        <div className="k-panel p-8 text-center text-[#E2E8F0]/50" data-testid="openfda-empty">
+        <div className="k-panel p-8 text-center text-slate-400" data-testid="openfda-empty">
           No results for "{query}".
         </div>
       )}
@@ -105,10 +105,10 @@ function ResultCard({ r, idx }) {
       <div className="flex items-start justify-between flex-wrap gap-2 mb-6">
         <div>
           <p className="k-label">Result {idx + 1}</p>
-          <h3 className="font-display text-white text-2xl mt-2 tracking-tight">
+          <h3 className="font-display text-slate-900 text-2xl mt-2 tracking-tight">
             {r.brand_name}
           </h3>
-          <p className="text-[#E2E8F0]/60 text-sm mt-1">
+          <p className="text-slate-500 text-sm mt-1">
             {r.generic_name || "—"} {r.manufacturer_name ? `· ${r.manufacturer_name}` : ""}
           </p>
         </div>
@@ -144,13 +144,13 @@ function Panel({ icon, title, content, testid }) {
       ? content.join("\n\n")
       : "No data provided by OpenFDA for this section.";
   return (
-    <div className="border border-[#E2E8F0]/15 p-4 flex flex-col" data-testid={testid}>
+    <div className="border border-slate-200 p-4 flex flex-col" data-testid={testid}>
       <div className="flex items-center gap-2 mb-3">
         {icon}
-        <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-white">{title}</p>
+        <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-slate-900">{title}</p>
       </div>
       <div className="max-h-[280px] overflow-auto pr-1">
-        <p className="text-[#E2E8F0]/80 text-xs leading-relaxed whitespace-pre-wrap">{text}</p>
+        <p className="text-slate-600 text-xs leading-relaxed whitespace-pre-wrap">{text}</p>
       </div>
     </div>
   );

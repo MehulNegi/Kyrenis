@@ -83,8 +83,8 @@ export default function POSBilling() {
     <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6" data-testid="pos-view">
       <div className="k-panel p-6 md:p-8">
         <div className="flex items-center gap-3 mb-6">
-          <ShoppingCart size={18} className="text-[#10B981]" />
-          <h2 className="font-display text-white text-xl">POS Checkout</h2>
+          <ShoppingCart size={18} className="text-emerald-700" />
+          <h2 className="font-display text-slate-900 text-xl">POS Checkout</h2>
         </div>
 
         <div>
@@ -108,9 +108,9 @@ export default function POSBilling() {
         <div className="k-divider my-6" />
 
         {cart.length === 0 ? (
-          <div className="border border-dashed border-[#E2E8F0]/15 p-8 text-center" data-testid="pos-cart-empty">
-            <p className="text-[11px] text-[#E2E8F0]/55 tracking-[0.14em]">Cart empty</p>
-            <p className="text-[#E2E8F0]/60 text-sm mt-2">
+            <div className="border border-dashed border-slate-200 p-8 text-center" data-testid="pos-cart-empty">
+              <p className="text-[11px] text-slate-400 tracking-[0.14em]">Cart empty</p>
+              <p className="text-slate-500 text-sm mt-2">
               Search for a medicine to start a checkout.
             </p>
           </div>
@@ -124,18 +124,18 @@ export default function POSBilling() {
                 <div
                   key={line.medicine_id}
                   className={`border p-3 flex items-center gap-3 ${
-                    locked ? "border-[#EF4444]/60" : "border-[#E2E8F0]/12"
+                    locked ? "border-red-200" : "border-slate-200"
                   }`}
-                  style={locked ? { background: "rgba(239,68,68,0.06)" } : {}}
+                  style={locked ? { background: "#FEF2F2" } : {}}
                   data-testid={`pos-cart-line-${med?.brand_name}`}
                 >
                   <div className="flex-1">
-                    <p className="text-white text-sm font-medium">{med?.brand_name}</p>
-                    <p className="text-[#E2E8F0]/55 text-xs">
+                    <p className="text-slate-900 text-sm font-medium">{med?.brand_name}</p>
+                    <p className="text-slate-500 text-xs">
                       {med?.generic_composition} · dispensable {s?.dispensable ?? 0}
                     </p>
                     {locked && (
-                      <p className="text-[#EF4444] text-xs mt-1 inline-flex items-center gap-1" data-testid={`pos-expiry-lock-${med?.brand_name}`}>
+                      <p className="text-red-700 text-xs mt-1 inline-flex items-center gap-1" data-testid={`pos-expiry-lock-${med?.brand_name}`}>
                         <AlertTriangle size={12} />
                         Billing locked — all on-hand stock has expired.
                       </p>
@@ -147,12 +147,12 @@ export default function POSBilling() {
                     value={line.quantity}
                     data-testid={`pos-cart-qty-${med?.brand_name}`}
                     onChange={(e) => updateQty(line.medicine_id, parseInt(e.target.value, 10))}
-                    className="w-20 px-3 py-2 bg-black border border-[#E2E8F0]/20 text-white text-sm text-right focus:border-[#10B981] focus:outline-none"
+                    className="w-20 px-3 py-2 bg-white border border-slate-200 text-slate-900 text-sm text-right focus:border-emerald-700 focus:outline-none"
                   />
                   <button
                     onClick={() => removeLine(line.medicine_id)}
                     data-testid={`pos-cart-remove-${med?.brand_name}`}
-                    className="text-[#EF4444] hover:text-white p-2 border border-[#E2E8F0]/12 hover:border-[#EF4444] transition-colors"
+                    className="text-red-700 hover:text-slate-900 p-2 border border-slate-200 hover:border-red-700 transition-colors"
                     aria-label="Remove"
                   >
                     <Trash2 size={14} />
@@ -167,7 +167,7 @@ export default function POSBilling() {
           onClick={submit}
           disabled={cart.length === 0 || busy || cartHasIssues}
           data-testid="pos-checkout-btn"
-          className="mt-6 w-full py-3 bg-white text-[#1E2B4E] text-sm font-medium inline-flex items-center justify-center gap-2 hover:bg-[#E2E8F0] active:scale-[0.98] transition-colors disabled:opacity-40"
+          className="mt-6 w-full py-3 bg-white text-slate-900 text-sm font-medium inline-flex items-center justify-center gap-2 hover:bg-slate-100 active:scale-[0.98] transition-colors disabled:opacity-40"
         >
           <Receipt size={14} />
           {cartHasIssues ? "Resolve expiry lock to continue" : "Finalise & Generate Invoice"}
@@ -184,8 +184,8 @@ function ReceiptPanel({ receipt, onPrint }) {
   if (!receipt) {
     return (
       <div className="k-panel p-6 flex flex-col items-center justify-center text-center min-h-[400px]" data-testid="pos-receipt-empty">
-        <Receipt size={40} className="text-[#E2E8F0]/25" />
-        <p className="mt-4 text-[11px] tracking-[0.14em] text-[#E2E8F0]/55">No invoice yet</p>
+        <Receipt size={40} className="text-slate-300" />
+        <p className="mt-4 text-[11px] tracking-[0.14em] text-slate-400">No invoice yet</p>
       </div>
     );
   }
@@ -194,44 +194,44 @@ function ReceiptPanel({ receipt, onPrint }) {
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="k-label">Invoice</p>
-          <p className="text-white font-medium mt-1" data-testid="pos-receipt-number">
+          <p className="text-slate-900 font-medium mt-1" data-testid="pos-receipt-number">
             {receipt.invoice_number}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-2 border border-[#10B981]/50 text-[#10B981] px-3 py-1.5 text-[11px] tracking-[0.14em]">
+          <span className="inline-flex items-center gap-2 border border-emerald-200 text-emerald-700 px-3 py-1.5 text-[11px] tracking-[0.14em]">
             <CheckCircle2 size={12} />
             {receipt.status}
           </span>
           <button
             onClick={onPrint}
             data-testid="pos-print-btn"
-            className="inline-flex items-center gap-2 border border-[#E2E8F0]/25 px-3 py-1.5 text-[11px] hover:text-white hover:border-white transition-colors"
+            className="inline-flex items-center gap-2 border border-slate-200 px-3 py-1.5 text-[11px] hover:text-slate-900 hover:border-slate-300 transition-colors"
           >
             <Printer size={12} />
             Print
           </button>
         </div>
       </div>
-      <p className="text-[#E2E8F0]/55 text-xs">
-        {new Date(receipt.timestamp).toLocaleString()}
-      </p>
+          <p className="text-slate-500 text-xs">
+            {new Date(receipt.timestamp).toLocaleString()}
+          </p>
 
       <div className="flex flex-col gap-3 mt-6">
         {receipt.lines.map((l, i) => (
-          <div key={i} className="border border-[#E2E8F0]/12 p-4" data-testid={`pos-receipt-line-${i}`}>
+          <div key={i} className="border border-slate-200 p-4" data-testid={`pos-receipt-line-${i}`}>
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-white text-sm font-medium">{l.medicine.brand_name}</p>
-                <p className="text-[#E2E8F0]/55 text-xs">
+                <p className="text-slate-900 text-sm font-medium">{l.medicine.brand_name}</p>
+                <p className="text-slate-500 text-xs">
                   {l.medicine.generic_composition} · qty {l.requested_qty}
                 </p>
               </div>
-              <p className="text-white text-sm">₹{l.line_total.toFixed(2)}</p>
+              <p className="text-slate-900 text-sm">₹{l.line_total.toFixed(2)}</p>
             </div>
-            <div className="mt-3 border-l border-[#10B981]/40 pl-3 flex flex-col gap-1">
+            <div className="mt-3 border-l border-emerald-200 pl-3 flex flex-col gap-1">
               {l.deductions.map((d, j) => (
-                <p key={j} className="text-[11px] text-[#E2E8F0]/60">
+                <p key={j} className="text-[11px] text-slate-500">
                   FIFO · {d.batch_number} · exp {d.expiry_date} · qty {d.qty_taken} @ ₹{d.mrp}
                 </p>
               ))}
@@ -242,14 +242,14 @@ function ReceiptPanel({ receipt, onPrint }) {
 
       <div className="k-divider my-6" />
       <div className="grid grid-cols-2 gap-3 text-sm">
-        <p className="text-[#E2E8F0]/70">Taxable Value</p>
-        <p className="text-right text-white">₹{receipt.taxable_value.toFixed(2)}</p>
-        <p className="text-[#E2E8F0]/70">CGST (6%)</p>
-        <p className="text-right text-white">₹{receipt.cgst.toFixed(2)}</p>
-        <p className="text-[#E2E8F0]/70">SGST (6%)</p>
-        <p className="text-right text-white">₹{receipt.sgst.toFixed(2)}</p>
-        <p className="text-[#E2E8F0]/70 font-medium">Grand Total</p>
-        <p className="text-right font-display text-white text-2xl" data-testid="pos-receipt-total">
+        <p className="text-slate-600">Taxable Value</p>
+        <p className="text-right text-slate-900">₹{receipt.taxable_value.toFixed(2)}</p>
+        <p className="text-slate-600">CGST (6%)</p>
+        <p className="text-right text-slate-900">₹{receipt.cgst.toFixed(2)}</p>
+        <p className="text-slate-600">SGST (6%)</p>
+        <p className="text-right text-slate-900">₹{receipt.sgst.toFixed(2)}</p>
+        <p className="text-slate-600 font-medium">Grand Total</p>
+        <p className="text-right font-display text-slate-900 text-2xl" data-testid="pos-receipt-total">
           ₹{receipt.grand_total.toFixed(2)}
         </p>
       </div>

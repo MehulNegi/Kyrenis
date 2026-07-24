@@ -62,7 +62,7 @@ export default function KyrenisLogo({ size = 44, className = "" }) {
       {/* Checkmark cutout */}
       <path
         d="M42 66 L48 72 L60 60"
-        stroke="#1E2B4E"
+        stroke="#FFFFFF"
         strokeWidth="4"
         strokeLinecap="round"
         strokeLinejoin="round"

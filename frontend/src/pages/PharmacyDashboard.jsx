@@ -20,17 +20,17 @@ const TABS = [
 export default function PharmacyDashboard() {
   const [active, setActive] = useState("intake");
   return (
-    <div className="min-h-screen bg-black text-[#E2E8F0]" data-testid="pharmacy-dashboard">
+    <div className="min-h-screen bg-white text-slate-600" data-testid="pharmacy-dashboard">
       <KyrenisHeader variant="Pharmacy Operations Hub" />
 
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 pt-10">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
           <div>
             <p className="k-label">Pharmacy Console</p>
-            <h1 className="font-display font-bold text-white text-3xl md:text-4xl tracking-tight mt-3">
+            <h1 className="font-display font-bold text-slate-900 text-3xl md:text-4xl tracking-tight mt-3">
               Retail Operations Hub
             </h1>
-            <p className="text-[#E2E8F0]/65 mt-2 max-w-2xl">
+            <p className="text-slate-600 mt-2 max-w-2xl">
               Batch intake, First-In-First-Out point-of-sale billing, replenishment governance,
               sales history and CDSCO regulatory analytics — all in one console.
             </p>
@@ -38,7 +38,7 @@ export default function PharmacyDashboard() {
         </div>
 
         <div
-          className="flex flex-wrap gap-1 border border-[#E2E8F0]/12 p-1 mb-8"
+          className="flex flex-wrap gap-1 border border-slate-200 p-1 mb-8"
           role="tablist"
           data-testid="pharmacy-tabs"
         >
@@ -51,8 +51,8 @@ export default function PharmacyDashboard() {
               data-testid={testid}
               className={`inline-flex items-center gap-2 px-4 py-3 text-sm transition-colors ${
                 active === key
-                  ? "bg-[#1E2B4E] text-white"
-                  : "text-[#E2E8F0]/75 hover:text-white"
+                  ? "bg-slate-100 text-slate-900"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               <Icon size={14} />

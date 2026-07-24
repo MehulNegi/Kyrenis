@@ -17,7 +17,7 @@ export default function InvoicePrint({ receipt, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/85 flex items-start md:items-center justify-center overflow-auto p-4"
+      className="fixed inset-0 z-[100] bg-slate-900/50 flex items-start md:items-center justify-center overflow-auto p-4"
       data-testid="invoice-print-overlay"
     >
       <style>{`
@@ -40,7 +40,7 @@ export default function InvoicePrint({ receipt, onClose }) {
             <button
               onClick={doPrint}
               data-testid="invoice-print-do"
-              className="inline-flex items-center gap-2 bg-[#1E2B4E] text-white px-4 py-2 text-sm hover:bg-[#0f1a34] transition-colors"
+              className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 text-sm hover:bg-slate-800 transition-colors"
             >
               <Printer size={14} />
               Print
@@ -49,7 +49,7 @@ export default function InvoicePrint({ receipt, onClose }) {
               onClick={onClose}
               data-testid="invoice-print-close"
               aria-label="Close"
-              className="w-9 h-9 border border-black/15 inline-flex items-center justify-center hover:bg-black/5 transition-colors"
+              className="w-9 h-9 border border-slate-300 inline-flex items-center justify-center hover:bg-slate-100 transition-colors"
             >
               <X size={16} />
             </button>
@@ -59,18 +59,18 @@ export default function InvoicePrint({ receipt, onClose }) {
         <div className="p-8">
           <div className="invoice-header flex items-start justify-between border-b border-black/15 pb-6">
             <div>
-              <p className="text-[10px] tracking-[0.28em] uppercase text-[#1E2B4E]/70">
+              <p className="text-[10px] tracking-[0.28em] uppercase text-slate-900/70">
                 Kyrenis Reference Pharmacy
               </p>
-              <h1 className="font-display text-3xl mt-2 text-[#1E2B4E]">Tax Invoice</h1>
+              <h1 className="font-display text-3xl mt-2 text-slate-900">Tax Invoice</h1>
               <p className="text-black/55 text-xs mt-2">
                 Andheri East, Mumbai 400 069 · GSTIN 27ABCDE1234F1Z5
               </p>
             </div>
             <div className="text-right">
-              <p className="text-[10px] tracking-[0.14em] text-black/55">Invoice #</p>
-              <p className="text-[#1E2B4E] font-mono text-sm mt-1">{receipt.invoice_number}</p>
-              <p className="text-[10px] tracking-[0.14em] text-black/55 mt-3">Date</p>
+              <p className="text-[10px] tracking-[0.14em] text-slate-900/55">Invoice #</p>
+              <p className="text-slate-900 font-mono text-sm mt-1">{receipt.invoice_number}</p>
+              <p className="text-[10px] tracking-[0.14em] text-slate-900/55 mt-3">Date</p>
               <p className="text-sm mt-1">{new Date(receipt.timestamp).toLocaleString()}</p>
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function InvoicePrint({ receipt, onClose }) {
               <Row label="SGST (6%)" value={`₹${receipt.sgst.toFixed(2)}`} />
               <div className="border-t border-black/25 mt-2 pt-3 flex justify-between font-medium">
                 <span>Grand Total</span>
-                <span className="text-[#1E2B4E] text-lg">₹{receipt.grand_total.toFixed(2)}</span>
+                <span className="text-slate-900 text-lg">₹{receipt.grand_total.toFixed(2)}</span>
               </div>
             </div>
           </div>

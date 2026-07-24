@@ -65,14 +65,14 @@ export default function Telemetry() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <p className="k-label">// Network Telemetry Grid</p>
-          <p className="text-[#E2E8F0]/60 text-sm mt-1">
+          <p className="text-slate-500 text-sm mt-1">
             Live signals across {volumetric.length} tracked batches · {alerts.length} unresolved anomalies.
           </p>
         </div>
         <a
           href={`${BACKEND}/api/pharmacy/export/audit-log.csv`}
           data-testid="telemetry-export-csv"
-          className="inline-flex items-center gap-2 border border-[#10B981]/50 text-[#10B981] px-4 py-2 font-mono text-[10px] tracking-[0.25em] uppercase hover:bg-[#10B981]/10 transition-colors"
+          className="inline-flex items-center gap-2 border border-emerald-200 text-emerald-700 px-4 py-2 font-mono text-[10px] tracking-[0.25em] uppercase hover:bg-emerald-50 transition-colors"
         >
           <Download size={12} />
           Export Audit CSV
@@ -83,15 +83,15 @@ export default function Telemetry() {
       {exceededBatches.length > 0 && (
         <div
           className="border p-4 flex items-start gap-3"
-          style={{ borderColor: "#EF4444", background: "rgba(239,68,68,0.09)" }}
+          style={{ borderColor: "#EF4444", background: "#FEF2F2" }}
           data-testid="volumetric-critical-banner"
         >
-          <AlertTriangle size={20} className="text-[#EF4444] mt-0.5" />
+          <AlertTriangle size={20} className="text-red-700 mt-0.5" />
           <div>
-            <p className="text-white font-medium">
+            <p className="text-slate-900 font-medium">
               CRITICAL: Volumetric Threshold Exceeded (Suspected Batch Cloning Ring)
             </p>
-            <p className="text-[#E2E8F0]/70 text-sm mt-1">
+            <p className="text-slate-600 text-sm mt-1">
               {exceededBatches.length} batch(es) have surpassed 40,000 units cumulative — suspected clone circulation.
             </p>
           </div>
@@ -101,11 +101,11 @@ export default function Telemetry() {
       {/* Timeline area chart */}
       <div className="k-panel p-6 md:p-8" data-testid="telemetry-timeline-panel">
         <div className="flex items-center gap-3 mb-6">
-          <Activity size={18} className="text-[#10B981]" />
-          <h2 className="font-display text-white text-xl">Scan Activity · Last 7 Days</h2>
+          <Activity size={18} className="text-emerald-700" />
+          <h2 className="font-display text-slate-900 text-xl">Scan Activity · Last 7 Days</h2>
         </div>
         {timeline.length === 0 ? (
-          <p className="text-[#E2E8F0]/50 text-sm">No recent scan activity.</p>
+          <p className="text-slate-400 text-sm">No recent scan activity.</p>
         ) : (
           <div className="h-[220px]" data-testid="timeline-chart">
             <ResponsiveContainer width="100%" height="100%">
@@ -120,27 +120,27 @@ export default function Telemetry() {
                     <stop offset="100%" stopColor="#EF4444" stopOpacity={0.05} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="rgba(226,232,240,0.08)" vertical={false} />
+                <CartesianGrid stroke="#E2E8F0" vertical={false} />
                 <XAxis
                   dataKey="hour"
-                  tick={{ fill: "#E2E8F0", fontFamily: "JetBrains Mono", fontSize: 9 }}
+                  tick={{ fill: "#64748B", fontFamily: "JetBrains Mono", fontSize: 9 }}
                   tickFormatter={(h) => (typeof h === "string" ? h.slice(5) : h)}
                   interval={Math.max(Math.floor(timeline.length / 12), 1)}
                 />
                 <YAxis
-                  tick={{ fill: "#E2E8F0", fontFamily: "JetBrains Mono", fontSize: 10 }}
+                  tick={{ fill: "#64748B", fontFamily: "JetBrains Mono", fontSize: 10 }}
                 />
                 <Tooltip
                   contentStyle={{
-                    background: "#1F2326",
-                    border: "1px solid rgba(226,232,240,0.2)",
+                    background: "#FFFFFF",
+                    border: "1px solid #E2E8F0",
                     fontFamily: "JetBrains Mono",
                     fontSize: 12,
-                    color: "#E2E8F0",
+                    color: "#0F172A",
                   }}
                 />
                 <Legend
-                  wrapperStyle={{ fontFamily: "JetBrains Mono", fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#E2E8F0" }}
+                  wrapperStyle={{ fontFamily: "JetBrains Mono", fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#64748B" }}
                 />
                 <Area
                   type="monotone"
@@ -170,8 +170,8 @@ export default function Telemetry() {
         {/* Volumetric chart */}
         <div className="k-panel p-6 md:p-8" data-testid="volumetric-chart-panel">
           <div className="flex items-center gap-3 mb-6">
-            <Waves size={18} className="text-[#10B981]" />
-            <h2 className="font-display text-white text-xl">Batch Volume Distribution</h2>
+          <Waves size={18} className="text-emerald-700" />
+          <h2 className="font-display text-slate-900 text-xl">Batch Volume Distribution</h2>
           </div>
           <div className="h-[340px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -184,16 +184,16 @@ export default function Telemetry() {
                   interval={0}
                 />
                 <YAxis
-                  tick={{ fill: "#E2E8F0", fontFamily: "JetBrains Mono", fontSize: 10 }}
+                  tick={{ fill: "#64748B", fontFamily: "JetBrains Mono", fontSize: 10 }}
                 />
                 <Tooltip
-                  cursor={{ fill: "rgba(30, 43, 78, 0.4)" }}
+                  cursor={{ fill: "rgba(226, 232, 240, 0.4)" }}
                   contentStyle={{
-                    background: "#1F2326",
-                    border: "1px solid rgba(226,232,240,0.2)",
+                    background: "#FFFFFF",
+                    border: "1px solid #E2E8F0",
                     fontFamily: "JetBrains Mono",
                     fontSize: 12,
-                    color: "#E2E8F0",
+                    color: "#0F172A",
                   }}
                 />
                 <ReferenceLine
@@ -212,7 +212,7 @@ export default function Telemetry() {
                   {chartData.map((entry, idx) => (
                     <Cell
                       key={idx}
-                      fill={entry.exceeded ? "#EF4444" : "#1E2B4E"}
+                      fill={entry.exceeded ? "#EF4444" : "#E2E8F0"}
                       stroke={entry.exceeded ? "#EF4444" : "#E2E8F0"}
                       strokeOpacity={0.25}
                     />
@@ -226,25 +226,25 @@ export default function Telemetry() {
         {/* Spatial teleportation list */}
         <div className="k-panel p-6 md:p-8" data-testid="spatial-panel">
           <div className="flex items-center gap-3 mb-6">
-            <MapPin size={18} className="text-[#EF4444]" />
-            <h2 className="font-display text-white text-xl">Verification Trends by City</h2>
+          <MapPin size={18} className="text-red-700" />
+          <h2 className="font-display text-slate-900 text-xl">Verification Trends by City</h2>
           </div>
           {spatial.length === 0 ? (
-            <p className="text-[#E2E8F0]/50 text-sm">No spatial anomalies within 12h window.</p>
+            <p className="text-slate-400 text-sm">No spatial anomalies within 12h window.</p>
           ) : (
             <div className="flex flex-col gap-3 max-h-[300px] overflow-auto pr-1" data-testid="spatial-list">
               {spatial.slice(0, 10).map((a, i) => (
                 <div
                   key={i}
-                  className="border border-[#EF4444]/40 p-3"
-                  style={{ background: "rgba(239,68,68,0.05)" }}
+                  className="border border-red-200 p-3"
+                  style={{ background: "#FEF2F2" }}
                   data-testid={`spatial-item-${a.batch_number}`}
                 >
-                  <p className="font-mono text-white text-sm">{a.batch_number}</p>
-                  <p className="text-[#E2E8F0]/70 text-xs mt-1">
+                  <p className="text-slate-900 text-sm font-medium">{a.batch_number}</p>
+                  <p className="text-slate-600 text-xs mt-1">
                     {a.from_city} → {a.to_city}
                   </p>
-                  <p className="font-mono text-[10px] text-[#EF4444] mt-1">
+                  <p className="font-mono text-[10px] text-red-700 mt-1">
                     Gap {a.gap_hours}h
                   </p>
                 </div>
@@ -258,22 +258,22 @@ export default function Telemetry() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="k-panel p-6 md:p-8" data-testid="security-alerts-panel">
           <div className="flex items-center gap-3 mb-6">
-            <Radar size={18} className="text-[#EF4444]" />
-            <h2 className="font-display text-white text-xl">Risk Alerts</h2>
+          <Radar size={18} className="text-red-700" />
+          <h2 className="font-display text-slate-900 text-xl">Risk Alerts</h2>
           </div>
           {alerts.length === 0 ? (
-            <p className="text-[#E2E8F0]/50 text-sm">Network clean.</p>
+            <p className="text-slate-400 text-sm">Network clean.</p>
           ) : (
             <div className="flex flex-col gap-2 max-h-[300px] overflow-auto pr-1">
               {alerts.slice(0, 20).map((a) => (
                 <div
                   key={a.id}
-                  className="border border-[#E2E8F0]/12 p-3 flex items-center justify-between"
+                  className="border border-slate-200 p-3 flex items-center justify-between"
                   data-testid={`alert-${a.target_batch_number}`}
                 >
                   <div>
-                    <p className="text-white text-sm">{a.alert_type}</p>
-                    <p className="font-mono text-[10px] text-[#E2E8F0]/60 mt-1">
+                    <p className="text-slate-900 text-sm">{a.alert_type}</p>
+                    <p className="font-mono text-[10px] text-slate-500 mt-1">
                       {a.target_batch_number} · {a.target_medicine_name || "—"}
                     </p>
                   </div>
@@ -295,21 +295,21 @@ export default function Telemetry() {
 
         <div className="k-panel p-6 md:p-8" data-testid="cdsco-panel">
           <div className="flex items-center gap-3 mb-6">
-            <AlertTriangle size={18} className="text-[#F59E0B]" />
-            <h2 className="font-display text-white text-xl">Recall Intelligence</h2>
+          <AlertTriangle size={18} className="text-amber-600" />
+          <h2 className="font-display text-slate-900 text-xl">Recall Intelligence</h2>
           </div>
           <div className="flex flex-col gap-2 max-h-[300px] overflow-auto pr-1">
             {recalls.map((r) => (
               <div
                 key={r.id}
-                className="border border-[#F59E0B]/30 p-3"
+                  className="border border-amber-200 p-3"
                 data-testid={`recall-${r.target_batch_number}`}
               >
-                <p className="text-white text-sm">{r.target_medicine_name}</p>
-                <p className="font-mono text-[10px] text-[#F59E0B] mt-1">
+                <p className="text-slate-900 text-sm">{r.target_medicine_name}</p>
+                <p className="font-mono text-[10px] text-amber-600 mt-1">
                   Batch {r.target_batch_number} · {r.date_published}
                 </p>
-                <p className="text-[#E2E8F0]/60 text-xs mt-1">{r.hazard_classification}</p>
+                  <p className="text-slate-500 text-xs mt-1">{r.hazard_classification}</p>
               </div>
             ))}
           </div>

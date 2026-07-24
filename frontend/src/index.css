@@ -7,55 +7,52 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-    --k-black: #000000;
-    --k-panel: #1F2326;
-    --k-navy: #1E2B4E;
-    --k-grey: #E2E8F0;
-    --k-white: #FFFFFF;
-    --k-safe: #10B981;
-    --k-danger: #EF4444;
-    --k-amber: #F59E0B;
+    --k-surface: #F8FAFC;
+    --k-panel: #FFFFFF;
+    --k-navy: #F1F5F9;
+    --k-grey: #94A3B8;
+    --k-white: #0F172A;
+    --k-safe: #059669;
+    --k-danger: #DC2626;
+    --k-amber: #D97706;
 
-    /* Shadcn variable overrides mapped to Kyrenis palette (dark-only) */
-    --background: 0 0% 0%;
-    --foreground: 214 32% 91%;
-    --card: 210 8% 13%;
-    --card-foreground: 0 0% 100%;
-    --popover: 210 8% 13%;
-    --popover-foreground: 214 32% 91%;
-    --primary: 220 44% 22%;
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 222 47% 11%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 8% 13%;
-    --secondary-foreground: 214 32% 91%;
-    --muted: 210 8% 13%;
-    --muted-foreground: 214 22% 70%;
-    --accent: 220 44% 22%;
-    --accent-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 91% / 0.15;
-    --input: 210 8% 13%;
-    --ring: 220 44% 22%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 222 47% 11%;
     --radius: 4px;
 }
 
 * {
-    border-color: rgba(226, 232, 240, 0.15);
+    border-color: #E2E8F0;
 }
 
 html, body, #root {
-    background: #000000;
-    color: var(--k-grey);
+    background: #FFFFFF;
+    color: #0F172A;
     font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
 }
 
 body {
-    background-image:
-        radial-gradient(circle at 20% 10%, rgba(30, 43, 78, 0.18), transparent 55%),
-        radial-gradient(circle at 85% 90%, rgba(16, 185, 129, 0.05), transparent 45%);
-    background-attachment: fixed;
+    background-image: none;
+    background-attachment: auto;
 }
 
 .font-display {
@@ -69,23 +66,23 @@ body {
 
 .k-panel {
     background: var(--k-panel);
-    border: 1px solid rgba(226, 232, 240, 0.12);
+    border: 1px solid #E2E8F0;
 }
 
 .k-panel-navy {
     background: var(--k-navy);
-    border: 1px solid rgba(226, 232, 240, 0.18);
+    border: 1px solid #E2E8F0;
 }
 
 .k-label {
     font-size: 11px;
     letter-spacing: 0.14em;
-    color: rgba(226, 232, 240, 0.6);
+    color: #64748B;
 }
 
 .k-divider {
     height: 1px;
-    background: linear-gradient(to right, transparent, rgba(226, 232, 240, 0.25), transparent);
+    background: #E2E8F0;
 }
 
 /* Scanner viewfinder animation kept for camera scanner UI only */
@@ -101,13 +98,13 @@ body {
 
 /* Selection */
 ::selection {
-    background: var(--k-navy);
-    color: var(--k-white);
+    background: #F1F5F9;
+    color: #0F172A;
 }
 
 /* Focus ring */
 button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, [role="tab"]:focus-visible {
-    outline: 2px solid var(--k-grey);
+    outline: 2px solid #94A3B8;
     outline-offset: 2px;
 }
 

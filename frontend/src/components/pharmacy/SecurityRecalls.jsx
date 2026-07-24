@@ -4,18 +4,18 @@ import { ShieldAlert, AlertOctagon, Filter, RefreshCw } from "lucide-react";
 
 const severityStyle = (sev) => {
   const s = (sev || "").toLowerCase();
-  if (s === "critical") return "text-[#EF4444] border-[#EF4444]/40 bg-[#EF4444]/10";
-  if (s === "high") return "text-[#F59E0B] border-[#F59E0B]/40 bg-[#F59E0B]/10";
-  return "text-[#E2E8F0]/80 border-[#E2E8F0]/20 bg-[#E2E8F0]/5";
+  if (s === "critical") return "text-red-700 border-red-200 bg-red-50";
+  if (s === "high") return "text-amber-600 border-amber-200 bg-amber-50";
+  return "text-slate-700 border-slate-200 bg-slate-50";
 };
 
 const categoryStyle = (cat) => {
   const c = (cat || "").toLowerCase();
-  if (c === "recall") return "text-[#EF4444]";
-  if (c === "spurious") return "text-[#F97316]";
-  if (c === "theft") return "text-[#8B5CF6]";
-  if (c === "nsq") return "text-[#F59E0B]";
-  return "text-[#E2E8F0]/70";
+  if (c === "recall") return "text-red-700";
+  if (c === "spurious") return "text-orange-600";
+  if (c === "theft") return "text-violet-700";
+  if (c === "nsq") return "text-amber-600";
+  return "text-slate-600";
 };
 
 export default function SecurityRecalls() {
@@ -68,10 +68,10 @@ export default function SecurityRecalls() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <p className="k-label">Regulatory Feed</p>
-          <h2 className="font-display text-white text-2xl md:text-3xl tracking-tight mt-2">
+          <h2 className="font-display text-slate-900 text-2xl md:text-3xl tracking-tight mt-2">
             Security &amp; Recalls
           </h2>
-          <p className="text-[#E2E8F0]/65 text-sm mt-1">
+          <p className="text-slate-600 text-sm mt-1">
             CDSCO advisories cross-referenced with in-pharmacy telemetry saturation and spatial
             anomaly hits.
           </p>
@@ -80,7 +80,7 @@ export default function SecurityRecalls() {
           onClick={load}
           disabled={loading}
           data-testid="security-recalls-refresh"
-          className="inline-flex items-center gap-2 border border-[#E2E8F0]/20 px-3 py-2 text-sm text-[#E2E8F0]/80 hover:text-white hover:border-white/40 transition-colors"
+          className="inline-flex items-center gap-2 border border-slate-200 px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-colors"
         >
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
           Refresh
@@ -88,7 +88,7 @@ export default function SecurityRecalls() {
       </div>
 
       <div
-        className="inline-flex border border-[#E2E8F0]/12 p-1"
+        className="inline-flex border border-slate-200 p-1"
         role="tablist"
         data-testid="security-recalls-tabs"
       >
@@ -101,7 +101,7 @@ export default function SecurityRecalls() {
           aria-selected={tab === "recalls"}
           data-testid="security-recalls-tab-recalls"
           className={`inline-flex items-center gap-2 px-4 py-2 text-sm ${
-            tab === "recalls" ? "bg-[#1E2B4E] text-white" : "text-[#E2E8F0]/70 hover:text-white"
+            tab === "recalls" ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:text-slate-900"
           }`}
         >
           <ShieldAlert size={14} />
@@ -116,7 +116,7 @@ export default function SecurityRecalls() {
           aria-selected={tab === "alerts"}
           data-testid="security-recalls-tab-alerts"
           className={`inline-flex items-center gap-2 px-4 py-2 text-sm ${
-            tab === "alerts" ? "bg-[#1E2B4E] text-white" : "text-[#E2E8F0]/70 hover:text-white"
+            tab === "alerts" ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:text-slate-900"
           }`}
         >
           <AlertOctagon size={14} />
@@ -127,7 +127,7 @@ export default function SecurityRecalls() {
       {error && (
         <div
           data-testid="security-recalls-error"
-          className="border border-[#EF4444]/40 bg-[#EF4444]/10 text-[#FCA5A5] px-4 py-3 text-sm"
+          className="border border-red-200 bg-red-50 text-red-800 px-4 py-3 text-sm"
         >
           {error}
         </div>
@@ -136,7 +136,7 @@ export default function SecurityRecalls() {
       {tab === "recalls" && (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2 text-xs">
-            <Filter size={12} className="text-[#E2E8F0]/50" />
+            <Filter size={12} className="text-slate-500" />
             {[
               ["all", "All"],
               ["recall", "Recall"],
@@ -150,8 +150,8 @@ export default function SecurityRecalls() {
                 data-testid={`security-recalls-filter-${k}`}
                 className={`px-3 py-1.5 border transition-colors ${
                   filter === k
-                    ? "border-[#10B981] text-[#10B981]"
-                    : "border-[#E2E8F0]/15 text-[#E2E8F0]/65 hover:text-white"
+                    ? "border-emerald-700 text-emerald-700"
+                    : "border-slate-200 text-slate-600 hover:text-slate-900"
                 }`}
               >
                 {label}
@@ -161,13 +161,13 @@ export default function SecurityRecalls() {
 
           <div
             data-testid="security-recalls-recalls-list"
-            className="border border-[#E2E8F0]/12 divide-y divide-[#E2E8F0]/10"
+            className="border border-slate-200 divide-y divide-slate-200"
           >
             {loading && (
-              <div className="px-4 py-6 text-[#E2E8F0]/50 text-sm">Loading CDSCO advisories…</div>
+              <div className="px-4 py-6 text-slate-400 text-sm">Loading CDSCO advisories…</div>
             )}
             {!loading && filteredRecalls.length === 0 && (
-              <div className="px-4 py-6 text-[#E2E8F0]/50 text-sm">
+              <div className="px-4 py-6 text-slate-400 text-sm">
                 No advisories match the current filter.
               </div>
             )}
@@ -175,21 +175,21 @@ export default function SecurityRecalls() {
               <div
                 key={r.id || i}
                 data-testid={`security-recalls-recall-row-${i}`}
-                className="px-4 py-4 flex flex-col md:flex-row md:items-center gap-3 hover:bg-white/2.5"
+                className="px-4 py-4 flex flex-col md:flex-row md:items-center gap-3 hover:bg-slate-50"
               >
                 <div className="md:w-56 shrink-0">
-                  <p className="text-white font-medium text-sm">{r.product_name}</p>
-                  <p className="text-[#E2E8F0]/60 text-xs mt-0.5">{r.generic_composition}</p>
+                  <p className="text-slate-900 font-medium text-sm">{r.product_name}</p>
+                  <p className="text-slate-500 text-xs mt-0.5">{r.generic_composition}</p>
                 </div>
                 <div className="md:w-40 shrink-0">
-                  <p className="k-mono text-[#E2E8F0]/80 text-xs">{r.batch_number}</p>
-                  <p className="text-[#E2E8F0]/55 text-[11px] mt-0.5">{r.manufacturer}</p>
+                  <p className="k-mono text-slate-700 text-xs">{r.batch_number}</p>
+                  <p className="text-slate-400 text-[11px] mt-0.5">{r.manufacturer}</p>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[#E2E8F0]/85 text-sm">
+                  <p className="text-slate-700 text-sm">
                     {r.failure_reason || r.hazard_classification}
                   </p>
-                  <p className="text-[#E2E8F0]/50 text-[11px] mt-1">
+                  <p className="text-slate-400 text-[11px] mt-1">
                     {r.reporting_authority} • {r.reporting_lab} •{" "}
                     {r.reporting_date || r.date_published}
                   </p>
@@ -219,7 +219,7 @@ export default function SecurityRecalls() {
       {tab === "alerts" && (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-2 text-xs">
-            <Filter size={12} className="text-[#E2E8F0]/50" />
+            <Filter size={12} className="text-slate-500" />
             {[
               ["all", "All"],
               ["critical", "Critical"],
@@ -229,11 +229,11 @@ export default function SecurityRecalls() {
                 key={k}
                 onClick={() => setFilter(k)}
                 data-testid={`security-recalls-alert-filter-${k}`}
-                className={`px-3 py-1.5 border transition-colors ${
-                  filter === k
-                    ? "border-[#10B981] text-[#10B981]"
-                    : "border-[#E2E8F0]/15 text-[#E2E8F0]/65 hover:text-white"
-                }`}
+                  className={`px-3 py-1.5 border transition-colors ${
+                    filter === k
+                      ? "border-emerald-700 text-emerald-700"
+                      : "border-slate-200 text-slate-600 hover:text-slate-900"
+                  }`}
               >
                 {label}
               </button>
@@ -242,14 +242,14 @@ export default function SecurityRecalls() {
 
           <div
             data-testid="security-recalls-alerts-list"
-            className="border border-[#E2E8F0]/12 divide-y divide-[#E2E8F0]/10"
+            className="border border-slate-200 divide-y divide-slate-200"
           >
             {loading && (
-              <div className="px-4 py-6 text-[#E2E8F0]/50 text-sm">Loading security alerts…</div>
+              <div className="px-4 py-6 text-slate-400 text-sm">Loading security alerts…</div>
             )}
             {!loading && filteredAlerts.length === 0 && (
-              <div className="px-4 py-6 text-[#E2E8F0]/50 text-sm">
-                No security alerts match the current filter.
+              <div className="px-4 py-6 text-slate-400 text-sm">
+                No advisories match the current filter.
               </div>
             )}
             {filteredAlerts.map((a, i) => (
@@ -259,15 +259,15 @@ export default function SecurityRecalls() {
                 className="px-4 py-4 flex flex-col md:flex-row md:items-center gap-3"
               >
                 <div className="md:w-56 shrink-0">
-                  <p className="text-white font-medium text-sm">{a.target_medicine_name}</p>
-                  <p className="k-mono text-[#E2E8F0]/60 text-xs mt-0.5">
+                  <p className="text-slate-900 font-medium text-sm">{a.target_medicine_name}</p>
+                  <p className="k-mono text-slate-500 text-xs mt-0.5">
                     {a.target_batch_number}
                   </p>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[#E2E8F0]/85 text-sm">{a.alert_type}</p>
+                  <p className="text-slate-700 text-sm">{a.alert_type}</p>
                   {a.triggering_telemetry_json?.detail && (
-                    <p className="text-[#E2E8F0]/55 text-[11px] mt-1">
+                    <p className="text-slate-400 text-[11px] mt-1">
                       {a.triggering_telemetry_json.detail}
                     </p>
                   )}
@@ -283,8 +283,8 @@ export default function SecurityRecalls() {
                   <span
                     className={`text-[11px] px-2 py-1 border ${
                       a.resolved_status
-                        ? "border-[#10B981]/40 text-[#10B981]"
-                        : "border-[#F59E0B]/40 text-[#F59E0B]"
+                        ? "border-emerald-200 text-emerald-700"
+                        : "border-amber-200 text-amber-600"
                     }`}
                   >
                     {a.resolved_status ? "Resolved" : "Open"}

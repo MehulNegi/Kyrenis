@@ -70,11 +70,11 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-[#E2E8F0]" data-testid="landing-page">
+    <div className="min-h-screen bg-white text-slate-600" data-testid="landing-page">
       {/* Header */}
-      <header className="border-b border-[#E2E8F0]/10">
+      <header className="border-b border-slate-200">
         <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 md:px-10 py-5">
-          <Link to="/" className="flex items-center gap-4 text-white" data-testid="landing-home-link">
+          <Link to="/" className="flex items-center gap-4 text-slate-900" data-testid="landing-home-link">
             <KyrenisLogo size={40} />
             <div className="flex flex-col">
               <span
@@ -83,15 +83,15 @@ export default function Landing() {
               >
                 KYRENIS
               </span>
-              <span className="text-[10px] text-[#E2E8F0]/70 mt-1 tracking-[0.14em]">
+              <span className="text-[10px] text-slate-600 mt-1 tracking-[0.14em]">
                 Regulatory Intelligence Platform
               </span>
             </div>
           </Link>
-          <nav className="hidden md:flex items-center gap-10 text-sm text-[#E2E8F0]/80">
+          <nav className="hidden md:flex items-center gap-10 text-sm text-slate-600">
             <Link
               to="/about"
-              className="hover:text-white transition-colors"
+              className="hover:text-slate-900 transition-colors"
               data-testid="landing-nav-about"
             >
               About our Mission
@@ -105,19 +105,19 @@ export default function Landing() {
         <div className="flex flew-row gap-5">
           <section className="pt-20 pb-16">
             <p
-              className="text-[11px] tracking-[0.28em] uppercase text-[#00e5ff] mb-5"
+              className="text-[11px] tracking-[0.28em] uppercase text-emerald-700 mb-5"
               data-testid="landing-eyebrow"
             >
               CDSCO-Powered Regulatory Intelligence
             </p>
             <h1
-              className="font-display font-bold text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight max-w-5xl"
+              className="font-display font-bold text-slate-900 text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight max-w-5xl"
               data-testid="landing-headline"
             >
               India's Regulatory Intelligence Platform for{" "}
-              <span className="text-[#00e5ff]/70">medicine batch verification.</span>
+              <span className="text-emerald-700/70">medicine batch verification.</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-[#E2E8F0]/75 text-base md:text-lg leading-relaxed">
+            <p className="mt-6 max-w-2xl text-slate-600 text-base md:text-lg leading-relaxed">
               Kyrenis aggregates the Central Drugs Standard Control Organisation's NSQ, Recall and
               Spurious Drug advisories into a single searchable repository, producing a transparent
               risk assessment for every medicine batch — for pharmacies, distributors and consumers.
@@ -159,14 +159,14 @@ export default function Landing() {
         >
           {stats.map((s) => (
             <div key={s.key} className="k-panel p-6" data-testid={`landing-stat-${s.key}`}>
-              <p className="text-[11px] text-[#E2E8F0]/60 tracking-[0.14em]">{s.label}</p>
-              <p
-                className="font-display text-[32px] md:text-[36px] text-white leading-none mt-4"
+            <p className="text-[11px] text-slate-500 tracking-[0.14em]">{s.label}</p>
+            <p
+              className="font-display text-[32px] md:text-[36px] text-slate-900 leading-none mt-4"
                 data-testid={`landing-stat-${s.key}-value`}
               >
                 {s.value}
               </p>
-              <p className="text-[#E2E8F0]/55 text-xs mt-3 leading-snug">{s.suffix}</p>
+              <p className="text-slate-400 text-xs mt-3 leading-snug">{s.suffix}</p>
             </div>
           ))}
         </section>
@@ -178,18 +178,18 @@ export default function Landing() {
         >
           {CAPABILITIES.map((c) => (
             <div key={c.title} className="k-panel p-6 flex flex-col gap-4">
-              <span className="inline-flex items-center justify-center w-11 h-11 border border-[#E2E8F0]/25 text-[#E2E8F0]">
+              <span className="inline-flex items-center justify-center w-11 h-11 border border-slate-200 text-slate-600">
                 <c.icon size={20} />
               </span>
-              <h3 className="font-display text-white text-xl">{c.title}</h3>
-              <p className="text-[#E2E8F0]/70 text-sm leading-relaxed">{c.body}</p>
+              <h3 className="font-display text-slate-900 text-xl">{c.title}</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">{c.body}</p>
             </div>
           ))}
         </section>
       </main>
 
-      <footer className="border-t border-[#E2E8F0]/10">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-[#E2E8F0]/55 text-xs">
+      <footer className="border-t border-slate-200">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-slate-400 text-xs">
           <div className="flex flex-col gap-3">
             <div className="flex flew-row gap-3 items-center">
               <KyrenisLogo size='40'/>
@@ -203,13 +203,13 @@ export default function Landing() {
             </div>
           </div>
           <div className="flex gap-6">
-            <Link to="/about" className="hover:text-white transition-colors">
+            <Link to="/about" className="hover:text-slate-900 transition-colors">
               About
             </Link>
-            <Link to="/patient" className="hover:text-white transition-colors">
+            <Link to="/patient" className="hover:text-slate-900 transition-colors">
               Verify a Batch
             </Link>
-            <a href="https://www.instagram.com/kyrenis.health/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+            <a href="https://www.instagram.com/kyrenis.health/" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900 transition-colors">
               Instagram
             </a>
           </div>
@@ -226,41 +226,41 @@ function GatewayCard({ href, testid, eyebrow, title, body, icon, action, variant
       to={href}
       data-testid={testid}
       className={`group relative overflow-hidden border transition-transform hover:-translate-y-1 ${
-        isLight ? "bg-white text-[#1E2B4E]" : ""
+        isLight ? "bg-white text-slate-900" : "bg-slate-50 text-slate-900"
       }`}
       style={{
-        background: isLight ? "#FFFFFF" : "#1F2326",
-        borderColor: isLight ? "transparent" : "rgba(226, 232, 240, 0.15)",
+        background: isLight ? "#FFFFFF" : "#F8FAFC",
+        borderColor: isLight ? "transparent" : "#E2E8F0",
       }}
     >
       <div className="p-8 md:p-10 min-h-[320px] flex flex-col justify-between">
         <div>
           <div className="flex items-center justify-between mb-6">
-            <span
-              className={`text-[11px] tracking-[0.14em] ${
-                isLight ? "text-[#1E2B4E]/70" : "text-[#E2E8F0]/60"
-              }`}
+              <span
+                className={`text-[11px] tracking-[0.14em] ${
+                  isLight ? "text-slate-900/70" : "text-slate-500"
+                }`}
             >
               {eyebrow}
             </span>
-            <span
-              className={`inline-flex items-center justify-center w-11 h-11 border ${
-                isLight ? "border-[#1E2B4E]/25 text-[#1E2B4E]" : "border-[#E2E8F0]/25 text-white"
-              }`}
+              <span
+                className={`inline-flex items-center justify-center w-11 h-11 border ${
+                  isLight ? "border-slate-300 text-slate-900" : "border-slate-200 text-slate-600"
+                }`}
             >
               {icon}
             </span>
           </div>
           <h2
             className={`font-display font-bold text-3xl md:text-4xl tracking-tight ${
-              isLight ? "text-[#1E2B4E]" : "text-white"
+              isLight ? "text-slate-900" : "text-slate-900"
             }`}
           >
             {title}
           </h2>
           <p
             className={`mt-6 leading-relaxed max-w-md text-[15px] ${
-              isLight ? "text-[#1E2B4E]/80" : "text-[#E2E8F0]/75"
+              isLight ? "text-slate-900/80" : "text-slate-600"
             }`}
           >
             {body}
@@ -268,17 +268,17 @@ function GatewayCard({ href, testid, eyebrow, title, body, icon, action, variant
         </div>
         <div
           className={`mt-8 inline-flex items-center justify-between gap-3 border-t pt-5 ${
-            isLight ? "border-[#1E2B4E]/15" : "border-[#E2E8F0]/15"
+            isLight ? "border-slate-200" : "border-slate-200"
           }`}
         >
-          <span className={`text-sm font-medium ${isLight ? "text-[#1E2B4E]" : "text-white"}`}>
+          <span className={`text-sm font-medium ${isLight ? "text-slate-900" : "text-slate-900"}`}>
             {action}
           </span>
           <span
             className={`inline-flex items-center justify-center w-9 h-9 border ${
               isLight
-                ? "border-[#1E2B4E]/30 text-[#1E2B4E] group-hover:bg-[#1E2B4E] group-hover:text-white"
-                : "border-[#E2E8F0]/25 text-white group-hover:bg-white group-hover:text-[#1E2B4E]"
+                ? "border-slate-300 text-slate-900 group-hover:bg-slate-100 group-hover:text-slate-900"
+                : "border-slate-200 text-slate-600 group-hover:bg-slate-100 group-hover:text-slate-900"
             } transition-colors`}
           >
             <ArrowRight size={18} />

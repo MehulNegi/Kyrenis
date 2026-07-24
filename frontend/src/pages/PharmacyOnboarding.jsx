@@ -34,14 +34,14 @@ export default function PharmacyOnboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[#E2E8F0]" data-testid="onboarding-page">
+    <div className="min-h-screen bg-white text-slate-600" data-testid="onboarding-page">
       <KyrenisHeader variant="Pharmacy Onboarding" />
       <main className="max-w-[880px] mx-auto px-6 md:px-10 py-14">
         <p className="k-label">Pharmacy verification</p>
-        <h1 className="font-display font-bold text-white text-3xl md:text-4xl tracking-tight mt-3">
+        <h1 className="font-display font-bold text-slate-900 text-3xl md:text-4xl tracking-tight mt-3">
           Welcome{user?.name ? `, ${user.name.split(" ")[0]}` : ""}. Attach your pharmacy.
         </h1>
-        <p className="text-[#E2E8F0]/65 mt-3 max-w-xl">
+        <p className="text-slate-600 mt-3 max-w-xl">
           Kyrenis links your Google identity to your retail outlet. Provide your CDSCO
           license and location once — you'll never see this screen again.
         </p>
@@ -54,7 +54,7 @@ export default function PharmacyOnboarding() {
               required
               placeholder="e.g. Kyrenis Reference Pharmacy"
               data-testid="onboarding-pharmacy-name-input"
-              className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white font-mono text-sm focus:border-[#10B981] focus:outline-none transition-colors"
+              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
             />
           </Field>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -65,7 +65,7 @@ export default function PharmacyOnboarding() {
                 required
                 placeholder="MH-RTL-77812"
                 data-testid="onboarding-license-input"
-                className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white font-mono text-sm focus:border-[#10B981] focus:outline-none transition-colors"
+                className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
               />
             </Field>
             <Field label="City" testid="onboarding-city">
@@ -75,7 +75,7 @@ export default function PharmacyOnboarding() {
                 required
                 placeholder="Mumbai"
                 data-testid="onboarding-city-input"
-                className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white font-mono text-sm focus:border-[#10B981] focus:outline-none transition-colors"
+                className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
               />
             </Field>
           </div>
@@ -85,7 +85,7 @@ export default function PharmacyOnboarding() {
               onChange={(e) => set("postal_code", e.target.value)}
               placeholder="400001"
               data-testid="onboarding-postal-input"
-              className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white font-mono text-sm focus:border-[#10B981] focus:outline-none transition-colors"
+              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
             />
           </Field>
 
@@ -93,7 +93,7 @@ export default function PharmacyOnboarding() {
             type="submit"
             disabled={busy}
             data-testid="onboarding-submit"
-            className="mt-2 py-3 bg-white text-[#1E2B4E] font-mono text-xs tracking-[0.28em] uppercase inline-flex items-center justify-center gap-2 hover:bg-[#E2E8F0] active:scale-[0.98] transition-colors disabled:opacity-50"
+            className="mt-2 py-3 bg-white text-slate-900 font-mono text-xs tracking-[0.28em] uppercase inline-flex items-center justify-center gap-2 hover:bg-slate-100 active:scale-[0.98] transition-colors disabled:opacity-50"
           >
             <Building2 size={14} />
             Grant Pharmacy Staff Access

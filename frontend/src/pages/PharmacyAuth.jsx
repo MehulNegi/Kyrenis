@@ -46,23 +46,23 @@ export default function PharmacyAuth() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[#E2E8F0] flex flex-col" data-testid="pharmacy-auth-page">
-      <div className="border-b border-[#E2E8F0]/10">
+    <div className="min-h-screen bg-white text-slate-600 flex flex-col" data-testid="pharmacy-auth-page">
+      <div className="border-b border-slate-200">
         <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 text-white" data-testid="auth-home-link">
+          <Link to="/" className="flex items-center gap-3 text-slate-900" data-testid="auth-home-link">
             <KyrenisLogo size={38} />
             <div className="flex flex-col">
               <span className="font-display font-bold text-[18px]" style={{ letterSpacing: "0.35em" }}>
                 KYRENIS
               </span>
-              <span className="font-mono text-[9px] tracking-[0.32em] text-[#E2E8F0]/70">
+              <span className="font-mono text-[9px] tracking-[0.32em] text-slate-500">
                 SCAN · VERIFY · TRUST
               </span>
             </div>
           </Link>
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.25em] text-[#E2E8F0]/70 hover:text-white"
+            className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.25em] text-slate-500 hover:text-slate-900"
             data-testid="auth-back-link"
           >
             <ArrowLeft size={14} />
@@ -75,16 +75,16 @@ export default function PharmacyAuth() {
         {/* Left contextual panel */}
         <section
           className="hidden lg:flex flex-col justify-between px-14 py-16"
-          style={{ background: "#0a0d10" }}
+          style={{ background: "#F8FAFC" }}
         >
           <div>
             <p className="k-label">Pharmacy console sign-in</p>
-            <h1 className="font-display font-bold text-white text-5xl mt-6 leading-[1.05] tracking-tighter">
+            <h1 className="font-display font-bold text-slate-900 text-5xl mt-6 leading-[1.05] tracking-tighter">
               Every intake, verified in
               <br />
-              <span className="text-[#10B981]">four sovereign checks.</span>
+              <span className="text-emerald-700">four sovereign checks.</span>
             </h1>
-            <p className="text-[#E2E8F0]/70 mt-6 max-w-md leading-relaxed">
+            <p className="text-slate-600 mt-6 max-w-md leading-relaxed">
               Access the operator dashboard to log new inventory through the sealed 4-step
               verification pipeline, run FIFO POS transactions, and monitor cross-network
               anomaly telemetry in real time.
@@ -100,7 +100,7 @@ export default function PharmacyAuth() {
             ].map((x) => (
               <div key={x.k} className="border border-[#E2E8F0]/12 p-4">
                 <p className="k-label">{x.k}</p>
-                <p className="font-mono text-[#E2E8F0]/90 text-sm mt-2">{x.v}</p>
+                <p className="font-mono text-slate-700 text-sm mt-2">{x.v}</p>
               </div>
             ))}
           </div>
@@ -110,47 +110,46 @@ export default function PharmacyAuth() {
         <section
           className="flex items-center justify-center px-6 md:px-10 py-14"
           style={{
-            background:
-              "linear-gradient(180deg, rgba(30,43,78,0.55), rgba(0,0,0,1) 70%), #000000",
+            background: "#F8FAFC",
           }}
         >
           <div className="w-full max-w-[420px]">
             <div className="k-panel p-8" data-testid="auth-terminal-card">
               <div className="flex items-center gap-2 mb-6">
-                <Terminal size={16} className="text-[#10B981]" />
-                <p className="text-[11px] tracking-[0.14em] text-[#E2E8F0]/75">Pharmacy Console Sign-in</p>
+                <Terminal size={16} className="text-emerald-700" />
+                <p className="text-[11px] tracking-[0.14em] text-slate-600">Pharmacy Console Sign-in</p>
               </div>
 
-              <div className="flex gap-2 mb-6 border border-[#E2E8F0]/15 p-1" data-testid="auth-mode-tabs">
-                <button
-                  onClick={() => setMode("signin")}
-                  data-testid="auth-mode-signin"
-                  className={`flex-1 py-2 text-xs font-mono uppercase tracking-[0.2em] transition-colors ${
-                    mode === "signin"
-                      ? "bg-[#1E2B4E] text-white"
-                      : "text-[#E2E8F0]/70 hover:text-white"
-                  }`}
-                >
-                  Sign In
-                </button>
-                <button
-                  onClick={() => setMode("register")}
-                  data-testid="auth-mode-register"
-                  className={`flex-1 py-2 text-xs font-mono uppercase tracking-[0.2em] transition-colors ${
-                    mode === "register"
-                      ? "bg-[#1E2B4E] text-white"
-                      : "text-[#E2E8F0]/70 hover:text-white"
-                  }`}
-                >
-                  Create Account
-                </button>
-              </div>
+                <div className="flex gap-2 mb-6 border border-slate-200 p-1" data-testid="auth-mode-tabs">
+                  <button
+                    onClick={() => setMode("signin")}
+                    data-testid="auth-mode-signin"
+                    className={`flex-1 py-2 text-xs font-mono uppercase tracking-[0.2em] transition-colors ${
+                      mode === "signin"
+                        ? "bg-slate-100 text-slate-900"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => setMode("register")}
+                    data-testid="auth-mode-register"
+                    className={`flex-1 py-2 text-xs font-mono uppercase tracking-[0.2em] transition-colors ${
+                      mode === "register"
+                        ? "bg-slate-100 text-slate-900"
+                        : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    Create Account
+                  </button>
+                </div>
 
               <button
                 onClick={autofill}
                 disabled={busy}
                 data-testid="auth-autofill-btn"
-                className="w-full mb-4 py-3 border border-[#10B981]/50 text-[#10B981] text-sm inline-flex items-center justify-center gap-2 hover:bg-[#10B981]/10 disabled:opacity-50 transition-colors"
+                className="w-full mb-4 py-3 border border-emerald-200 text-emerald-700 text-sm inline-flex items-center justify-center gap-2 hover:bg-emerald-50 disabled:opacity-50 transition-colors"
               >
                 <Zap size={14} />
                 Sign in as demo pharmacy
@@ -158,11 +157,11 @@ export default function PharmacyAuth() {
 
               <GoogleSignInButton flow="pharmacy" testid="pharmacy-google-signin" />
 
-              <div className="flex items-center gap-3 my-5">
-                <div className="flex-1 h-px bg-[#E2E8F0]/15" />
-                <span className="text-[11px] text-[#E2E8F0]/55 tracking-[0.14em]">or continue with password</span>
-                <div className="flex-1 h-px bg-[#E2E8F0]/15" />
-              </div>
+                <div className="flex items-center gap-3 my-5">
+                  <div className="flex-1 h-px bg-slate-200" />
+                  <span className="text-[11px] text-slate-400 tracking-[0.14em]">or continue with password</span>
+                  <div className="flex-1 h-px bg-slate-200" />
+                </div>
 
               <form onSubmit={submit} className="flex flex-col gap-4" data-testid="auth-form">
                 <Field
@@ -216,7 +215,7 @@ export default function PharmacyAuth() {
 
                 {(localError || error) && (
                   <p
-                    className="text-[#EF4444] text-sm font-mono border border-[#EF4444]/40 p-3"
+                    className="text-red-700 text-sm font-mono border border-red-200 p-3"
                     data-testid="auth-error"
                   >
                     {localError || error}
@@ -227,7 +226,7 @@ export default function PharmacyAuth() {
                   type="submit"
                   disabled={busy}
                   data-testid="auth-submit-btn"
-                  className="mt-2 py-3 bg-white text-[#1E2B4E] font-mono text-xs tracking-[0.28em] uppercase inline-flex items-center justify-center gap-2 hover:bg-[#E2E8F0] active:scale-[0.98] transition-colors disabled:opacity-50"
+                  className="mt-2 py-3 bg-white text-slate-900 font-mono text-xs tracking-[0.28em] uppercase inline-flex items-center justify-center gap-2 hover:bg-slate-100 active:scale-[0.98] transition-colors disabled:opacity-50"
                 >
                   {mode === "signin" ? (
                     <>
@@ -243,7 +242,7 @@ export default function PharmacyAuth() {
                 </button>
               </form>
             </div>
-            <p className="mt-4 text-[11px] text-[#E2E8F0]/45 text-center">
+              <p className="mt-4 text-[11px] text-slate-400 text-center">
               Demo access: chemist@kyrenis.in · password
             </p>
           </div>
@@ -264,7 +263,7 @@ function Field({ label, testid, value, onChange, type = "text", required, autoCo
         required={required}
         autoComplete={autoComplete}
         data-testid={testid}
-        className="px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white font-mono text-sm focus:border-[#10B981] focus:outline-none transition-colors"
+        className="px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
       />
     </label>
   );

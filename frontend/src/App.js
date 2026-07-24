@@ -54,12 +54,12 @@ function App() {
           <AppRouter />
           <Toaster
             position="bottom-right"
-            theme="dark"
+            theme="light"
             toastOptions={{
               style: {
-                background: "#1F2326",
-                border: "1px solid rgba(226,232,240,0.15)",
-                color: "#E2E8F0",
+                background: "#FFFFFF",
+                border: "1px solid #E2E8F0",
+                color: "#0F172A",
                 fontFamily: "JetBrains Mono, monospace",
                 fontSize: 12,
               },

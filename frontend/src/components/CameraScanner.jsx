@@ -72,7 +72,7 @@ export default function CameraScanner({ onDetected }) {
   };
 
   return (
-    <div className="border border-[#E2E8F0]/15 p-4 flex flex-col gap-3" data-testid="camera-scanner">
+    <div     className="border border-slate-200 p-4 flex flex-col gap-3" data-testid="camera-scanner">
       <div className="flex items-center justify-between">
         <p className="k-label">Live camera scan</p>
         {running ? (
@@ -80,7 +80,7 @@ export default function CameraScanner({ onDetected }) {
             type="button"
             onClick={stop}
             data-testid="camera-scanner-stop"
-            className="inline-flex items-center gap-2 border border-[#EF4444]/60 text-[#EF4444] px-3 py-1.5 font-mono text-[10px] tracking-[0.25em] uppercase hover:bg-[#EF4444]/10 transition-colors"
+            className="inline-flex items-center gap-2 border border-red-200 text-red-700 px-3 py-1.5 font-mono text-[10px] tracking-[0.25em] uppercase hover:bg-red-50 transition-colors"
           >
             <StopCircle size={12} />
             Stop
@@ -90,7 +90,7 @@ export default function CameraScanner({ onDetected }) {
             type="button"
             onClick={start}
             data-testid="camera-scanner-start"
-            className="inline-flex items-center gap-2 border border-[#10B981]/60 text-[#10B981] px-3 py-1.5 font-mono text-[10px] tracking-[0.25em] uppercase hover:bg-[#10B981]/10 transition-colors"
+            className="inline-flex items-center gap-2 border border-emerald-200 text-emerald-700 px-3 py-1.5 font-mono text-[10px] tracking-[0.25em] uppercase hover:bg-emerald-50 transition-colors"
           >
             <Camera size={12} />
             Start Scan
@@ -98,10 +98,10 @@ export default function CameraScanner({ onDetected }) {
         )}
       </div>
 
-      <div className="relative aspect-video border border-[#E2E8F0]/15 bg-black overflow-hidden">
+      <div className="relative aspect-video border border-slate-200 bg-slate-50 overflow-hidden">
         <div id={containerId} className="w-full h-full" />
         {!running && (
-          <div className="absolute inset-0 flex items-center justify-center text-[#E2E8F0]/50 text-xs font-mono tracking-[0.28em] uppercase">
+          <div className="absolute inset-0 flex items-center justify-center text-slate-400 text-xs font-mono tracking-[0.28em] uppercase">
             Camera Off
           </div>
         )}
@@ -109,12 +109,12 @@ export default function CameraScanner({ onDetected }) {
 
       {error && (
         <div
-          className="flex items-start gap-2 border border-[#EF4444]/40 p-3"
-          style={{ background: "rgba(239,68,68,0.06)" }}
+          className="flex items-start gap-2 border border-red-200 p-3"
+          style={{ background: "#FEF2F2" }}
           data-testid="camera-scanner-error"
         >
-          <AlertTriangle size={14} className="text-[#EF4444] mt-0.5" />
-          <p className="text-[#E2E8F0]/80 text-xs">
+          <AlertTriangle size={14} className="text-red-700 mt-0.5" />
+          <p className="text-slate-600 text-xs">
             {error}. Ensure the device has camera access and reload if permissions were denied.
           </p>
         </div>

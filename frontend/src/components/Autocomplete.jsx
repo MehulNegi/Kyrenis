@@ -101,11 +101,11 @@ export default function Autocomplete({
     >
       <div
         className={`flex items-center gap-2 border px-3 transition-colors ${
-          open ? "border-[#10B981]" : "border-[#E2E8F0]/20"
+          open ? "border-emerald-700" : "border-slate-200"
         } ${disabled ? "opacity-50" : ""}`}
-        style={{ background: "#000" }}
+        style={{ background: "#FFFFFF" }}
       >
-        <Search size={14} className="text-[#E2E8F0]/60 shrink-0" />
+        <Search size={14} className="text-slate-500 shrink-0" />
         <input
           data-testid={testid}
           disabled={disabled}
@@ -118,7 +118,7 @@ export default function Autocomplete({
           onFocus={() => setOpen(true)}
           onKeyDown={onKey}
           placeholder={selected ? getLabel(selected) : placeholder}
-          className="flex-1 py-3 bg-transparent text-white text-sm focus:outline-none placeholder:text-[#E2E8F0]/40"
+          className="flex-1 py-3 bg-transparent text-slate-900 text-sm focus:outline-none placeholder:text-slate-400"
         />
         {selected && allowClear && !disabled && (
           <button
@@ -129,24 +129,24 @@ export default function Autocomplete({
             }}
             aria-label="Clear"
             data-testid={testid ? `${testid}-clear` : "autocomplete-clear"}
-            className="text-[#E2E8F0]/60 hover:text-white"
+            className="text-slate-500 hover:text-slate-900"
           >
             <X size={14} />
           </button>
         )}
         <ChevronDown
           size={14}
-          className={`text-[#E2E8F0]/60 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`text-slate-500 transition-transform ${open ? "rotate-180" : ""}`}
         />
       </div>
       {open && !disabled && (
         <div
-          className="absolute z-50 mt-1 w-full max-h-[280px] overflow-auto border border-[#E2E8F0]/20 shadow-2xl"
-          style={{ background: "#1F2326" }}
+          className="absolute z-50 mt-1 w-full max-h-[280px] overflow-auto border border-slate-200 shadow-2xl"
+          style={{ background: "#FFFFFF" }}
           data-testid={testid ? `${testid}-options` : "autocomplete-options"}
         >
           {filtered.length === 0 && (
-            <div className="px-4 py-3 text-[#E2E8F0]/50 text-sm">No matches for "{query}".</div>
+            <div className="px-4 py-3 text-slate-400 text-sm">No matches for "{query}".</div>
           )}
           {filtered.map((item, i) => {
             const active = i === activeIdx;
@@ -158,12 +158,12 @@ export default function Autocomplete({
                 onClick={() => pick(item)}
                 data-testid={testid ? `${testid}-option-${i}` : `autocomplete-option-${i}`}
                 className={`w-full text-left px-4 py-2.5 flex flex-col ${
-                  active ? "bg-[#1E2B4E] text-white" : "text-[#E2E8F0]/85 hover:bg-[#1E2B4E]/60"
+                  active ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:bg-slate-200"
                 }`}
               >
                 <span className="text-sm">{getLabel(item)}</span>
                 {getSublabel(item) && (
-                  <span className="text-xs text-[#E2E8F0]/50 mt-0.5">{getSublabel(item)}</span>
+                  <span className="text-xs text-slate-400 mt-0.5">{getSublabel(item)}</span>
                 )}
               </button>
             );

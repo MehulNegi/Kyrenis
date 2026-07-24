@@ -16,7 +16,7 @@ export default function GoogleSignInButton({ flow = "pharmacy", label, className
       type="button"
       onClick={start}
       data-testid={testid || `google-signin-${flow}`}
-      className={`w-full inline-flex items-center justify-center gap-3 py-3 px-4 border border-[#E2E8F0]/25 bg-black text-white text-sm font-medium hover:bg-[#1E2B4E] transition-colors ${className}`}
+      className={`w-full inline-flex items-center justify-center gap-3 py-3 px-4 border border-slate-200 bg-white text-slate-900 text-sm font-medium hover:bg-slate-100 transition-colors ${className}`}
     >
       <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
         <path fill="#EA4335" d="M24 9.5c3.9 0 6.6 1.7 8.1 3.1l5.9-5.8C34.4 3.6 29.8 1.5 24 1.5 14.8 1.5 6.9 6.9 3 14.8l6.9 5.4C11.7 14.3 17.4 9.5 24 9.5z"/>

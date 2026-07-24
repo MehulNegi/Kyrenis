@@ -102,23 +102,23 @@ export default function BatchAuthenticator() {
         data-testid="consumer-verify-form"
       >
         <div className="flex items-center gap-3">
-          <ShieldCheck size={18} className="text-[#10B981]" />
-          <h2 className="font-display text-white text-xl">Regulatory Batch Verification</h2>
+          <ShieldCheck size={18} className="text-emerald-700" />
+          <h2 className="font-display text-slate-900 text-xl">Regulatory Batch Verification</h2>
         </div>
-        <p className="text-[#E2E8F0]/65 text-sm -mt-2">
+        <p className="text-slate-600 text-sm -mt-2">
           Enter the batch number printed on your medicine strip, or scan it using the camera.
           Kyrenis checks the integrated CDSCO NSQ, Recall and Spurious Drug datasets and reports
           only what has been recorded by the regulator.
         </p>
 
         <label className="flex flex-col gap-2">
-          <span className="text-[11px] text-[#E2E8F0]/60 tracking-[0.14em]">Batch Number</span>
+          <span className="text-[11px] text-slate-500 tracking-[0.14em]">Batch Number</span>
           <input
             value={batch}
             onChange={(e) => setBatch(e.target.value)}
             data-testid="consumer-batch-input"
             placeholder="e.g. SHT7550"
-            className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white text-sm focus:border-[#10B981] focus:outline-none transition-colors"
+            className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
           />
         </label>
 
@@ -127,7 +127,7 @@ export default function BatchAuthenticator() {
             type="button"
             onClick={() => setShowCamera((v) => !v)}
             data-testid="consumer-scan-camera-btn"
-            className="inline-flex items-center justify-center gap-2 border border-[#E2E8F0]/30 text-white px-5 py-3 text-sm hover:border-white hover:bg-[#1E2B4E] transition-colors"
+            className="inline-flex items-center justify-center gap-2 border border-slate-300 text-slate-900 px-5 py-3 text-sm hover:border-slate-300 hover:bg-slate-100 transition-colors"
           >
             <Camera size={14} />
             {showCamera ? "Close camera" : "Scan Using Camera"}
@@ -136,7 +136,7 @@ export default function BatchAuthenticator() {
             type="submit"
             disabled={busy}
             data-testid="consumer-verify-btn"
-            className="flex-1 inline-flex items-center justify-center gap-2 bg-white text-[#1E2B4E] px-6 py-3 text-sm font-medium hover:bg-[#E2E8F0] active:scale-[0.98] transition-colors disabled:opacity-50"
+            className="flex-1 inline-flex items-center justify-center gap-2 bg-white text-slate-900 px-6 py-3 text-sm font-medium hover:bg-slate-100 active:scale-[0.98] transition-colors disabled:opacity-50"
           >
             {busy ? "Checking CDSCO records…" : "Check Regulatory Status"}
           </button>
@@ -145,7 +145,7 @@ export default function BatchAuthenticator() {
         {showCamera && (
           <div data-testid="consumer-camera-wrap">
             <CameraScanner onDetected={handleScan} />
-            <p className="text-[10px] text-[#E2E8F0]/50 mt-2">
+            <p className="text-[10px] text-slate-400 mt-2">
               Point the camera at the QR code or barcode on your medicine strip. The scanner will
               capture the batch identifier and fill it above — you can review and edit before
               running the regulatory check.
@@ -155,10 +155,10 @@ export default function BatchAuthenticator() {
 
         {recent.length > 0 && (
           <div
-            className="border-t border-[#E2E8F0]/10 pt-5 flex flex-col gap-3"
+            className="border-t border-slate-200 pt-5 flex flex-col gap-3"
             data-testid="consumer-recent-section"
           >
-            <p className="text-[11px] text-[#E2E8F0]/55 tracking-[0.14em] inline-flex items-center gap-2">
+              <p className="text-[11px] text-slate-400 tracking-[0.14em] inline-flex items-center gap-2">
               <History size={11} />
               Recent Searches
             </p>
@@ -167,13 +167,13 @@ export default function BatchAuthenticator() {
                 <div
                   key={val + "-" + i}
                   data-testid={`consumer-recent-chip-${i}`}
-                  className="inline-flex items-center gap-1 border border-[#E2E8F0]/20 hover:border-[#10B981]/60 group transition-colors"
+                  className="inline-flex items-center gap-1 border border-slate-200 hover:border-emerald-200 group transition-colors"
                 >
                   <button
                     type="button"
                     onClick={() => rerunRecent(val)}
                     data-testid={`consumer-recent-run-${i}`}
-                    className="px-3 py-1.5 text-[11px] text-[#E2E8F0]/80 group-hover:text-white font-mono"
+                    className="px-3 py-1.5 text-[11px] text-slate-600 group-hover:text-slate-900 font-mono"
                   >
                     {val}
                   </button>
@@ -182,7 +182,7 @@ export default function BatchAuthenticator() {
                     onClick={() => removeRecent(val)}
                     aria-label={`Remove ${val}`}
                     data-testid={`consumer-recent-remove-${i}`}
-                    className="pr-2 pl-1 py-1.5 text-[#E2E8F0]/50 hover:text-[#EF4444]"
+                    className="pr-2 pl-1 py-1.5 text-slate-400 hover:text-red-700"
                   >
                     <X size={12} />
                   </button>
@@ -205,13 +205,13 @@ function VerdictPanel({ verdict, busy }) {
         className="k-panel p-8 flex flex-col items-center justify-center text-center min-h-[420px]"
         data-testid="consumer-verdict-empty"
       >
-        <div className="w-28 h-28 border-2 border-[#E2E8F0]/20 relative overflow-hidden">
-          <div className="absolute inset-x-2 h-[2px] bg-[#10B981] k-scanline" />
+        <div className="w-28 h-28 border-2 border-slate-200 relative overflow-hidden">
+          <div className="absolute inset-x-2 h-[2px] bg-emerald-700 k-scanline" />
         </div>
-        <p className="mt-6 text-[11px] tracking-[0.14em] text-[#E2E8F0]/50 uppercase">
+        <p className="mt-6 text-[11px] tracking-[0.14em] text-slate-400 uppercase">
           Awaiting a batch
         </p>
-        <p className="text-[#E2E8F0]/55 text-sm mt-2 max-w-xs">
+        <p className="text-slate-400 text-sm mt-2 max-w-xs">
           Enter a batch number or scan your strip — Kyrenis returns a regulatory risk assessment
           based only on the integrated CDSCO surveillance datasets.
         </p>
@@ -224,8 +224,8 @@ function VerdictPanel({ verdict, busy }) {
         className="k-panel p-8 min-h-[420px] flex flex-col items-center justify-center text-center"
         data-testid="consumer-verdict-loading"
       >
-        <div className="animate-pulse w-16 h-16 border-2 border-[#10B981]/60" />
-        <p className="mt-6 text-sm text-[#E2E8F0]/70">Checking the CDSCO regulatory record…</p>
+        <div className="animate-pulse w-16 h-16 border-2 border-emerald-200" />
+        <p className="mt-6 text-sm text-slate-600">Checking the CDSCO regulatory record…</p>
       </div>
     );
   }
@@ -235,33 +235,33 @@ function VerdictPanel({ verdict, busy }) {
   return (
     <div
       className="p-8 min-h-[420px] relative overflow-hidden"
-      style={{ background: "#1F2326", border: `1px solid ${color}66` }}
+      style={{ background: "#FFFFFF", border: `1px solid ${color}66` }}
       data-testid="consumer-verdict-card"
     >
       <div
-        className="absolute inset-0 opacity-30"
-        style={{ background: `radial-gradient(circle at 20% 0%, ${color}22, transparent 55%)` }}
+        className="absolute inset-0 opacity-10"
+        style={{ background: `radial-gradient(circle at 20% 0%, ${color}11, transparent 55%)` }}
       />
       <div className="relative flex flex-col">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p
-              className="text-[11px] tracking-[0.14em]"
-              style={{ color }}
-              data-testid="consumer-verdict-severity"
-            >
-              {alert ? "HIGH RISK" : "LOW RISK"}
-            </p>
-            <h3
-              className="font-display text-white text-2xl md:text-3xl mt-2 leading-tight"
+              <p
+                className="text-[11px] tracking-[0.14em]"
+                style={{ color }}
+                data-testid="consumer-verdict-severity"
+              >
+                {alert ? "HIGH RISK" : "LOW RISK"}
+              </p>
+              <h3
+                className="font-display text-slate-900 text-2xl md:text-3xl mt-2 leading-tight"
               data-testid="consumer-verdict-headline"
             >
               {verdict.headline}
             </h3>
-            <p
-              className="text-[#E2E8F0]/70 text-sm mt-2"
-              data-testid="consumer-verdict-status"
-            >
+              <p
+                className="text-slate-600 text-sm mt-2"
+                data-testid="consumer-verdict-status"
+              >
               {alert
                 ? "CDSCO Match Found — this batch appears in an official surveillance advisory."
                 : "CDSCO Match Not Found — this batch does not appear in the integrated datasets."}
@@ -277,17 +277,17 @@ function VerdictPanel({ verdict, busy }) {
         </div>
 
         {/* Risk gauge — binary presentation per new spec */}
-        <div className="mt-6" data-testid="consumer-risk-gauge">
-          <div className="flex items-center justify-between text-[11px] text-[#E2E8F0]/60 tracking-[0.14em]">
-            <span>Risk Level</span>
-            <span
-              className="text-white text-sm"
-              data-testid="consumer-risk-score"
-            >
+          <div className="mt-6" data-testid="consumer-risk-gauge">
+            <div className="flex items-center justify-between text-[11px] text-slate-500 tracking-[0.14em]">
+              <span>Risk Level</span>
+              <span
+                className="text-slate-900 text-sm"
+                data-testid="consumer-risk-score"
+              >
               {alert ? "High" : "Low"}
             </span>
           </div>
-          <div className="mt-2 h-2 bg-[#0d1013] border border-[#E2E8F0]/12 relative">
+          <div className="mt-2 h-2 bg-slate-100 border border-slate-200 relative">
             <div
               className="absolute top-0 left-0 h-full transition-all"
               style={{
@@ -296,7 +296,7 @@ function VerdictPanel({ verdict, busy }) {
               }}
             />
           </div>
-          <div className="flex justify-between mt-2 text-[10px] text-[#E2E8F0]/45">
+          <div className="flex justify-between mt-2 text-[10px] text-slate-400">
             <span>No Regulatory Alert Found</span>
             <span>Regulatory Alert</span>
           </div>
@@ -333,11 +333,11 @@ function VerdictPanel({ verdict, busy }) {
           </div>
         ) : (
           <div
-            className="mt-8 border border-[#10B981]/40 p-5"
+            className="mt-8 border border-emerald-200 p-5 grid grid-cols-1 md:grid-cols-2 gap-4"
             data-testid="consumer-clean-card"
           >
-            <p className="text-white text-sm">{verdict.message}</p>
-            <p className="text-[#E2E8F0]/55 text-[11px] mt-4">
+              <p className="text-slate-900 text-sm">{verdict.message}</p>
+              <p className="text-slate-400 text-[11px] mt-4">
               Kyrenis reports what has been recorded by the regulator in the integrated CDSCO
               surveillance datasets. A "No Regulatory Alert Found" result is not a guarantee of
               authenticity — always purchase from a licensed pharmacy.
@@ -353,9 +353,9 @@ function AlertRow({ label, value, mono, full, accent }) {
   if (!value) return null;
   return (
     <div className={full ? "md:col-span-2" : ""}>
-      <p className="text-[10px] tracking-[0.14em] text-[#E2E8F0]/55">{label}</p>
+      <p className="text-[10px] tracking-[0.14em] text-slate-400">{label}</p>
       <p
-        className={`text-white mt-1 text-sm ${mono ? "font-mono" : ""}`}
+        className={`text-slate-900 mt-1 text-sm ${mono ? "font-mono" : ""}`}
         style={accent ? { color: accent } : undefined}
       >
         {value}

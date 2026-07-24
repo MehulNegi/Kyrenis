@@ -58,15 +58,15 @@ export default function Replenishment() {
         <div className="k-panel p-6 md:p-8" data-testid="low-stock-panel">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-3">
-              <AlertTriangle size={18} className="text-[#EF4444]" />
-              <h2 className="font-display text-white text-xl">Low-Stock Queue</h2>
+              <AlertTriangle size={18} className="text-red-700" />
+              <h2 className="font-display text-slate-900 text-xl">Low-Stock Queue</h2>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={autoGeneratePO}
                 disabled={busy || low.length === 0}
                 data-testid="generate-po-btn"
-                className="inline-flex items-center gap-2 border border-[#10B981]/50 text-[#10B981] px-4 py-2 text-[11px] tracking-[0.14em] hover:bg-[#10B981]/10 disabled:opacity-40 transition-colors"
+                className="inline-flex items-center gap-2 border border-emerald-200 text-emerald-700 px-4 py-2 text-[11px] tracking-[0.14em] hover:bg-emerald-50 disabled:opacity-40 transition-colors"
               >
                 <Zap size={12} />
                 Auto-Generate PO
@@ -74,7 +74,7 @@ export default function Replenishment() {
               <button
                 onClick={() => setShowManual(true)}
                 data-testid="open-manual-po-btn"
-                className="inline-flex items-center gap-2 border border-[#E2E8F0]/25 text-[#E2E8F0] px-4 py-2 text-[11px] tracking-[0.14em] hover:text-white hover:border-white transition-colors"
+                className="inline-flex items-center gap-2 border border-slate-200 text-slate-600 px-4 py-2 text-[11px] tracking-[0.14em] hover:text-slate-900 hover:border-slate-300 transition-colors"
               >
                 <Plus size={12} />
                 Manual PO
@@ -83,25 +83,25 @@ export default function Replenishment() {
           </div>
 
           {low.length === 0 ? (
-            <p className="text-[#E2E8F0]/55 text-sm">All items above safety threshold.</p>
+            <p className="text-slate-400 text-sm">All items above safety threshold.</p>
           ) : (
             <div className="flex flex-col gap-2 max-h-[380px] overflow-auto pr-1" data-testid="low-stock-list">
               {low.map((item) => (
                 <div
                   key={item.medicine.id}
-                  className="border border-[#EF4444]/25 p-3 flex items-center justify-between"
-                  style={{ background: "rgba(239,68,68,0.05)" }}
+                  className="border border-red-200 p-3 flex items-center justify-between"
+                  style={{ background: "#FEF2F2" }}
                   data-testid={`low-stock-item-${item.medicine.brand_name}`}
                 >
                   <div>
-                    <p className="text-white text-sm font-medium">{item.medicine.brand_name}</p>
-                    <p className="text-[#E2E8F0]/60 text-xs">{item.medicine.generic_composition}</p>
+                    <p className="text-slate-900 text-sm font-medium">{item.medicine.brand_name}</p>
+                    <p className="text-slate-500 text-xs">{item.medicine.generic_composition}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-display text-[#EF4444] text-lg leading-none">
+                    <p className="font-display text-red-700 text-lg leading-none">
                       {item.total_stock}
                     </p>
-                    <p className="text-[10px] text-[#E2E8F0]/50 mt-1">
+                    <p className="text-[10px] text-slate-400 mt-1">
                       / min {item.minimum_safety_stock}
                     </p>
                   </div>
@@ -113,29 +113,29 @@ export default function Replenishment() {
 
         <div className="k-panel p-6 md:p-8" data-testid="expiring-panel">
           <div className="flex items-center gap-3 mb-6">
-            <Timer size={18} className="text-[#F59E0B]" />
-            <h2 className="font-display text-white text-xl">Expiring · Next 60 Days</h2>
+              <Timer size={18} className="text-amber-600" />
+              <h2 className="font-display text-slate-900 text-xl">Expiring · Next 60 Days</h2>
           </div>
           {expiring.length === 0 ? (
-            <p className="text-[#E2E8F0]/55 text-sm">No near-expiry stock detected.</p>
+            <p className="text-slate-400 text-sm">No near-expiry stock detected.</p>
           ) : (
             <div className="flex flex-col gap-2 max-h-[380px] overflow-auto pr-1" data-testid="expiring-list">
               {expiring.slice(0, 20).map((b) => (
                 <div
                   key={b.id}
-                  className="border border-[#F59E0B]/30 p-3 flex items-center justify-between"
-                  style={{ background: "rgba(245,158,11,0.05)" }}
+                  className="border border-amber-200 p-3 flex items-center justify-between"
+                  style={{ background: "#FFFBEB" }}
                   data-testid={`expiring-item-${b.batch_number}`}
                 >
                   <div>
-                    <p className="text-white text-sm font-medium">
+                    <p className="text-slate-900 text-sm font-medium">
                       {b.medicine?.brand_name || "—"}
                     </p>
-                    <p className="text-[11px] text-[#E2E8F0]/60">
+                    <p className="text-[11px] text-slate-500">
                       Batch {b.batch_number} · qty {b.current_stock_qty}
                     </p>
                   </div>
-                  <p className="text-[#F59E0B] text-sm">{b.expiry_date}</p>
+                  <p className="text-amber-600 text-sm">{b.expiry_date}</p>
                 </div>
               ))}
             </div>
@@ -145,17 +145,17 @@ export default function Replenishment() {
 
       <div className="k-panel p-6 md:p-8" data-testid="po-history-panel">
         <div className="flex items-center gap-3 mb-6">
-          <FileText size={18} className="text-[#E2E8F0]" />
-          <h2 className="font-display text-white text-xl">Purchase Orders</h2>
+          <FileText size={18} className="text-slate-600" />
+          <h2 className="font-display text-slate-900 text-xl">Purchase Orders</h2>
         </div>
 
         {pos.length === 0 ? (
-          <p className="text-[#E2E8F0]/55 text-sm">No purchase orders yet.</p>
+            <p className="text-slate-400 text-sm">No purchase orders yet.</p>
         ) : (
           <div className="overflow-auto">
             <table className="w-full text-sm" data-testid="po-table">
               <thead>
-                <tr className="text-left border-b border-[#E2E8F0]/12 text-[11px] text-[#E2E8F0]/60 tracking-[0.14em] uppercase">
+                <tr className="text-left border-b border-slate-200 text-[11px] text-slate-500 tracking-[0.14em] uppercase">
                   <th className="py-3">PO #</th>
                   <th className="py-3">Mode</th>
                   <th className="py-3">Lines</th>
@@ -166,17 +166,17 @@ export default function Replenishment() {
               </thead>
               <tbody>
                 {pos.map((p) => (
-                  <tr key={p.id} className="border-b border-[#E2E8F0]/8" data-testid={`po-row-${p.po_number}`}>
-                    <td className="py-3 font-mono text-xs text-white">{p.po_number}</td>
-                    <td className="py-3 text-[#E2E8F0]/85">{p.creation_mode || "Auto"}</td>
-                    <td className="py-3 text-[#E2E8F0]/85">{p.lines.length}</td>
-                    <td className="py-3 text-right text-white">₹{p.estimated_total.toFixed(2)}</td>
+                  <tr key={p.id} className="border-b border-slate-200" data-testid={`po-row-${p.po_number}`}>
+                    <td className="py-3 font-mono text-xs text-slate-900">{p.po_number}</td>
+                    <td className="py-3 text-slate-700">{p.creation_mode || "Auto"}</td>
+                    <td className="py-3 text-slate-700">{p.lines.length}</td>
+                    <td className="py-3 text-right text-slate-900">₹{p.estimated_total.toFixed(2)}</td>
                     <td className="py-3">
-                      <span className="border border-[#10B981]/50 text-[#10B981] px-2 py-1 text-[10px] tracking-[0.14em]">
+                      <span className="border border-emerald-200 text-emerald-700 px-2 py-1 text-[10px] tracking-[0.14em]">
                         {p.status}
                       </span>
                     </td>
-                    <td className="py-3 text-[#E2E8F0]/85">
+                    <td className="py-3 text-slate-700">
                       {new Date(p.created_at).toLocaleDateString()}
                     </td>
                   </tr>
@@ -236,7 +236,7 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/80 flex items-start justify-center overflow-auto p-4" data-testid="manual-po-modal">
+    <div className="fixed inset-0 z-[100] bg-slate-900/50 flex items-start justify-center overflow-auto p-4" data-testid="manual-po-modal">
       <form
         onSubmit={submit}
         className="k-panel p-6 md:p-8 w-full max-w-[720px] flex flex-col gap-5 mt-8"
@@ -244,13 +244,13 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
         <div className="flex items-center justify-between">
           <div>
             <p className="k-label">Manual Purchase Order</p>
-            <h3 className="font-display text-white text-2xl mt-1">Create a new PO</h3>
+            <h3 className="font-display text-slate-900 text-2xl mt-1">Create a new PO</h3>
           </div>
           <button
             type="button"
             onClick={onClose}
             data-testid="manual-po-close"
-            className="w-9 h-9 border border-[#E2E8F0]/20 inline-flex items-center justify-center hover:border-white hover:text-white transition-colors"
+            className="w-9 h-9 border border-slate-200 inline-flex items-center justify-center hover:border-slate-300 hover:text-slate-900 transition-colors"
             aria-label="Close"
           >
             <X size={16} />
@@ -277,7 +277,7 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
               value={delivery}
               onChange={(e) => setDelivery(e.target.value)}
               data-testid="manual-po-delivery"
-              className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white text-sm focus:border-[#10B981] focus:outline-none transition-colors"
+              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
             />
           </div>
         </div>
@@ -289,7 +289,7 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
               type="button"
               onClick={() => setLines((ls) => [...ls, { medicine_id: "", quantity: 10 }])}
               data-testid="manual-po-add-line"
-              className="inline-flex items-center gap-1 border border-[#E2E8F0]/25 px-3 py-1.5 text-[11px] hover:text-white hover:border-white transition-colors"
+              className="inline-flex items-center gap-1 border border-slate-200 px-3 py-1.5 text-[11px] hover:text-slate-900 hover:border-slate-300 transition-colors"
             >
               <Plus size={12} />
               Add row
@@ -313,7 +313,7 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
                   value={l.quantity}
                   onChange={(e) => setLine(i, "quantity", parseInt(e.target.value, 10) || 1)}
                   data-testid={`manual-po-qty-${i}`}
-                  className="px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white text-sm text-right focus:border-[#10B981] focus:outline-none"
+                  className="px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm text-right focus:border-emerald-700 focus:outline-none"
                 />
                 {lines.length > 1 && (
                   <button
@@ -321,7 +321,7 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
                     onClick={() => setLines((ls) => ls.filter((_, idx) => idx !== i))}
                     aria-label="Remove line"
                     data-testid={`manual-po-remove-${i}`}
-                    className="w-11 h-11 border border-[#E2E8F0]/20 inline-flex items-center justify-center text-[#EF4444] hover:border-[#EF4444] transition-colors"
+                    className="w-11 h-11 border border-slate-200 inline-flex items-center justify-center text-red-700 hover:border-red-700 transition-colors"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -338,7 +338,7 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             data-testid="manual-po-notes"
-            className="w-full px-3 py-3 bg-black border border-[#E2E8F0]/20 text-white text-sm focus:border-[#10B981] focus:outline-none transition-colors"
+              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
           />
         </div>
 
@@ -346,7 +346,7 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
           type="submit"
           disabled={busy}
           data-testid="manual-po-submit"
-          className="py-3 bg-white text-[#1E2B4E] text-sm font-medium inline-flex items-center justify-center gap-2 hover:bg-[#E2E8F0] active:scale-[0.98] transition-colors disabled:opacity-50"
+          className="py-3 bg-white text-slate-900 text-sm font-medium inline-flex items-center justify-center gap-2 hover:bg-slate-100 active:scale-[0.98] transition-colors disabled:opacity-50"
         >
           <Send size={14} />
           Create Purchase Order

@@ -57,34 +57,34 @@ export default function AuthCallback() {
   }, [location.search, navigate, setUser]);
 
   return (
-    <div className="min-h-screen bg-black text-[#E2E8F0] flex items-center justify-center p-6" data-testid="auth-callback">
+    <div className="min-h-screen bg-white text-slate-600 flex items-center justify-center p-6" data-testid="auth-callback">
       <div className="k-panel p-10 max-w-md w-full text-center">
-        <div className="flex items-center justify-center text-white mb-6">
+        <div className="flex items-center justify-center text-slate-900 mb-6">
           <KyrenisLogo size={56} />
         </div>
         {!error ? (
           <>
             <p className="k-label">Signing you in</p>
-            <h1 className="font-display text-white text-2xl mt-4">Establishing secure session…</h1>
-            <p className="text-[#E2E8F0]/60 mt-3 text-sm">
+            <h1 className="font-display text-slate-900 text-2xl mt-4">Establishing secure session…</h1>
+            <p className="text-slate-500 mt-3 text-sm">
               Kyrenis is exchanging your Google credentials for a signed session token.
               This takes about a second.
             </p>
-            <div className="mt-6 flex items-center justify-center gap-2 font-mono text-[10px] tracking-[0.3em] uppercase text-[#10B981]">
+            <div className="mt-6 flex items-center justify-center gap-2 font-mono text-[10px] tracking-[0.3em] uppercase text-emerald-700">
               <span className="w-1.5 h-1.5 bg-[#10B981]" />
               Ingest OK
             </div>
           </>
         ) : (
           <>
-            <p className="text-[11px] tracking-[0.14em] text-[#EF4444]">Sign-in failed</p>
-            <h1 className="font-display text-white text-2xl mt-4">Could not complete sign-in</h1>
-            <p className="text-[#E2E8F0]/70 mt-3 text-sm break-words" data-testid="auth-callback-error">
+          <p className="text-[11px] tracking-[0.14em] text-red-700">Sign-in failed</p>
+          <h1 className="font-display text-slate-900 text-2xl mt-4">Could not complete sign-in</h1>
+          <p className="text-slate-600 mt-3 text-sm break-words" data-testid="auth-callback-error">
               {error}
             </p>
             <button
               onClick={() => navigate("/pharmacy/auth")}
-              className="mt-6 py-3 px-6 bg-white text-[#1E2B4E] font-mono text-xs tracking-[0.28em] uppercase hover:bg-[#E2E8F0] transition-colors"
+              className="mt-6 py-3 px-6 bg-white text-slate-900 font-mono text-xs tracking-[0.28em] uppercase hover:bg-slate-100 transition-colors"
               data-testid="auth-callback-retry"
             >
               Return to Sign-in

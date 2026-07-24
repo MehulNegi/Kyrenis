@@ -45,23 +45,23 @@ export default function SalesHistory() {
       <div className="k-panel p-6 md:p-8">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-3">
-            <Receipt size={18} className="text-[#10B981]" />
-            <h2 className="font-display text-white text-xl">Sales & Invoice History</h2>
+          <Receipt size={18} className="text-emerald-700" />
+          <h2 className="font-display text-slate-900 text-xl">Sales & Invoice History</h2>
           </div>
-          <div className="flex items-center gap-2 border border-[#E2E8F0]/20 px-3 focus-within:border-[#10B981] transition-colors w-full md:w-[380px]">
-            <Search size={14} className="text-[#E2E8F0]/60" />
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && load(q)}
-              placeholder="Search by invoice # or medicine name"
-              data-testid="sales-search-input"
-              className="flex-1 py-3 bg-transparent text-white text-sm focus:outline-none placeholder:text-[#E2E8F0]/40"
+            <div className="flex items-center gap-2 border border-slate-200 px-3 focus-within:border-emerald-700 transition-colors w-full md:w-[380px]">
+              <Search size={14} className="text-slate-500" />
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && load(q)}
+                placeholder="Search by invoice # or medicine name"
+                data-testid="sales-search-input"
+                className="flex-1 py-3 bg-transparent text-slate-900 text-sm focus:outline-none placeholder:text-slate-400"
             />
             <button
               onClick={() => load(q)}
               data-testid="sales-search-btn"
-              className="text-[11px] text-[#10B981] hover:text-white tracking-[0.14em]"
+              className="text-[11px] text-emerald-700 hover:text-slate-900 tracking-[0.14em]"
             >
               Search
             </button>
@@ -71,16 +71,16 @@ export default function SalesHistory() {
         <div className="k-divider my-6" />
 
         {busy ? (
-          <p className="text-[#E2E8F0]/55 text-sm">Loading…</p>
+          <p className="text-slate-400 text-sm">Loading…</p>
         ) : receipts.length === 0 ? (
-          <p className="text-[#E2E8F0]/55 text-sm" data-testid="sales-empty">
+          <p className="text-slate-400 text-sm" data-testid="sales-empty">
             No invoices match your search.
           </p>
         ) : (
           <div className="overflow-auto">
             <table className="w-full text-sm" data-testid="sales-table">
               <thead>
-                <tr className="text-left border-b border-[#E2E8F0]/12 text-[11px] text-[#E2E8F0]/60 tracking-[0.14em] uppercase">
+                <tr className="text-left border-b border-slate-200 text-[11px] text-slate-500 tracking-[0.14em] uppercase">
                   <th className="py-3">Invoice #</th>
                   <th className="py-3">Date</th>
                   <th className="py-3">Product</th>
@@ -101,20 +101,20 @@ export default function SalesHistory() {
                     0
                   );
                   return (
-                    <tr
-                      key={r.id}
-                      className="border-b border-[#E2E8F0]/8"
-                      data-testid={`sales-row-${r.invoice_number}`}
-                    >
-                      <td className="py-3 font-mono text-xs text-white">{r.invoice_number}</td>
-                      <td className="py-3 text-[#E2E8F0]/85">
-                        {new Date(r.timestamp).toLocaleDateString()}
-                      </td>
-                      <td className="py-3 text-[#E2E8F0]/85">{productLabel}</td>
-                      <td className="py-3 text-right text-[#E2E8F0]/85">{totalQty}</td>
-                      <td className="py-3 text-right text-white">₹{r.grand_total?.toFixed(2)}</td>
-                      <td className="py-3">
-                        <span className="border border-[#10B981]/50 text-[#10B981] px-2 py-1 text-[10px] tracking-[0.14em]">
+                  <tr
+                    key={r.id}
+                    className="border-b border-slate-200"
+                    data-testid={`sales-row-${r.invoice_number}`}
+                  >
+                    <td className="py-3 font-mono text-xs text-slate-900">{r.invoice_number}</td>
+                    <td className="py-3 text-slate-700">
+                      {new Date(r.timestamp).toLocaleDateString()}
+                    </td>
+                    <td className="py-3 text-slate-700">{productLabel}</td>
+                    <td className="py-3 text-right text-slate-700">{totalQty}</td>
+                    <td className="py-3 text-right text-slate-900">₹{r.grand_total?.toFixed(2)}</td>
+                    <td className="py-3">
+                      <span className="border border-emerald-200 text-emerald-700 px-2 py-1 text-[10px] tracking-[0.14em]">
                           {r.status || "Paid"}
                         </span>
                       </td>
@@ -122,7 +122,7 @@ export default function SalesHistory() {
                         <button
                           onClick={() => setPreview(r)}
                           data-testid={`sales-reprint-${r.invoice_number}`}
-                          className="inline-flex items-center gap-1 border border-[#E2E8F0]/20 px-3 py-1.5 text-[11px] hover:text-white hover:border-white transition-colors"
+                          className="inline-flex items-center gap-1 border border-slate-200 px-3 py-1.5 text-[11px] hover:text-slate-900 hover:border-slate-300 transition-colors"
                         >
                           <Printer size={12} />
                           Reprint
@@ -144,9 +144,9 @@ export default function SalesHistory() {
 
 function SummaryCell({ label, value }) {
   return (
-    <div className="k-panel p-5">
-      <p className="text-[11px] text-[#E2E8F0]/55 tracking-[0.14em]">{label}</p>
-      <p className="font-display text-white text-2xl mt-2">{value}</p>
+      <div className="k-panel p-5">
+        <p className="text-[11px] text-slate-400 tracking-[0.14em]">{label}</p>
+        <p className="font-display text-slate-900 text-2xl mt-2">{value}</p>
     </div>
   );
 }
