@@ -2,7 +2,7 @@
 
 **Kyrenis** is an AI-powered Pharmacy Operating System built to improve medicine safety, streamline pharmacy operations, and help combat counterfeit drugs. It combines inventory management, intelligent batch verification, AI assistance, and public medicine information into a unified platform.
 
-🌐 **Live Demo:** [Kyrenis]https://kyrenis.vercel.app
+🌐 **Live Demo:** [Kyrenis](https://kyrenis.vercel.app)
 
 ---
 
