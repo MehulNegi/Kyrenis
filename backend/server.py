@@ -1185,8 +1185,7 @@ app.include_router(api)
 # CORS
 frontend_url = os.environ.get(
     "CORS_ORIGINS",
-    "http://localhost:3000",
-    "https://kyrenis.vercel.app"
+    "http://localhost:3000,https://kyrenis.vercel.app"
 )
 
 origins = [o.strip() for o in frontend_url.split(",") if o.strip()]
