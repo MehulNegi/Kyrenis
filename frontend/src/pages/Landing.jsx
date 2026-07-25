@@ -189,7 +189,7 @@ export default function Landing() {
         </section>
 
         {/* Metrics */}
-        <section className="py-16 border-t border-slate-200">
+        {/* <section className="py-16 border-t border-slate-200">
           <div className="mb-10 text-center">
             <p className="text-[11px] tracking-[0.2em] uppercase text-slate-900 font-medium">Trusted Regulatory Intelligence</p>
           </div>
@@ -215,7 +215,7 @@ export default function Landing() {
               <p className="mt-1 text-xs text-slate-500">By Pharmacies & Consumers</p>
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
 
       <footer className="border-t border-slate-200">
