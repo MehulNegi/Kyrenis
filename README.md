@@ -1,158 +1,209 @@
-# Kyrenis – Scan • Verify • Trust
+# 💊 Kyrenis
 
-## Overview
+**Kyrenis** is an AI-powered Pharmacy Operating System built to improve medicine safety, streamline pharmacy operations, and help combat counterfeit drugs. It combines inventory management, intelligent batch verification, AI assistance, and public medicine information into a unified platform.
 
-Kyrenis is a medicine verification and drug safety platform designed to help consumers and pharmacies identify potentially counterfeit, recalled, expired, or high-risk medicines through batch-level verification and safety intelligence.
-
-The platform aims to improve trust, transparency, and safety across the pharmaceutical supply chain by providing instant access to medicine-related safety information through a simple verification process.
+🌐 **Live Demo:** [Kyrenis]https://kyrenis.vercel.app
 
 ---
 
-## Problem Statement
+## 🚀 Features
 
-Counterfeit and unsafe medicines continue to pose a significant risk to public health. Consumers and pharmacies often have limited access to reliable information regarding:
+### 🏥 Pharmacy Dashboard
+- Modern analytics dashboard
+- Inventory overview
+- Sales and stock insights
+- Medicine management
+- Batch tracking
 
-* Medicine authenticity
-* Batch-specific recalls
-* Safety alerts
-* Manufacturing details
-* Expiry information
-* Regulatory warnings
+### 🔐 Authentication
+- Secure user authentication
+- Role-based access
+- Persistent login sessions
 
-As a result, identifying potentially dangerous medicines becomes difficult, increasing the risk of harmful consumption and distribution.
+### 💊 Medicine Management
+- Add, update and remove medicines
+- Batch-wise inventory
+- Expiry date tracking
+- Stock monitoring
+
+### 🛡️ Counterfeit Detection
+- Verify medicine batches
+- Batch authenticity validation
+- Recall alerts
+- Safety verification
+
+### 🌍 OpenFDA Integration
+- Search medicines
+- Drug information lookup
+- Usage details
+- Safety information
+
+### 📊 Distributor Management
+- Distributor database
+- Inventory supply tracking
+- Purchase management
+
+### 📱 Consumer Portal
+- Verify medicine authenticity
+- Check batch details
+- View medicine information
+- Report suspicious products
 
 ---
 
-## Solution
+## 📸 Screenshots
 
-Kyrenis provides a centralized medicine verification system that allows users to verify medicines using batch information and receive real-time safety insights.
-
-By combining verification, recall intelligence, and safety monitoring, Kyrenis helps users make informed decisions before consuming or dispensing medicines.
-
----
-
-## Key Features
+### Dashboard
+<table>
+  <tr>
+    <td><img src="readme_assets/dashboard_1.png" width="500"></td>
+    <td><img src="readme_assets/dashboard_2.png" width="500"></td>
+  </tr>
+</table>
 
 ### Batch Verification
 
-Verify medicines using batch numbers and product information.
+<table>
+  <tr>
+    <td><img src="readme_assets/batchVerification_1.png" width="500"></td>
+    <td><img src="readme_assets/batchVerification_2.png" width="500"></td>
+  </tr>
+</table>
 
-### Safety Alerts
+### Pharmacy Portal
 
-Receive alerts for recalled, counterfeit, or potentially unsafe medicine batches.
-
-### Drug Safety Intelligence
-
-Access safety information associated with verified medicines.
-
-### Pharmacy Support
-
-Assist pharmacies in identifying high-risk inventory before distribution.
-
-### Consumer-Friendly Interface
-
-Simple and intuitive verification process designed for everyday users.
-
-### Risk Classification
-
-Flag medicine batches based on available safety and verification data.
+<table>
+  <tr>
+    <td><img src="readme_assets/pharmacyPortal_1.png" width="500"></td>
+    <td><img src="readme_assets/pharmacyPortal_2.png" width="500"></td>
+  </tr>
+</table>
 
 ---
 
-## How It Works
+## 🛠️ Tech Stack
 
-1. User enters or scans medicine information.
-2. Kyrenis searches the available medicine database.
-3. Batch information is analyzed.
-4. Safety records and alerts are checked.
-5. Verification results are displayed to the user.
-6. High-risk batches are flagged for immediate attention.
+### Frontend
+- React
+- CRACO
+- JavaScript
+- CSS
+
+### Backend
+- FastAPI
+- Python
+- MongoDB
+- Motor (Async MongoDB Driver)
+
+### APIs
+- OpenFDA API
+
+### Deployment
+- Frontend: Vercel
+- Backend: Render
+- Database: MongoDB Atlas
 
 ---
 
-## Technology Stack
+## 📂 Project Structure
+
+```
+Kyrenis/
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   └── package.json
+│
+├── backend/
+│   ├── server.py
+│   ├── requirements.txt
+│   └── ...
+│
+└── README.md
+```
+
+---
+
+## ⚙️ Environment Variables
 
 ### Frontend
 
-* React
-* TypeScript
-* Tailwind CSS
+Create a `.env` file inside the frontend directory.
+
+```env
+REACT_APP_BACKEND_URL=https://your-render-url.onrender.com
+```
 
 ### Backend
 
-* Node.js
-* Express
+Create a `.env` file inside the backend directory.
 
-### Database
+```env
+MONGODB_URI=your_mongodb_connection_string
 
-* PostgreSQL / Structured Batch Database
+JWT_SECRET=your_secret
 
-### Deployment
+OPENFDA_API_KEY=your_openfda_api_key
 
-* Cloud-hosted web application
-
----
-
-## Current Challenges
-
-The biggest challenge in building Kyrenis is obtaining reliable and comprehensive medicine data, including:
-
-* Batch numbers
-* Manufacturing information
-* Expiry details
-* Recall records
-* Regulatory safety updates
-
-Access to trustworthy pharmaceutical datasets is essential for creating an accurate and dependable verification platform.
+CORS_ORIGINS=http://localhost:3000,https://kyrenis.vercel.app
+```
 
 ---
 
-## Future Roadmap
+## 🚀 Running Locally
 
-* QR-based medicine verification
-* Pharmacy dashboard
-* Real-time recall notifications
-* AI-powered risk analysis
-* Regulatory authority integrations
-* Supply-chain transparency tools
-* Mobile application support
-* Advanced analytics and reporting
+### Clone the repository
 
----
+```bash
+git clone https://github.com/MehulNegi/Kyrenis.git
+cd Kyrenis
+```
 
-## Expected Impact
+### Frontend
 
-### For Consumers
+```bash
+cd frontend
+npm install
+npm start
+```
 
-* Greater confidence in medicine authenticity
-* Increased awareness of safety risks
-* Improved healthcare decision-making
+Runs on:
 
-### For Pharmacies
-
-* Reduced risk of dispensing unsafe medicines
-* Better inventory monitoring
-* Faster response to recalls and safety alerts
-
-### For Healthcare Ecosystem
-
-* Enhanced transparency
-* Improved medicine safety
-* Increased public trust
+```
+http://localhost:3000
+```
 
 ---
 
-## Project Status
+### Backend
 
-🚧 Prototype / Hackathon Development Stage
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn server:app --reload
+```
 
-Kyrenis is currently being developed as a proof-of-concept focused on demonstrating the potential of batch-level medicine verification and drug safety intelligence.
+Runs on:
+
+```
+http://localhost:8000
+```
 
 ---
 
-## Team Cypher
+## 🎯 Vision
 
-Built with the vision of making medicine verification accessible, reliable, and trustworthy.
+Counterfeit medicines remain a major healthcare challenge worldwide. Kyrenis aims to leverage AI and modern web technologies to help pharmacies improve medicine safety, inventory management, and operational efficiency while empowering consumers to verify medicine authenticity.
 
-**Kyrenis**
-**Scan • Verify • Trust**
+---
+
+## 👥 Team
+
+Built with ❤️ by
+
+- **[Mehul Negi](https://github.com/MehulNegi)**
+- **[Rishabh Agrawal](https://github.com/rishabh124122)**
+- **[Swasti Nayak](https://github.com/Swasti-Soumyaa)**
+- **[Vinay Bichchali](https://github.com/vinay34744)**
+
+---
