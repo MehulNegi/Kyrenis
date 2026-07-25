@@ -45,16 +45,6 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ["DB_NAME"]]
 
 app = FastAPI(title="Kyrenis Pharmacy OS")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8000",
-        "https://kyrenis.vercel.app"
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 api = APIRouter(prefix="/api")
 
 logging.basicConfig(level=logging.INFO)
@@ -1193,11 +1183,18 @@ async def shutdown():
 app.include_router(api)
 
 # CORS
-frontend_url = os.environ.get("CORS_ORIGINS", "http://localhost:3000")
+frontend_url = os.environ.get(
+    "CORS_ORIGINS",
+    "http://localhost:3000",
+    "https://kyrenis.vercel.app"
+)
+
 origins = [o.strip() for o in frontend_url.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
