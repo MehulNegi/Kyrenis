@@ -6,7 +6,7 @@ export default function LandingBackground() {
       <svg className="absolute inset-0 w-full h-full opacity-[0.35]" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
         {/* Grid dots */}
         <defs>
-          <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
             <circle cx="1" cy="1" r="0.5" fill="#686868" />
           </pattern>
         </defs>

@@ -27,7 +27,7 @@ export default function PatientHub() {
               <h1 className="mt-3 text-3xl font-bold tracking-tight font-display text-slate-900 md:text-4xl">
                Check the <span className="text-emerald-500"> regulatory status </span> of a medicine batch.
              </h1>
-             <p className="max-w-2xl mt-2 text-slate-600">
+             <p className="max-w-2xl mt-2 text-black">
                Enter a batch number or scan the barcode on your strip — Kyrenis searches CDSCO advisories and reports what has been recorded.
              </p>
           </div>

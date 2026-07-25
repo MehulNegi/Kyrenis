@@ -31,7 +31,7 @@ export default function PharmacyDashboard() {
             <h1 className="mt-3 text-3xl font-bold tracking-tight font-display text-slate-900 md:text-4xl">
               Retail Operations Hub
             </h1>
-            <p className="max-w-2xl mt-2 text-slate-600">
+            <p className="max-w-2xl mt-2 text-black">
               Batch intake, First-In-First-Out point-of-sale billing, sales history and CDSCO regulatory analytics — all in one console.
             </p>
           </div>

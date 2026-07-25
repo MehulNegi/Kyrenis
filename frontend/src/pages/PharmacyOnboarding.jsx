@@ -35,20 +35,20 @@ export default function PharmacyOnboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-600 relative" data-testid="onboarding-page">
+    <div className="relative min-h-screen bg-white text-slate-600" data-testid="onboarding-page">
       <LandingBackground />
       <KyrenisHeader variant="Pharmacy Onboarding" />
       <main className="max-w-[880px] mx-auto px-6 md:px-10 py-14">
         <p className="k-label">Pharmacy verification</p>
-        <h1 className="font-display font-bold text-slate-900 text-3xl md:text-4xl tracking-tight mt-3">
+        <h1 className="mt-3 text-3xl font-bold tracking-tight font-display text-slate-900 md:text-4xl">
           Welcome{user?.name ? `, ${user.name.split(" ")[0]}` : ""}. Attach your pharmacy.
         </h1>
-        <p className="text-slate-600 mt-3 max-w-xl">
+        <p className="max-w-xl mt-3 text-black">
           Kyrenis links your Google identity to your retail outlet. Provide your CDSCO
           license and location once — you'll never see this screen again.
         </p>
 
-        <form onSubmit={submit} className="k-panel p-8 md:p-10 mt-8 flex flex-col gap-5" data-testid="onboarding-form">
+        <form onSubmit={submit} className="flex flex-col gap-5 p-8 mt-8 k-panel md:p-10" data-testid="onboarding-form">
           <Field label="Pharmacy Name" testid="onboarding-pharmacy-name">
             <input
               value={form.pharmacy_name}
@@ -56,10 +56,10 @@ export default function PharmacyOnboarding() {
               required
               placeholder="e.g. Kyrenis Reference Pharmacy"
               data-testid="onboarding-pharmacy-name-input"
-              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+              className="w-full px-3 py-3 font-mono text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
             />
           </Field>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Field label="CDSCO / Retail License #" testid="onboarding-license">
               <input
                 value={form.license_number}
@@ -67,7 +67,7 @@ export default function PharmacyOnboarding() {
                 required
                 placeholder="MH-RTL-77812"
                 data-testid="onboarding-license-input"
-                className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+                className="w-full px-3 py-3 font-mono text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
               />
             </Field>
             <Field label="City" testid="onboarding-city">
@@ -77,7 +77,7 @@ export default function PharmacyOnboarding() {
                 required
                 placeholder="Mumbai"
                 data-testid="onboarding-city-input"
-                className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+                className="w-full px-3 py-3 font-mono text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
               />
             </Field>
           </div>
@@ -87,7 +87,7 @@ export default function PharmacyOnboarding() {
               onChange={(e) => set("postal_code", e.target.value)}
               placeholder="400001"
               data-testid="onboarding-postal-input"
-              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+              className="w-full px-3 py-3 font-mono text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
             />
           </Field>
 

@@ -52,7 +52,7 @@ export default function Landing() {
 
       {/* Hero */}
       <main className="max-w-[1200px] mx-auto px-6 md:px-10">
-        <div className="grid grid-cols-1 gap-12 pt-16 pb-20 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 pt-16 pb-20 lg:grid-cols-2">
           <section>
             <span className="inline-block text-[11px] tracking-[0.2em] uppercase text-emerald-700 mb-5" data-testid="landing-eyebrow">
               CDSCO-Powered Regulatory Intelligence
@@ -63,7 +63,7 @@ export default function Landing() {
             >
               India's regulatory intelligence platform for <span className="text-emerald-500"> medicine batch verification. </span>
             </h1>
-            <p className="max-w-xl mt-6 text-base leading-relaxed text-slate-600 md:text-lg">
+            <p className="max-w-xl mt-6 text-base leading-relaxed text-black md:text-lg">
               Kyrenis aggregates the Central Drugs Standard Control Organisation's NSQ, Recall and
               Spurious Drug advisories into a single searchable repository, producing a transparent
               risk assessment for every medicine batch — for pharmacies, distributors and consumers.
@@ -110,10 +110,10 @@ export default function Landing() {
         <section className="py-16 border-t border-slate-200">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
             <div>
-              <p className="text-4xl tracking-[0.2em] uppercase text-slate-900 font-medium">The Problem We Couldn't Ignore</p>
+              <p className="text-4xl tracking-[0.2em] uppercase text-slate-900 font-medium text-center">The Problem We Couldn't Ignore</p>
             </div>
             <div>
-              <p className="text-base leading-relaxed text-slate-600">
+              <p className="text-base leading-relaxed text-black">
                 Consumer health trust in India's pharmaceutical supply chain faces a growing verification gap. Without accessible, real-time batch-level verification, patients and pharmacies cannot confidently confirm whether a medicine batch is safe, recalled, or spurious — leaving a dangerous gap between trust and safety.
               </p>
               <p className="mt-4 font-medium text-emerald-700">A lack of accessible verification creates a dangerous gap between trust and safety.</p>
@@ -132,22 +132,22 @@ export default function Landing() {
               <div className="inline-flex items-center justify-center mb-4 border rounded-full w-14 h-14 border-slate-200 text-slate-900">
                 <ScanLine size={24} />
               </div>
-              <p className="text-xs tracking-[0.2em] uppercase text-slate-900 font-medium mb-2">1. Scan</p>
-              <p className="text-sm text-slate-600">Capture the batch number from the medicine package or strip.</p>
+              <p className="text-s tracking-[0.2em] uppercase text-black font-medium mb-2">1. Scan</p>
+              <p className="text-sm text-black">Capture the batch number from the medicine package or strip.</p>
             </div>
             <div className="text-center">
               <div className="inline-flex items-center justify-center mb-4 border rounded-full w-14 h-14 border-slate-200 text-slate-900">
                 <ShieldCheck size={24} />
               </div>
-              <p className="text-xs tracking-[0.2em] uppercase text-slate-900 font-medium mb-2">2. Verify</p>
-              <p className="text-sm text-slate-600">Kyrenis verifies the batch against CDSCO databases, recall lists and safety alerts.</p>
+              <p className="text-s tracking-[0.2em] uppercase text-black font-medium mb-2">2. Verify</p>
+              <p className="text-sm text-black">Kyrenis verifies the batch against CDSCO databases, recall lists and safety alerts.</p>
             </div>
             <div className="text-center">
               <div className="inline-flex items-center justify-center mb-4 border rounded-full w-14 h-14 border-slate-200 text-slate-900">
                 <BadgeCheck size={24} />
               </div>
-              <p className="text-xs tracking-[0.2em] uppercase text-slate-900 font-medium mb-2">3. Trust</p>
-              <p className="text-sm text-slate-600">Get instant authenticity status and risk assessment with regulatory insights.</p>
+              <p className="text-s tracking-[0.2em] uppercase text-black font-medium mb-2">3. Trust</p>
+              <p className="text-sm text-black">Get instant authenticity status and risk assessment with regulatory insights.</p>
             </div>
           </div>
         </section>

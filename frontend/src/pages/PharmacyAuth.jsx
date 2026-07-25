@@ -84,7 +84,7 @@ export default function PharmacyAuth() {
             <h1 className="font-display font-bold text-slate-900 text-5xl mt-6 leading-[1.05] tracking-tighter">
                Every intake, verified in <br/> <span className="text-emerald-500"> four sovereign checks. </span>
             </h1>
-            <p className="max-w-md mt-6 leading-relaxed text-slate-600">
+            <p className="max-w-md mt-6 leading-relaxed text-black">
               Access the operator dashboard to log new inventory through the sealed 4-step
               verification pipeline, run FIFO POS transactions, and monitor cross-network
               anomaly telemetry in real time.

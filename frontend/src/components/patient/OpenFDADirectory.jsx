@@ -117,7 +117,7 @@ function ResultCard({ r, idx }) {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="bg-[#EF44440a]">
           <Panel
-            icon={<AlertTriangle size={16} className="text-[#EF4444]" />}
+            icon={<AlertTriangle size={18} className="text-[#EF4444]" />}
             title="Warnings"
             testid={`openfda-warnings-${idx}`}
             content={r.warnings}
@@ -125,7 +125,7 @@ function ResultCard({ r, idx }) {
         </div>
         <div className="bg-[#F59E0B0a]">
           <Panel
-            icon={<Activity size={16} className="text-[#F59E0B]" />}
+            icon={<Activity size={18} className="text-[#F59E0B]" />}
             title="Adverse Reactions"
             testid={`openfda-adverse-${idx}`}
             content={r.adverse_reactions}
@@ -133,7 +133,7 @@ function ResultCard({ r, idx }) {
         </div>
         <div className="bg-[#10B9810a]">
           <Panel
-            icon={<Pill size={16} className="text-[#10B981]" />}
+            icon={<Pill size={18} className="text-[#10B981]" />}
             title="Dosage & Administration"
             testid={`openfda-dosage-${idx}`}
             content={r.dosage_and_administration}
@@ -153,7 +153,7 @@ function Panel({ icon, title, content, testid }) {
     <div className="flex flex-col p-4 border border-slate-200" data-testid={testid}>
       <div className="flex items-center gap-2 mb-3">
         {icon}
-        <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-slate-900">{title}</p>
+        <p className="font-mono text-[13px] tracking-[0.3em] uppercase text-slate-900">{title}</p>
       </div>
       <div className="max-h-[280px] overflow-auto pr-1">
         <p className="text-xs leading-relaxed whitespace-pre-wrap text-slate-600">{text}</p>
