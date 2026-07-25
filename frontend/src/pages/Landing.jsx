@@ -40,9 +40,6 @@ export default function Landing() {
             <Link to="/about" className="transition-colors hover:text-slate-900" data-testid="landing-nav-about">
               About
             </Link>
-            <Link to="/patient" className="transition-colors hover:text-slate-900">
-              Features
-            </Link>
             <Link to="/contact" className="transition-colors hover:text-slate-900">
               Contact
             </Link>

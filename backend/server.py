@@ -37,7 +37,7 @@ from verification import (
     compute_telemetry_hash,
 )
 from seed_data import seed_all
-from email_dispatch import dispatch_alert_email, dispatch_contact_email
+from email_dispatch import dispatch_alert_email
 
 # ---------------- Setup ----------------
 mongo_url = os.environ["MONGO_URL"]
@@ -1096,20 +1096,16 @@ async def public_metrics():
 
 @api.post("/public/contact")
 async def public_contact(payload: ContactEnquiryPayload):
-    """Route a contact-form enquiry to the internal Kyrenis inbox.
-
-    The destination address is never rendered in the UI — see
-    `email_dispatch._CONTACT_INBOX`."""
+    """Store a contact-form enquiry in the database."""
     enquiry = {
         "name": sanitize_string(payload.name, 120),
         "email": sanitize_string(payload.email, 200),
         "organisation": sanitize_string(payload.organisation or "", 200),
         "category": sanitize_string(payload.category, 40),
         "message": sanitize_string(payload.message, 4000),
+        "created_at": datetime.now(timezone.utc),
     }
-    # Fire-and-forget delivery — the API always confirms receipt so demo users
-    # aren't blocked if the email integration is offline. Logs record every send.
-    await dispatch_contact_email(enquiry)
+    await db.contact_enquiries.insert_one(enquiry)
     return {
         "submitted": True,
         "message": "Thank you for contacting Kyrenis. Your enquiry has been submitted successfully.",
@@ -1169,6 +1165,7 @@ async def startup():
     await db.scan_telemetry.create_index("timestamp")
     await db.cdsco_recalls.create_index("target_batch_number")
     await db.security_alerts.create_index("target_batch_number")
+    await db.contact_enquiries.create_index("created_at")
     # seed
     counts = await seed_all(db)
     logger.info("Kyrenis seed complete: %s", counts)
