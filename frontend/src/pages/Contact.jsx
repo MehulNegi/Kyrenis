@@ -86,42 +86,17 @@ export default function Contact() {
         </div>
       </header>
 
-      <main className="max-w-[1080px] mx-auto px-6 md:px-10 py-16 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10">
+      <main className="max-w-[1080px] mx-auto px-6 md:px-10 py-16 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-12">
         <section>
           <p className="text-[11px] tracking-[0.28em] uppercase text-emerald-700 mb-4">Contact</p>
           <h1 className="font-display font-bold text-slate-900 text-4xl md:text-5xl tracking-tight leading-[1.08]">
             Send the Kyrenis team an enquiry.
           </h1>
-          <p className="mt-6 text-slate-600 leading-relaxed max-w-lg">
-            Whether you run a single-outlet pharmacy or a hospital chain, we're happy to walk you
-            through the platform, discuss regulatory data partnerships, or answer any support
-            question you have about your account. Fill in the form and a member of the team will
-            get back to you.
-          </p>
+<p className="mt-6 text-slate-600 leading-relaxed max-w-lg">
+             Fill in the form and a member of the team will get back to you.
+           </p>
 
-          <ul className="mt-10 flex flex-col gap-4 text-sm text-slate-600">
-            <li className="border-l-2 border-emerald-200 pl-4">
-              <p className="text-[11px] text-slate-400 tracking-[0.14em]">Technical Support</p>
-              <p className="text-slate-900 mt-1">
-                Account access, invoicing, batch intake or POS billing issues.
-              </p>
-            </li>
-            <li className="border-l-2 border-emerald-200 pl-4">
-              <p className="text-[11px] text-slate-400 tracking-[0.14em]">Partnership Enquiry</p>
-              <p className="text-slate-900 mt-1">
-                Distributor, chain-pharmacy and hospital roll-outs.
-              </p>
-            </li>
-            <li className="border-l-2 border-emerald-200 pl-4">
-              <p className="text-[11px] text-slate-400 tracking-[0.14em]">
-                Regulatory Collaboration
-              </p>
-              <p className="text-slate-900 mt-1">
-                State FDAs, CDSCO liaison, laboratory data-sharing.
-              </p>
-            </li>
-          </ul>
-        </section>
+</section>
 
         <section>
           {submitted ? (

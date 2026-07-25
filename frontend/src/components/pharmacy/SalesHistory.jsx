@@ -54,7 +54,7 @@ export default function SalesHistory() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && load(q)}
-                placeholder="Search by invoice # or medicine name"
+                placeholder="Search invoice or medicine…"
                 data-testid="sales-search-input"
                 className="flex-1 py-3 bg-transparent text-slate-900 text-sm focus:outline-none placeholder:text-slate-400"
             />

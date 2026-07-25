@@ -19,16 +19,15 @@ export default function PatientHub() {
     <div className="min-h-screen bg-white text-slate-600" data-testid="patient-hub">
       <KyrenisHeader variant="Patient Trust Hub · Guest" />
       <div className="max-w-[1240px] mx-auto px-6 md:px-10 pt-10">
-        <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
+        <div className="flex items-center justify-between flex-wrap gap-6 mb-8">
           <div>
             <p className="k-label">Consumer Verification</p>
-            <h1 className="font-display font-bold text-slate-900 text-3xl md:text-4xl tracking-tight mt-3">
-              Check the regulatory status of a medicine batch.
-            </h1>
-            <p className="text-slate-600 mt-2 max-w-2xl">
-              Enter a batch number or scan the GS1 barcode on your strip. Kyrenis searches CDSCO's
-              NSQ, Recall, Spurious and Theft advisories and reports what has been recorded.
-            </p>
+<h1 className="font-display font-bold text-slate-900 text-3xl md:text-4xl tracking-tight mt-3">
+               Check the regulatory status of a medicine batch.
+             </h1>
+             <p className="text-slate-600 mt-2 max-w-2xl">
+               Enter a batch number or scan the barcode on your strip — Kyrenis searches CDSCO advisories and reports what has been recorded.
+             </p>
           </div>
           <div className="flex flex-col items-end gap-2">
             {isIdentified ? (
@@ -39,12 +38,9 @@ export default function PatientHub() {
                 </span>
               </div>
             ) : (
-                <div className="flex items-center gap-2 border border-slate-200 px-4 py-2">
-                  <span className="w-1.5 h-1.5 bg-emerald-700" />
-                  <span className="text-[11px] tracking-[0.14em] text-slate-500">
-                  No sign-in required
-                </span>
-              </div>
+<div className="flex items-center gap-2 border border-slate-200 px-4 py-2">
+                   <span className="w-1.5 h-1.5 bg-emerald-700" />
+                 </div>
             )}
             {!isIdentified && (
               <div className="w-[240px]" data-testid="patient-google-signin-wrap">

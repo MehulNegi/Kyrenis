@@ -101,15 +101,10 @@ export default function BatchAuthenticator() {
         className="k-panel p-6 md:p-8 flex flex-col gap-5"
         data-testid="consumer-verify-form"
       >
-        <div className="flex items-center gap-3">
-          <ShieldCheck size={18} className="text-emerald-700" />
-          <h2 className="font-display text-slate-900 text-xl">Regulatory Batch Verification</h2>
-        </div>
-        <p className="text-slate-600 text-sm -mt-2">
-          Enter the batch number printed on your medicine strip, or scan it using the camera.
-          Kyrenis checks the integrated CDSCO NSQ, Recall and Spurious Drug datasets and reports
-          only what has been recorded by the regulator.
-        </p>
+<div className="flex items-center gap-3">
+           <ShieldCheck size={18} className="text-emerald-700" />
+           <h2 className="font-display text-slate-900 text-xl">Regulatory Batch Verification</h2>
+         </div>
 
         <label className="flex flex-col gap-2">
           <span className="text-[11px] text-slate-500 tracking-[0.14em]">Batch Number</span>
@@ -142,16 +137,11 @@ export default function BatchAuthenticator() {
           </button>
         </div>
 
-        {showCamera && (
-          <div data-testid="consumer-camera-wrap">
-            <CameraScanner onDetected={handleScan} />
-            <p className="text-[10px] text-slate-400 mt-2">
-              Point the camera at the QR code or barcode on your medicine strip. The scanner will
-              capture the batch identifier and fill it above — you can review and edit before
-              running the regulatory check.
-            </p>
-          </div>
-        )}
+{showCamera && (
+           <div data-testid="consumer-camera-wrap">
+             <CameraScanner onDetected={handleScan} />
+           </div>
+         )}
 
         {recent.length > 0 && (
           <div
@@ -208,13 +198,9 @@ function VerdictPanel({ verdict, busy }) {
         <div className="w-28 h-28 border-2 border-slate-200 relative overflow-hidden">
           <div className="absolute inset-x-2 h-[2px] bg-emerald-700 k-scanline" />
         </div>
-        <p className="mt-6 text-[11px] tracking-[0.14em] text-slate-400 uppercase">
-          Awaiting a batch
-        </p>
-        <p className="text-slate-400 text-sm mt-2 max-w-xs">
-          Enter a batch number or scan your strip — Kyrenis returns a regulatory risk assessment
-          based only on the integrated CDSCO surveillance datasets.
-        </p>
+<p className="mt-6 text-[11px] tracking-[0.14em] text-slate-400 uppercase">
+           Awaiting a batch
+         </p>
       </div>
     );
   }

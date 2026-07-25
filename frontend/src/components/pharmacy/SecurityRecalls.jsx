@@ -68,13 +68,9 @@ export default function SecurityRecalls() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <p className="k-label">Regulatory Feed</p>
-          <h2 className="font-display text-slate-900 text-2xl md:text-3xl tracking-tight mt-2">
-            Security &amp; Recalls
-          </h2>
-          <p className="text-slate-600 text-sm mt-1">
-            CDSCO advisories cross-referenced with in-pharmacy telemetry saturation and spatial
-            anomaly hits.
-          </p>
+<h2 className="font-display text-slate-900 text-2xl md:text-3xl tracking-tight mt-2">
+             Security &amp; Recalls
+           </h2>
         </div>
         <button
           onClick={load}
@@ -164,12 +160,10 @@ export default function SecurityRecalls() {
             className="border border-slate-200 divide-y divide-slate-200"
           >
             {loading && (
-              <div className="px-4 py-6 text-slate-400 text-sm">Loading CDSCO advisories…</div>
+              <div className="px-4 py-6 text-slate-400 text-sm">Loading…</div>
             )}
             {!loading && filteredRecalls.length === 0 && (
-              <div className="px-4 py-6 text-slate-400 text-sm">
-                No advisories match the current filter.
-              </div>
+              <div className="px-4 py-6 text-slate-400 text-sm">No results.</div>
             )}
             {filteredRecalls.map((r, i) => (
               <div
@@ -245,12 +239,10 @@ export default function SecurityRecalls() {
             className="border border-slate-200 divide-y divide-slate-200"
           >
             {loading && (
-              <div className="px-4 py-6 text-slate-400 text-sm">Loading security alerts…</div>
+              <div className="px-4 py-6 text-slate-400 text-sm">Loading…</div>
             )}
             {!loading && filteredAlerts.length === 0 && (
-              <div className="px-4 py-6 text-slate-400 text-sm">
-                No advisories match the current filter.
-              </div>
+              <div className="px-4 py-6 text-slate-400 text-sm">No results.</div>
             )}
             {filteredAlerts.map((a, i) => (
               <div

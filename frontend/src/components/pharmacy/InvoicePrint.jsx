@@ -58,14 +58,11 @@ export default function InvoicePrint({ receipt, onClose }) {
 
         <div className="p-8">
           <div className="invoice-header flex items-start justify-between border-b border-black/15 pb-6">
-            <div>
-              <p className="text-[10px] tracking-[0.28em] uppercase text-slate-900/70">
-                Kyrenis Reference Pharmacy
-              </p>
-              <h1 className="font-display text-3xl mt-2 text-slate-900">Tax Invoice</h1>
-              <p className="text-black/55 text-xs mt-2">
-                Andheri East, Mumbai 400 069 · GSTIN 27ABCDE1234F1Z5
-              </p>
+<div>
+               <p className="text-[10px] tracking-[0.28em] uppercase text-slate-900/70">
+                 Kyrenis Reference Pharmacy
+               </p>
+               <h1 className="font-display text-3xl mt-2 text-slate-900">Tax Invoice</h1>
             </div>
             <div className="text-right">
               <p className="text-[10px] tracking-[0.14em] text-slate-900/55">Invoice #</p>

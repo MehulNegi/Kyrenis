@@ -77,12 +77,9 @@ export default function PharmacyAuth() {
           className="hidden lg:flex flex-col justify-between px-14 py-16"
           style={{ background: "#F8FAFC" }}
         >
-          <div>
-            <p className="k-label">Pharmacy console sign-in</p>
+<div>
             <h1 className="font-display font-bold text-slate-900 text-5xl mt-6 leading-[1.05] tracking-tighter">
-              Every intake, verified in
-              <br />
-              <span className="text-emerald-700">four sovereign checks.</span>
+               Four sovereign checks.
             </h1>
             <p className="text-slate-600 mt-6 max-w-md leading-relaxed">
               Access the operator dashboard to log new inventory through the sealed 4-step
@@ -93,10 +90,10 @@ export default function PharmacyAuth() {
 
           <div className="grid grid-cols-2 gap-3">
             {[
-              { k: "Pipeline", v: "OCR ↔ QR ↔ Mod10 ↔ CDSCO" },
-              { k: "Alert Model", v: "Volumetric + Teleportation" },
-              { k: "Privacy", v: "SHA-256 GTIN + Batch hashes" },
-              { k: "Compliance", v: "CDSCO Recall Registry sync" },
+              { k: "Pipeline", v: "4-Step" },
+              { k: "Alert Model", v: "Volumetric" },
+              { k: "Privacy", v: "SHA-256" },
+              { k: "Compliance", v: "CDSCO Sync" },
             ].map((x) => (
               <div key={x.k} className="border border-[#E2E8F0]/12 p-4">
                 <p className="k-label">{x.k}</p>
@@ -115,10 +112,10 @@ export default function PharmacyAuth() {
         >
           <div className="w-full max-w-[420px]">
             <div className="k-panel p-8" data-testid="auth-terminal-card">
-              <div className="flex items-center gap-2 mb-6">
-                <Terminal size={16} className="text-emerald-700" />
-                <p className="text-[11px] tracking-[0.14em] text-slate-600">Pharmacy Console Sign-in</p>
-              </div>
+<div className="flex items-center gap-2 mb-6">
+                 <Terminal size={16} className="text-emerald-700" />
+                 <p className="text-[11px] tracking-[0.14em] text-slate-400">Sign in</p>
+               </div>
 
                 <div className="flex gap-2 mb-6 border border-slate-200 p-1" data-testid="auth-mode-tabs">
                   <button

@@ -65,9 +65,6 @@ export default function Telemetry() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <p className="k-label">// Network Telemetry Grid</p>
-          <p className="text-slate-500 text-sm mt-1">
-            Live signals across {volumetric.length} tracked batches · {alerts.length} unresolved anomalies.
-          </p>
         </div>
         <a
           href={`${BACKEND}/api/pharmacy/export/audit-log.csv`}

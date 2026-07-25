@@ -88,7 +88,6 @@ export default function POSBilling() {
         </div>
 
         <div>
-          <p className="k-label mb-2">Add Medicine (search brand or generic)</p>
           <Autocomplete
             options={medicines}
             value=""
@@ -108,12 +107,9 @@ export default function POSBilling() {
         <div className="k-divider my-6" />
 
         {cart.length === 0 ? (
-            <div className="border border-dashed border-slate-200 p-8 text-center" data-testid="pos-cart-empty">
+<div className="border border-dashed border-slate-200 p-8 text-center" data-testid="pos-cart-empty">
               <p className="text-[11px] text-slate-400 tracking-[0.14em]">Cart empty</p>
-              <p className="text-slate-500 text-sm mt-2">
-              Search for a medicine to start a checkout.
-            </p>
-          </div>
+            </div>
         ) : (
           <div className="flex flex-col gap-2" data-testid="pos-cart">
             {cart.map((line) => {

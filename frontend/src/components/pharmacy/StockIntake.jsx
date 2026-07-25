@@ -91,14 +91,10 @@ export default function StockIntake() {
           <ScanLine size={18} className="text-emerald-700" />
           <h2 className="font-display text-slate-900 text-xl">Batch Intake</h2>
         </div>
-        <p className="text-slate-600 text-sm -mt-2">
-          Enter batch metadata or paste the GS1 DataMatrix payload from the strip. Kyrenis
-          verifies the batch against CDSCO advisories before writing it to inventory.
-        </p>
 
         <div className="flex gap-2 flex-wrap items-center">
-          <SampleChip label="Sample · Clean" onClick={() => loadSample("clean")} testid="sample-clean" />
-          <SampleChip label="Sample · Mismatch" onClick={() => loadSample("mismatch")} testid="sample-mismatch" tone="danger" />
+          <SampleChip label="Clean" onClick={() => loadSample("clean")} testid="sample-clean" />
+          <SampleChip label="Mismatch" onClick={() => loadSample("mismatch")} testid="sample-mismatch" tone="danger" />
           <button
             type="button"
             data-testid="intake-reset-demo-btn"
