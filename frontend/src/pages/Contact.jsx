@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import KyrenisLogo from "@/components/KyrenisLogo";
+import LandingBackground from "@/components/LandingBackground";
 import { api, formatApiErrorDetail } from "@/lib/api";
 import { toast } from "sonner";
 import {
@@ -53,7 +54,8 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-600" data-testid="contact-page">
+    <div className="relative min-h-screen bg-white text-slate-600 " data-testid="contact-page">
+      <LandingBackground />
       <header className="border-b border-slate-200">
         <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 md:px-10 py-5">
           <Link
@@ -75,11 +77,11 @@ export default function Contact() {
             </div>
           </Link>
           <div className="flex items-center gap-6 text-sm text-slate-600">
-            <Link to="/" className="inline-flex items-center gap-2 hover:text-slate-900 transition-colors">
+            <Link to="/" className="inline-flex items-center gap-2 transition-colors hover:text-slate-900">
               <ArrowLeft size={14} />
               Home
             </Link>
-            <Link to="/about" className="hover:text-slate-900 transition-colors">
+            <Link to="/about" className="transition-colors hover:text-slate-900">
               About
             </Link>
           </div>
@@ -92,7 +94,7 @@ export default function Contact() {
           <h1 className="font-display font-bold text-slate-900 text-4xl md:text-5xl tracking-tight leading-[1.08]">
             Send the Kyrenis team an enquiry.
           </h1>
-<p className="mt-6 text-slate-600 leading-relaxed max-w-lg">
+<p className="max-w-lg mt-6 leading-relaxed text-slate-600">
              Fill in the form and a member of the team will get back to you.
            </p>
 
@@ -101,15 +103,15 @@ export default function Contact() {
         <section>
           {submitted ? (
             <div
-              className="k-panel p-8 md:p-10 flex flex-col items-center text-center min-h-[520px] justify-center"
+              className="k-panel p-8 md:p-10 flex flex-col items-center text-center min-h-[520px] justify-center relative z-10"
               data-testid="contact-submitted"
             >
-              <span className="inline-flex items-center justify-center w-14 h-14 border border-emerald-700 text-emerald-700 mb-6">
+              <span className="inline-flex items-center justify-center mb-6 border w-14 h-14 border-emerald-700 text-emerald-700">
                 <Send size={22} />
               </span>
-              <h2 className="font-display text-slate-900 text-2xl">Enquiry submitted</h2>
+              <h2 className="text-2xl font-display text-slate-900">Enquiry submitted</h2>
               <p
-                className="text-slate-600 mt-3 max-w-sm"
+                className="max-w-sm mt-3 text-slate-600"
                 data-testid="contact-submitted-message"
               >
                 Thank you for contacting Kyrenis. Your enquiry has been submitted successfully.
@@ -134,17 +136,17 @@ export default function Contact() {
           ) : (
             <form
               onSubmit={submit}
-              className="k-panel p-8 md:p-10 flex flex-col gap-5"
+              className="relative z-10 flex flex-col gap-5 p-8 k-panel md:p-10"
               data-testid="contact-form"
             >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <Field label="Full name">
                   <input
                     required
                     value={form.name}
                     onChange={(e) => set("name", e.target.value)}
                     data-testid="contact-name"
-                    className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+                    className="w-full px-3 py-3 text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
                   />
                 </Field>
                 <Field label="Work email">
@@ -154,7 +156,7 @@ export default function Contact() {
                     value={form.email}
                     onChange={(e) => set("email", e.target.value)}
                     data-testid="contact-email"
-                    className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+                    className="w-full px-3 py-3 text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
                   />
                 </Field>
               </div>
@@ -164,7 +166,7 @@ export default function Contact() {
                   value={form.organisation}
                   onChange={(e) => set("organisation", e.target.value)}
                   data-testid="contact-org"
-                  className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+                  className="w-full px-3 py-3 text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
                 />
               </Field>
 
@@ -198,7 +200,7 @@ export default function Contact() {
                     onChange={(e) => set("message", e.target.value)}
                     data-testid="contact-message"
                     placeholder="Tell us how we can help…"
-                    className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+                    className="w-full px-3 py-3 text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
                   />
               </Field>
 

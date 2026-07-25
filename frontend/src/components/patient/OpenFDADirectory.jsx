@@ -28,11 +28,11 @@ export default function OpenFDADirectory() {
   };
 
   return (
-    <div className="flex flex-col gap-6" data-testid="openfda-directory">
-      <div className="k-panel p-6 md:p-8">
+    <div className="relative z-10 flex flex-col gap-6 bg-white" data-testid="openfda-directory">
+      <div className="p-6 k-panel md:p-8">
         <div className="flex items-center gap-3 mb-6">
           <BookOpen size={18} className="text-emerald-700" />
-          <h2 className="font-display text-slate-900 text-xl">OpenFDA Drug Safety Directory</h2>
+          <h2 className="text-xl font-display text-slate-900">OpenFDA Drug Safety Directory</h2>
         </div>
 
         <form
@@ -40,7 +40,7 @@ export default function OpenFDADirectory() {
             e.preventDefault();
             run();
           }}
-          className="flex gap-3 flex-wrap"
+          className="flex flex-wrap gap-3"
         >
           <div className="flex-1 min-w-[260px] flex items-center gap-2 border border-slate-200 px-3 focus-within:border-emerald-700 transition-colors">
             <Search size={16} className="text-slate-500" />
@@ -49,7 +49,7 @@ export default function OpenFDADirectory() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by generic or brand medicine name (e.g. Ibuprofen)"
               data-testid="openfda-search-input"
-              className="flex-1 py-3 bg-transparent text-slate-900 font-mono text-sm focus:outline-none"
+              className="flex-1 py-3 font-mono text-sm bg-transparent text-slate-900 focus:outline-none"
             />
           </div>
           <button
@@ -62,7 +62,7 @@ export default function OpenFDADirectory() {
           </button>
         </form>
 
-        <div className="mt-4 flex gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-2 mt-4">
           {QUICK.map((q) => (
             <button
               key={q}
@@ -91,7 +91,7 @@ export default function OpenFDADirectory() {
       ))}
 
       {!busy && searched && results.length === 0 && (
-        <div className="k-panel p-8 text-center text-slate-400" data-testid="openfda-empty">
+        <div className="p-8 text-center k-panel text-slate-400" data-testid="openfda-empty">
           No results for "{query}".
         </div>
       )}
@@ -101,38 +101,44 @@ export default function OpenFDADirectory() {
 
 function ResultCard({ r, idx }) {
   return (
-    <div className="k-panel p-6 md:p-8" data-testid={`openfda-result-${idx}`}>
-      <div className="flex items-start justify-between flex-wrap gap-2 mb-6">
+    <div className="p-6 k-panel md:p-8" data-testid={`openfda-result-${idx}`}>
+      <div className="flex flex-wrap items-start justify-between gap-2 mb-6">
         <div>
           <p className="k-label">Result {idx + 1}</p>
-          <h3 className="font-display text-slate-900 text-2xl mt-2 tracking-tight">
+          <h3 className="mt-2 text-2xl tracking-tight font-display text-slate-900">
             {r.brand_name}
           </h3>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="mt-1 text-sm text-slate-500">
             {r.generic_name || "—"} {r.manufacturer_name ? `· ${r.manufacturer_name}` : ""}
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Panel
-          icon={<AlertTriangle size={16} className="text-[#EF4444]" />}
-          title="Warnings"
-          testid={`openfda-warnings-${idx}`}
-          content={r.warnings}
-        />
-        <Panel
-          icon={<Activity size={16} className="text-[#F59E0B]" />}
-          title="Adverse Reactions"
-          testid={`openfda-adverse-${idx}`}
-          content={r.adverse_reactions}
-        />
-        <Panel
-          icon={<Pill size={16} className="text-[#10B981]" />}
-          title="Dosage & Administration"
-          testid={`openfda-dosage-${idx}`}
-          content={r.dosage_and_administration}
-        />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="bg-[#EF44440a]">
+          <Panel
+            icon={<AlertTriangle size={16} className="text-[#EF4444]" />}
+            title="Warnings"
+            testid={`openfda-warnings-${idx}`}
+            content={r.warnings}
+          />
+        </div>
+        <div className="bg-[#F59E0B0a]">
+          <Panel
+            icon={<Activity size={16} className="text-[#F59E0B]" />}
+            title="Adverse Reactions"
+            testid={`openfda-adverse-${idx}`}
+            content={r.adverse_reactions}
+          />
+        </div>
+        <div className="bg-[#10B9810a]">
+          <Panel
+            icon={<Pill size={16} className="text-[#10B981]" />}
+            title="Dosage & Administration"
+            testid={`openfda-dosage-${idx}`}
+            content={r.dosage_and_administration}
+          />
+        </div>
       </div>
     </div>
   );
@@ -144,13 +150,13 @@ function Panel({ icon, title, content, testid }) {
       ? content.join("\n\n")
       : "No data provided by OpenFDA for this section.";
   return (
-    <div className="border border-slate-200 p-4 flex flex-col" data-testid={testid}>
+    <div className="flex flex-col p-4 border border-slate-200" data-testid={testid}>
       <div className="flex items-center gap-2 mb-3">
         {icon}
         <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-slate-900">{title}</p>
       </div>
       <div className="max-h-[280px] overflow-auto pr-1">
-        <p className="text-slate-600 text-xs leading-relaxed whitespace-pre-wrap">{text}</p>
+        <p className="text-xs leading-relaxed whitespace-pre-wrap text-slate-600">{text}</p>
       </div>
     </div>
   );

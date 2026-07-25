@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { api, formatApiErrorDetail } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import KyrenisHeader from "@/components/KyrenisHeader";
+import LandingBackground from "@/components/LandingBackground";
 import { Building2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 
@@ -34,7 +35,8 @@ export default function PharmacyOnboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-600" data-testid="onboarding-page">
+    <div className="min-h-screen bg-white text-slate-600 relative" data-testid="onboarding-page">
+      <LandingBackground />
       <KyrenisHeader variant="Pharmacy Onboarding" />
       <main className="max-w-[880px] mx-auto px-6 md:px-10 py-14">
         <p className="k-label">Pharmacy verification</p>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import KyrenisHeader from "@/components/KyrenisHeader";
+import LandingBackground from "@/components/LandingBackground";
 import BatchAuthenticator from "@/components/patient/BatchAuthenticator";
 import OpenFDADirectory from "@/components/patient/OpenFDADirectory";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
@@ -16,29 +17,30 @@ export default function PatientHub() {
   const { user } = useAuth();
   const isIdentified = user && (user.designated_role === "CONSUMER_GUEST" || user.auth_provider === "google");
   return (
-    <div className="min-h-screen bg-white text-slate-600" data-testid="patient-hub">
+    <div className="relative min-h-screen bg-white text-slate-600" data-testid="patient-hub">
+      <LandingBackground />
       <KyrenisHeader variant="Patient Trust Hub · Guest" />
       <div className="max-w-[1240px] mx-auto px-6 md:px-10 pt-10">
-        <div className="flex items-center justify-between flex-wrap gap-6 mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-6 mb-8">
           <div>
-            <p className="k-label">Consumer Verification</p>
-<h1 className="font-display font-bold text-slate-900 text-3xl md:text-4xl tracking-tight mt-3">
-               Check the regulatory status of a medicine batch.
+            <p className="text-[11px] tracking-[0.2em] uppercase text-emerald-700 ml-2">Consumer Verification</p>
+              <h1 className="mt-3 text-3xl font-bold tracking-tight font-display text-slate-900 md:text-4xl">
+               Check the <span className="text-emerald-500"> regulatory status </span> of a medicine batch.
              </h1>
-             <p className="text-slate-600 mt-2 max-w-2xl">
+             <p className="max-w-2xl mt-2 text-slate-600">
                Enter a batch number or scan the barcode on your strip — Kyrenis searches CDSCO advisories and reports what has been recorded.
              </p>
           </div>
           <div className="flex flex-col items-end gap-2">
             {isIdentified ? (
-              <div className="flex items-center gap-2 border border-emerald-200 px-4 py-2" data-testid="patient-identified-pill">
+              <div className="flex items-center gap-2 px-4 py-2 border border-emerald-200" data-testid="patient-identified-pill">
                 <UserCheck size={14} className="text-emerald-700" />
                 <span className="text-[11px] tracking-[0.14em] text-emerald-700">
                   Signed in as {user.name || user.email}
                 </span>
               </div>
             ) : (
-<div className="flex items-center gap-2 border border-slate-200 px-4 py-2">
+<div className="flex items-center gap-2 px-4 py-2 border border-slate-200">
                    <span className="w-1.5 h-1.5 bg-emerald-700" />
                  </div>
             )}
@@ -56,7 +58,7 @@ export default function PatientHub() {
         </div>
 
         <div
-          className="flex flex-wrap gap-1 border border-slate-200 p-1 mb-8"
+          className="relative z-10 flex flex-wrap gap-1 p-1 mb-8 bg-white border border-slate-200"
           role="tablist"
           data-testid="patient-tabs"
         >
@@ -69,7 +71,7 @@ export default function PatientHub() {
               data-testid={testid}
               className={`inline-flex items-center gap-2 px-4 py-3 text-sm transition-colors ${
                 active === key
-                  ? "bg-slate-100 text-slate-900"
+                  ? "bg-emerald-100 text-emerald-700"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >

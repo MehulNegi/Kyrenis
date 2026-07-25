@@ -64,11 +64,11 @@ export default function SecurityRecalls() {
   }, [alerts, filter]);
 
   return (
-    <section data-testid="security-recalls-section" className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
+    <section data-testid="security-recalls-section" className="relative z-10 space-y-6 bg-white">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="k-label">Regulatory Feed</p>
-<h2 className="font-display text-slate-900 text-2xl md:text-3xl tracking-tight mt-2">
+<h2 className="mt-2 text-2xl tracking-tight font-display text-slate-900 md:text-3xl">
              Security &amp; Recalls
            </h2>
         </div>
@@ -76,7 +76,7 @@ export default function SecurityRecalls() {
           onClick={load}
           disabled={loading}
           data-testid="security-recalls-refresh"
-          className="inline-flex items-center gap-2 border border-slate-200 px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-colors"
+          className="inline-flex items-center gap-2 px-3 py-2 text-sm transition-colors border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300"
         >
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
           Refresh
@@ -84,7 +84,7 @@ export default function SecurityRecalls() {
       </div>
 
       <div
-        className="inline-flex border border-slate-200 p-1"
+        className="inline-flex p-1 border border-slate-200"
         role="tablist"
         data-testid="security-recalls-tabs"
       >
@@ -123,7 +123,7 @@ export default function SecurityRecalls() {
       {error && (
         <div
           data-testid="security-recalls-error"
-          className="border border-red-200 bg-red-50 text-red-800 px-4 py-3 text-sm"
+          className="px-4 py-3 text-sm text-red-800 border border-red-200 bg-red-50"
         >
           {error}
         </div>
@@ -157,30 +157,30 @@ export default function SecurityRecalls() {
 
           <div
             data-testid="security-recalls-recalls-list"
-            className="border border-slate-200 divide-y divide-slate-200"
+            className="border divide-y border-slate-200 divide-slate-200"
           >
             {loading && (
-              <div className="px-4 py-6 text-slate-400 text-sm">Loading…</div>
+              <div className="px-4 py-6 text-sm text-slate-400">Loading…</div>
             )}
             {!loading && filteredRecalls.length === 0 && (
-              <div className="px-4 py-6 text-slate-400 text-sm">No results.</div>
+              <div className="px-4 py-6 text-sm text-slate-400">No results.</div>
             )}
             {filteredRecalls.map((r, i) => (
               <div
                 key={r.id || i}
                 data-testid={`security-recalls-recall-row-${i}`}
-                className="px-4 py-4 flex flex-col md:flex-row md:items-center gap-3 hover:bg-slate-50"
+                className="flex flex-col gap-3 px-4 py-4 md:flex-row md:items-center hover:bg-slate-50"
               >
                 <div className="md:w-56 shrink-0">
-                  <p className="text-slate-900 font-medium text-sm">{r.product_name}</p>
+                  <p className="text-sm font-medium text-slate-900">{r.product_name}</p>
                   <p className="text-slate-500 text-xs mt-0.5">{r.generic_composition}</p>
                 </div>
                 <div className="md:w-40 shrink-0">
-                  <p className="k-mono text-slate-700 text-xs">{r.batch_number}</p>
+                  <p className="text-xs k-mono text-slate-700">{r.batch_number}</p>
                   <p className="text-slate-400 text-[11px] mt-0.5">{r.manufacturer}</p>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-slate-700 text-sm">
+                  <p className="text-sm text-slate-700">
                     {r.failure_reason || r.hazard_classification}
                   </p>
                   <p className="text-slate-400 text-[11px] mt-1">
@@ -236,28 +236,28 @@ export default function SecurityRecalls() {
 
           <div
             data-testid="security-recalls-alerts-list"
-            className="border border-slate-200 divide-y divide-slate-200"
+            className="border divide-y border-slate-200 divide-slate-200"
           >
             {loading && (
-              <div className="px-4 py-6 text-slate-400 text-sm">Loading…</div>
+              <div className="px-4 py-6 text-sm text-slate-400">Loading…</div>
             )}
             {!loading && filteredAlerts.length === 0 && (
-              <div className="px-4 py-6 text-slate-400 text-sm">No results.</div>
+              <div className="px-4 py-6 text-sm text-slate-400">No results.</div>
             )}
             {filteredAlerts.map((a, i) => (
               <div
                 key={a.id || i}
                 data-testid={`security-recalls-alert-row-${i}`}
-                className="px-4 py-4 flex flex-col md:flex-row md:items-center gap-3"
+                className="flex flex-col gap-3 px-4 py-4 md:flex-row md:items-center"
               >
                 <div className="md:w-56 shrink-0">
-                  <p className="text-slate-900 font-medium text-sm">{a.target_medicine_name}</p>
+                  <p className="text-sm font-medium text-slate-900">{a.target_medicine_name}</p>
                   <p className="k-mono text-slate-500 text-xs mt-0.5">
                     {a.target_batch_number}
                   </p>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-slate-700 text-sm">{a.alert_type}</p>
+                  <p className="text-sm text-slate-700">{a.alert_type}</p>
                   {a.triggering_telemetry_json?.detail && (
                     <p className="text-slate-400 text-[11px] mt-1">
                       {a.triggering_telemetry_json.detail}

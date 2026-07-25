@@ -53,13 +53,13 @@ export default function Replenishment() {
   };
 
   return (
-    <div className="flex flex-col gap-6" data-testid="replenishment-view">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="k-panel p-6 md:p-8" data-testid="low-stock-panel">
+    <div className="relative z-10 flex flex-col gap-6 bg-white" data-testid="replenishment-view">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="p-6 k-panel md:p-8" data-testid="low-stock-panel">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-3">
               <AlertTriangle size={18} className="text-red-700" />
-              <h2 className="font-display text-slate-900 text-xl">Low-Stock Queue</h2>
+              <h2 className="text-xl font-display text-slate-900">Low-Stock Queue</h2>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -83,22 +83,22 @@ export default function Replenishment() {
           </div>
 
           {low.length === 0 ? (
-            <p className="text-slate-400 text-sm">All items above safety threshold.</p>
+            <p className="text-sm text-slate-400">All items above safety threshold.</p>
           ) : (
             <div className="flex flex-col gap-2 max-h-[380px] overflow-auto pr-1" data-testid="low-stock-list">
               {low.map((item) => (
                 <div
                   key={item.medicine.id}
-                  className="border border-red-200 p-3 flex items-center justify-between"
+                  className="flex items-center justify-between p-3 border border-red-200"
                   style={{ background: "#FEF2F2" }}
                   data-testid={`low-stock-item-${item.medicine.brand_name}`}
                 >
                   <div>
-                    <p className="text-slate-900 text-sm font-medium">{item.medicine.brand_name}</p>
-                    <p className="text-slate-500 text-xs">{item.medicine.generic_composition}</p>
+                    <p className="text-sm font-medium text-slate-900">{item.medicine.brand_name}</p>
+                    <p className="text-xs text-slate-500">{item.medicine.generic_composition}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-display text-red-700 text-lg leading-none">
+                    <p className="text-lg leading-none text-red-700 font-display">
                       {item.total_stock}
                     </p>
                     <p className="text-[10px] text-slate-400 mt-1">
@@ -111,31 +111,31 @@ export default function Replenishment() {
           )}
         </div>
 
-        <div className="k-panel p-6 md:p-8" data-testid="expiring-panel">
+        <div className="p-6 k-panel md:p-8" data-testid="expiring-panel">
           <div className="flex items-center gap-3 mb-6">
               <Timer size={18} className="text-amber-600" />
-              <h2 className="font-display text-slate-900 text-xl">Expiring · Next 60 Days</h2>
+              <h2 className="text-xl font-display text-slate-900">Expiring · Next 60 Days</h2>
           </div>
           {expiring.length === 0 ? (
-            <p className="text-slate-400 text-sm">No near-expiry stock detected.</p>
+            <p className="text-sm text-slate-400">No near-expiry stock detected.</p>
           ) : (
             <div className="flex flex-col gap-2 max-h-[380px] overflow-auto pr-1" data-testid="expiring-list">
               {expiring.slice(0, 20).map((b) => (
                 <div
                   key={b.id}
-                  className="border border-amber-200 p-3 flex items-center justify-between"
+                  className="flex items-center justify-between p-3 border border-amber-200"
                   style={{ background: "#FFFBEB" }}
                   data-testid={`expiring-item-${b.batch_number}`}
                 >
                   <div>
-                    <p className="text-slate-900 text-sm font-medium">
+                    <p className="text-sm font-medium text-slate-900">
                       {b.medicine?.brand_name || "—"}
                     </p>
                     <p className="text-[11px] text-slate-500">
                       Batch {b.batch_number} · qty {b.current_stock_qty}
                     </p>
                   </div>
-                  <p className="text-amber-600 text-sm">{b.expiry_date}</p>
+                  <p className="text-sm text-amber-600">{b.expiry_date}</p>
                 </div>
               ))}
             </div>
@@ -143,14 +143,14 @@ export default function Replenishment() {
         </div>
       </div>
 
-      <div className="k-panel p-6 md:p-8" data-testid="po-history-panel">
+      <div className="p-6 k-panel md:p-8" data-testid="po-history-panel">
         <div className="flex items-center gap-3 mb-6">
           <FileText size={18} className="text-slate-600" />
-          <h2 className="font-display text-slate-900 text-xl">Purchase Orders</h2>
+          <h2 className="text-xl font-display text-slate-900">Purchase Orders</h2>
         </div>
 
         {pos.length === 0 ? (
-            <p className="text-slate-400 text-sm">No purchase orders yet.</p>
+            <p className="text-sm text-slate-400">No purchase orders yet.</p>
         ) : (
           <div className="overflow-auto">
             <table className="w-full text-sm" data-testid="po-table">
@@ -244,22 +244,22 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
         <div className="flex items-center justify-between">
           <div>
             <p className="k-label">Manual Purchase Order</p>
-            <h3 className="font-display text-slate-900 text-2xl mt-1">Create a new PO</h3>
+            <h3 className="mt-1 text-2xl font-display text-slate-900">Create a new PO</h3>
           </div>
           <button
             type="button"
             onClick={onClose}
             data-testid="manual-po-close"
-            className="w-9 h-9 border border-slate-200 inline-flex items-center justify-center hover:border-slate-300 hover:text-slate-900 transition-colors"
+            className="inline-flex items-center justify-center transition-colors border w-9 h-9 border-slate-200 hover:border-slate-300 hover:text-slate-900"
             aria-label="Close"
           >
             <X size={16} />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <p className="k-label mb-2">Distributor</p>
+            <p className="mb-2 k-label">Distributor</p>
             <Autocomplete
               options={distributors}
               value={distributorId}
@@ -271,13 +271,13 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
             />
           </div>
           <div>
-            <p className="k-label mb-2">Expected Delivery</p>
+            <p className="mb-2 k-label">Expected Delivery</p>
             <input
               type="date"
               value={delivery}
               onChange={(e) => setDelivery(e.target.value)}
               data-testid="manual-po-delivery"
-              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+              className="w-full px-3 py-3 text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
             />
           </div>
         </div>
@@ -313,7 +313,7 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
                   value={l.quantity}
                   onChange={(e) => setLine(i, "quantity", parseInt(e.target.value, 10) || 1)}
                   data-testid={`manual-po-qty-${i}`}
-                  className="px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm text-right focus:border-emerald-700 focus:outline-none"
+                  className="px-3 py-3 text-sm text-right bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
                 />
                 {lines.length > 1 && (
                   <button
@@ -321,7 +321,7 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
                     onClick={() => setLines((ls) => ls.filter((_, idx) => idx !== i))}
                     aria-label="Remove line"
                     data-testid={`manual-po-remove-${i}`}
-                    className="w-11 h-11 border border-slate-200 inline-flex items-center justify-center text-red-700 hover:border-red-700 transition-colors"
+                    className="inline-flex items-center justify-center text-red-700 transition-colors border w-11 h-11 border-slate-200 hover:border-red-700"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -332,13 +332,13 @@ function ManualPOModal({ medicines, distributors, onClose, onCreated }) {
         </div>
 
         <div>
-          <p className="k-label mb-2">Notes (optional)</p>
+          <p className="mb-2 k-label">Notes (optional)</p>
           <textarea
             rows={2}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             data-testid="manual-po-notes"
-              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+              className="w-full px-3 py-3 text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
           />
         </div>
 

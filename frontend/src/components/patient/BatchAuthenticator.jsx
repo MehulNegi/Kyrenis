@@ -93,17 +93,17 @@ export default function BatchAuthenticator() {
 
   return (
     <div
-      className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6"
+      className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 bg-white relative z-10"
       data-testid="batch-authenticator"
     >
       <form
         onSubmit={onSubmit}
-        className="k-panel p-6 md:p-8 flex flex-col gap-5"
+        className="flex flex-col gap-5 p-6 k-panel md:p-8"
         data-testid="consumer-verify-form"
-      >
+      > 
 <div className="flex items-center gap-3">
            <ShieldCheck size={18} className="text-emerald-700" />
-           <h2 className="font-display text-slate-900 text-xl">Regulatory Batch Verification</h2>
+           <h2 className="text-xl font-display text-slate-900">Regulatory Batch Verification</h2>
          </div>
 
         <label className="flex flex-col gap-2">
@@ -113,16 +113,16 @@ export default function BatchAuthenticator() {
             onChange={(e) => setBatch(e.target.value)}
             data-testid="consumer-batch-input"
             placeholder="e.g. SHT7550"
-            className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+            className="w-full px-3 py-3 text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
           />
         </label>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <button
             type="button"
             onClick={() => setShowCamera((v) => !v)}
             data-testid="consumer-scan-camera-btn"
-            className="inline-flex items-center justify-center gap-2 border border-slate-300 text-slate-900 px-5 py-3 text-sm hover:border-slate-300 hover:bg-slate-100 transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 text-sm transition-colors border border-slate-300 text-slate-900 hover:border-slate-300 hover:bg-slate-100"
           >
             <Camera size={14} />
             {showCamera ? "Close camera" : "Scan Using Camera"}
@@ -145,7 +145,7 @@ export default function BatchAuthenticator() {
 
         {recent.length > 0 && (
           <div
-            className="border-t border-slate-200 pt-5 flex flex-col gap-3"
+            className="flex flex-col gap-3 pt-5 border-t border-slate-200"
             data-testid="consumer-recent-section"
           >
               <p className="text-[11px] text-slate-400 tracking-[0.14em] inline-flex items-center gap-2">
@@ -157,7 +157,7 @@ export default function BatchAuthenticator() {
                 <div
                   key={val + "-" + i}
                   data-testid={`consumer-recent-chip-${i}`}
-                  className="inline-flex items-center gap-1 border border-slate-200 hover:border-emerald-200 group transition-colors"
+                  className="inline-flex items-center gap-1 transition-colors border border-slate-200 hover:border-emerald-200 group"
                 >
                   <button
                     type="button"
@@ -195,7 +195,7 @@ function VerdictPanel({ verdict, busy }) {
         className="k-panel p-8 flex flex-col items-center justify-center text-center min-h-[420px]"
         data-testid="consumer-verdict-empty"
       >
-        <div className="w-28 h-28 border-2 border-slate-200 relative overflow-hidden">
+        <div className="relative overflow-hidden border-2 w-28 h-28 border-slate-200">
           <div className="absolute inset-x-2 h-[2px] bg-emerald-700 k-scanline" />
         </div>
 <p className="mt-6 text-[11px] tracking-[0.14em] text-slate-400 uppercase">
@@ -210,7 +210,7 @@ function VerdictPanel({ verdict, busy }) {
         className="k-panel p-8 min-h-[420px] flex flex-col items-center justify-center text-center"
         data-testid="consumer-verdict-loading"
       >
-        <div className="animate-pulse w-16 h-16 border-2 border-emerald-200" />
+        <div className="w-16 h-16 border-2 animate-pulse border-emerald-200" />
         <p className="mt-6 text-sm text-slate-600">Checking the CDSCO regulatory record…</p>
       </div>
     );
@@ -239,13 +239,13 @@ function VerdictPanel({ verdict, busy }) {
                 {alert ? "HIGH RISK" : "LOW RISK"}
               </p>
               <h3
-                className="font-display text-slate-900 text-2xl md:text-3xl mt-2 leading-tight"
+                className="mt-2 text-2xl leading-tight font-display text-slate-900 md:text-3xl"
               data-testid="consumer-verdict-headline"
             >
               {verdict.headline}
             </h3>
               <p
-                className="text-slate-600 text-sm mt-2"
+                className="mt-2 text-sm text-slate-600"
                 data-testid="consumer-verdict-status"
               >
               {alert
@@ -254,7 +254,7 @@ function VerdictPanel({ verdict, busy }) {
             </p>
           </div>
           <div
-            className="w-16 h-16 border-2 flex items-center justify-center shrink-0"
+            className="flex items-center justify-center w-16 h-16 border-2 shrink-0"
             style={{ borderColor: color, color }}
             data-testid={`consumer-verdict-icon-${alert ? "high" : "low"}`}
           >
@@ -267,13 +267,13 @@ function VerdictPanel({ verdict, busy }) {
             <div className="flex items-center justify-between text-[11px] text-slate-500 tracking-[0.14em]">
               <span>Risk Level</span>
               <span
-                className="text-slate-900 text-sm"
+                className="text-sm text-slate-900"
                 data-testid="consumer-risk-score"
               >
               {alert ? "High" : "Low"}
             </span>
           </div>
-          <div className="mt-2 h-2 bg-slate-100 border border-slate-200 relative">
+          <div className="relative h-2 mt-2 border bg-slate-100 border-slate-200">
             <div
               className="absolute top-0 left-0 h-full transition-all"
               style={{
@@ -290,7 +290,7 @@ function VerdictPanel({ verdict, busy }) {
 
         {alert ? (
           <div
-            className="mt-8 border p-5 grid grid-cols-1 md:grid-cols-2 gap-4"
+            className="grid grid-cols-1 gap-4 p-5 mt-8 border md:grid-cols-2"
             style={{ borderColor: `${color}55`, background: `${color}0a` }}
             data-testid="consumer-alert-card"
           >
@@ -319,10 +319,10 @@ function VerdictPanel({ verdict, busy }) {
           </div>
         ) : (
           <div
-            className="mt-8 border border-emerald-200 p-5 grid grid-cols-1 md:grid-cols-2 gap-4"
+            className="grid grid-cols-1 gap-4 p-5 mt-8 bg-[#10B9810a] border border-emerald-200 md:grid-cols-2"
             data-testid="consumer-clean-card"
           >
-              <p className="text-slate-900 text-sm">{verdict.message}</p>
+              <p className="text-sm text-slate-900">{verdict.message}</p>
               <p className="text-slate-400 text-[11px] mt-4">
               Kyrenis reports what has been recorded by the regulator in the integrated CDSCO
               surveillance datasets. A "No Regulatory Alert Found" result is not a guarantee of

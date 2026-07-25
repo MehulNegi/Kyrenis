@@ -35,18 +35,18 @@ export default function SalesHistory() {
   );
 
   return (
-    <div className="flex flex-col gap-6" data-testid="sales-history-view">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="relative z-10 flex flex-col gap-6 bg-white" data-testid="sales-history-view">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <SummaryCell label="Invoices" value={summary.count} />
         <SummaryCell label="Revenue" value={`₹${summary.total.toFixed(2)}`} />
         <SummaryCell label="GST Collected" value={`₹${summary.gst.toFixed(2)}`} />
       </div>
 
-      <div className="k-panel p-6 md:p-8">
-        <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="p-6 k-panel md:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
           <Receipt size={18} className="text-emerald-700" />
-          <h2 className="font-display text-slate-900 text-xl">Sales & Invoice History</h2>
+          <h2 className="text-xl font-display text-slate-900">Sales & Invoice History</h2>
           </div>
             <div className="flex items-center gap-2 border border-slate-200 px-3 focus-within:border-emerald-700 transition-colors w-full md:w-[380px]">
               <Search size={14} className="text-slate-500" />
@@ -56,7 +56,7 @@ export default function SalesHistory() {
                 onKeyDown={(e) => e.key === "Enter" && load(q)}
                 placeholder="Search invoice or medicine…"
                 data-testid="sales-search-input"
-                className="flex-1 py-3 bg-transparent text-slate-900 text-sm focus:outline-none placeholder:text-slate-400"
+                className="flex-1 py-3 text-sm bg-transparent text-slate-900 focus:outline-none placeholder:text-slate-400"
             />
             <button
               onClick={() => load(q)}
@@ -68,12 +68,12 @@ export default function SalesHistory() {
           </div>
         </div>
 
-        <div className="k-divider my-6" />
+        <div className="my-6 k-divider" />
 
         {busy ? (
-          <p className="text-slate-400 text-sm">Loading…</p>
+          <p className="text-sm text-slate-400">Loading…</p>
         ) : receipts.length === 0 ? (
-          <p className="text-slate-400 text-sm" data-testid="sales-empty">
+          <p className="text-sm text-slate-400" data-testid="sales-empty">
             No invoices match your search.
           </p>
         ) : (
@@ -144,9 +144,9 @@ export default function SalesHistory() {
 
 function SummaryCell({ label, value }) {
   return (
-      <div className="k-panel p-5">
-        <p className="text-[11px] text-slate-400 tracking-[0.14em]">{label}</p>
-        <p className="font-display text-slate-900 text-2xl mt-2">{value}</p>
+      <div className="p-5 border bg-emerald-50">
+        <p className="text-[11px] text-emerald-700 tracking-[0.14em]">{label}</p>
+        <p className="mt-2 text-2xl font-display text-slate-900">{value}</p>
     </div>
   );
 }

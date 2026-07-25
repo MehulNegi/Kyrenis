@@ -84,15 +84,15 @@ export default function StockIntake() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6" data-testid="stock-intake-view">
+    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 bg-white relative z-10" data-testid="stock-intake-view">
       {/* Form */}
-      <form onSubmit={submit} className="k-panel p-6 md:p-8 flex flex-col gap-5" data-testid="intake-form">
+      <form onSubmit={submit} className="flex flex-col gap-5 p-6 k-panel md:p-8" data-testid="intake-form">
         <div className="flex items-center gap-3">
           <ScanLine size={18} className="text-emerald-700" />
-          <h2 className="font-display text-slate-900 text-xl">Batch Intake</h2>
+          <h2 className="text-xl font-display text-slate-900">Batch Intake</h2>
         </div>
 
-        <div className="flex gap-2 flex-wrap items-center">
+        <div className="flex flex-wrap items-center gap-2">
           <SampleChip label="Clean" onClick={() => loadSample("clean")} testid="sample-clean" />
           <SampleChip label="Mismatch" onClick={() => loadSample("mismatch")} testid="sample-mismatch" tone="danger" />
           <button
@@ -117,13 +117,6 @@ export default function StockIntake() {
           </button>
         </div>
 
-        <CameraScanner
-          onDetected={(text) => {
-            set("qr_string", text);
-            toast.success("QR captured — verify fields, then fire the pipeline");
-          }}
-        />
-
         <Field label="Raw 2D DataMatrix QR Output" testid="intake-qr">
           <textarea
             data-testid="intake-qr-input"
@@ -131,7 +124,7 @@ export default function StockIntake() {
             placeholder={SAMPLE_QR}
             value={form.qr_string}
             onChange={(e) => set("qr_string", e.target.value)}
-            className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+            className="w-full px-3 py-3 font-mono text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
           />
         </Field>
         <Field label="Foil Stamped OCR Text Payload" testid="intake-ocr">
@@ -141,7 +134,7 @@ export default function StockIntake() {
             placeholder={SAMPLE_OCR}
             value={form.ocr_text}
             onChange={(e) => set("ocr_text", e.target.value)}
-            className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+            className="w-full px-3 py-3 font-mono text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
           />
         </Field>
 
@@ -152,7 +145,7 @@ export default function StockIntake() {
               value={form.distributor_id}
               onChange={(e) => set("distributor_id", e.target.value)}
               required
-              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+              className="w-full px-3 py-3 text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
             >
               <option value="">Select node…</option>
               {distributors.map((d) => (
@@ -168,7 +161,7 @@ export default function StockIntake() {
               value={form.medicine_id}
               onChange={(e) => set("medicine_id", e.target.value)}
               required
-              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+              className="w-full px-3 py-3 text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
             >
               <option value="">Select SKU…</option>
               {medicines.map((m) => (
@@ -187,7 +180,7 @@ export default function StockIntake() {
               value={form.package_declared_mrp}
               onChange={(e) => set("package_declared_mrp", e.target.value)}
               required
-              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+              className="w-full px-3 py-3 font-mono text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
             />
           </Field>
           <Field label="Quantity" testid="intake-qty">
@@ -198,7 +191,7 @@ export default function StockIntake() {
               onChange={(e) => set("quantity", e.target.value)}
               min={1}
               required
-              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+              className="w-full px-3 py-3 font-mono text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
             />
           </Field>
         </div>
@@ -209,7 +202,7 @@ export default function StockIntake() {
               type="date"
               value={form.mfg_date}
               onChange={(e) => set("mfg_date", e.target.value)}
-              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+              className="w-full px-3 py-3 font-mono text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
             />
           </Field>
           <Field label="EXP Date" testid="intake-exp">
@@ -218,7 +211,7 @@ export default function StockIntake() {
               type="date"
               value={form.expiry_date}
               onChange={(e) => set("expiry_date", e.target.value)}
-              className="w-full px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+              className="w-full px-3 py-3 font-mono text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
             />
           </Field>
         </div>
@@ -274,7 +267,7 @@ function VerificationResult({ result }) {
         <p className="mt-4 font-mono text-[11px] tracking-[0.3em] uppercase text-slate-400">
           Awaiting Payload
         </p>
-        <p className="text-slate-400 text-sm mt-2 max-w-xs">
+        <p className="max-w-xs mt-2 text-sm text-slate-400">
           Submit a QR + OCR payload to see the 4-step verification breakdown.
         </p>
       </div>
@@ -286,7 +279,7 @@ function VerificationResult({ result }) {
   const accent = isPass ? "#10B981" : "#EF4444";
 
   return (
-    <div className="k-panel p-6 md:p-8 flex flex-col gap-5" data-testid="intake-result">
+    <div className="flex flex-col gap-5 p-6 k-panel md:p-8" data-testid="intake-result">
       <div className="flex items-center justify-between">
         <p className="k-label">Verification result</p>
         <span
@@ -300,16 +293,16 @@ function VerificationResult({ result }) {
 
       {result.verification.final_alert && (
         <div
-          className="border p-4 flex gap-3 items-start"
+          className="flex items-start gap-3 p-4 border"
           style={{ borderColor: "#FCA5A5", background: "#FEF2F2" }}
           data-testid="intake-critical-banner"
         >
           <AlertTriangle size={20} className="text-red-700 shrink-0 mt-0.5" />
           <div>
-            <p className="text-slate-900 font-medium">
+            <p className="font-medium text-slate-900">
               {result.verification.final_alert.level}: {result.verification.final_alert.title}
             </p>
-            <p className="text-slate-600 text-sm mt-1">
+            <p className="mt-1 text-sm text-slate-600">
               {result.verification.final_alert.detail}
             </p>
           </div>
@@ -320,7 +313,7 @@ function VerificationResult({ result }) {
         {v.checks.map((c, i) => (
           <li
             key={i}
-            className="flex items-center justify-between border border-slate-200 px-4 py-3"
+            className="flex items-center justify-between px-4 py-3 border border-slate-200"
             data-testid={`intake-check-${i}`}
           >
             <div className="flex items-center gap-3">
@@ -330,7 +323,7 @@ function VerificationResult({ result }) {
                   <AlertTriangle size={16} className="text-red-700" />
                 )}
                 <span className="font-mono text-xs tracking-wider text-slate-900">Check {i + 1}</span>
-                <span className="text-slate-600 text-sm">{c.name}</span>
+                <span className="text-sm text-slate-600">{c.name}</span>
             </div>
             {c.detail && (
                 <span className="hidden md:block font-mono text-[10px] text-slate-500">
@@ -343,15 +336,15 @@ function VerificationResult({ result }) {
 
       {v.warnings && v.warnings.length > 0 && (
         <div
-          className="border p-4"
+          className="p-4 border"
           style={{ borderColor: "#F59E0B", background: "#FFFBEB" }}
           data-testid="intake-mrp-warning"
         >
           <p className="text-amber-600 font-mono text-[10px] tracking-[0.28em] uppercase">
             Warning · Persistent Tag
           </p>
-          <p className="text-slate-900 mt-2 text-sm">{v.warnings[0].tag}</p>
-          <p className="text-slate-500 text-xs mt-1">{v.warnings[0].detail}</p>
+          <p className="mt-2 text-sm text-slate-900">{v.warnings[0].tag}</p>
+          <p className="mt-1 text-xs text-slate-500">{v.warnings[0].detail}</p>
         </div>
       )}
 
@@ -360,15 +353,15 @@ function VerificationResult({ result }) {
           {result.triggered_alerts.map((a, i) => (
             <div
               key={i}
-          className="border p-3 flex items-start gap-3"
+          className="flex items-start gap-3 p-3 border"
           style={{ borderColor: "#FCA5A5", background: "#FEF2F2" }}
             >
               <AlertTriangle size={16} className="text-red-700 mt-0.5" />
               <div>
-                <p className="text-slate-900 text-sm font-medium">
+                <p className="text-sm font-medium text-slate-900">
                   {a.alert_type} · {a.severity}
                 </p>
-                <p className="text-slate-600 text-xs mt-1">{a.message}</p>
+                <p className="mt-1 text-xs text-slate-600">{a.message}</p>
               </div>
             </div>
           ))}
@@ -376,10 +369,10 @@ function VerificationResult({ result }) {
       )}
 
       {result.inventory_batch && (
-        <div         className="border border-emerald-200 p-4 flex items-start gap-3" data-testid="intake-inventory-written">
+        <div         className="flex items-start gap-3 p-4 border border-emerald-200" data-testid="intake-inventory-written">
           <Package size={18} className="text-emerald-700 mt-0.5" />
           <div>
-            <p className="text-slate-900 text-sm font-medium">Inventory Batch Written</p>
+            <p className="text-sm font-medium text-slate-900">Inventory Batch Written</p>
             <p className="font-mono text-[11px] text-slate-500 mt-1">
               Batch {result.inventory_batch.batch_number} · Qty {result.inventory_batch.current_stock_qty} ·
               Exp {result.inventory_batch.expiry_date}
@@ -392,19 +385,19 @@ function VerificationResult({ result }) {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <p className="k-label">Parsed GTIN</p>
-          <p className="font-mono text-slate-600 mt-1 text-sm">{v.qr_gtin || "—"}</p>
+          <p className="mt-1 font-mono text-sm text-slate-600">{v.qr_gtin || "—"}</p>
         </div>
         <div>
           <p className="k-label">Parsed Batch</p>
-          <p className="font-mono text-slate-600 mt-1 text-sm">{v.qr_batch || "—"}</p>
+          <p className="mt-1 font-mono text-sm text-slate-600">{v.qr_batch || "—"}</p>
         </div>
         <div>
           <p className="k-label">QR Expiry</p>
-          <p className="font-mono text-slate-600 mt-1 text-sm">{v.qr_expiry || "—"}</p>
+          <p className="mt-1 font-mono text-sm text-slate-600">{v.qr_expiry || "—"}</p>
         </div>
         <div>
           <p className="k-label">OCR Expiry</p>
-          <p className="font-mono text-slate-600 mt-1 text-sm">{v.ocr_expiry || "—"}</p>
+          <p className="mt-1 font-mono text-sm text-slate-600">{v.ocr_expiry || "—"}</p>
         </div>
       </div>
     </div>

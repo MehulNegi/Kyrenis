@@ -13,7 +13,7 @@ export default function KyrenisHeader({ variant = "default" }) {
 
   return (
     <header
-      className="sticky top-0 z-40 border-b"
+      className="top-0 z-40 border-b"
       style={{
         background: "white",
         borderColor: "#E2E8F0",
@@ -54,8 +54,8 @@ export default function KyrenisHeader({ variant = "default" }) {
           )}
           {user && user.designated_role === "PHARMACY_STAFF" && !isPatientSurface && (
             <>
-              <div className="hidden md:flex flex-col items-end mr-1">
-                <span className="text-slate-900 text-sm font-medium" data-testid="header-user-email">
+              <div className="flex-col items-end hidden mr-1 md:flex">
+                <span className="text-sm font-medium text-slate-900" data-testid="header-user-email">
                   {user.email}
                 </span>
                 <span className="text-[10px] text-slate-500 mt-0.5">Pharmacy Staff</span>
@@ -66,7 +66,7 @@ export default function KyrenisHeader({ variant = "default" }) {
                   navigate("/");
                 }}
                 data-testid="header-logout-btn"
-                className="inline-flex items-center gap-2 border border-slate-200 px-3 py-2 text-xs text-slate-600 hover:text-slate-900 hover:border-red-700 transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-2 text-xs transition-colors border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-red-700"
               >
                 <LogOut size={14} />
                 Logout

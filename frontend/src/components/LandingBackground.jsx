@@ -72,7 +72,7 @@ export default function LandingBackground() {
         </g>
 
         {/* Medicine bottle */}
-        <g fill="#686868" stroke="#94A3B8" strokeWidth="1.2" opacity="0.55">
+        <g fill="#686868" stroke="#686868" strokeWidth="1.2" opacity="0.55">
           <rect x="1360" y="440" width="22" height="34" rx="4" />
           <rect x="1364" y="434" width="14" height="8" rx="2" />
           <line x1="1366" y1="448" x2="1376" y2="448" />
@@ -119,9 +119,9 @@ export default function LandingBackground() {
         </g>
 
         {/* Small shield / safety mark */}
-        <g fill="#686868" stroke="#94A3B8" strokeWidth="1.2" opacity="0.5">
+        <g fill="#686868" stroke="#686868" strokeWidth="1.2" opacity="0.5">
           <path d="M460 820 L470 808 L490 808 L495 820 L490 836 L470 836 Z" />
-          <polyline points="474,820 484,820" stroke="#94A3B8" strokeWidth="1.5" fill="none" opacity="0.7" />
+          <polyline points="474,820 484,820" stroke="#686868" strokeWidth="1.5" fill="none" opacity="0.7" />
         </g>
       </svg>
     </div>

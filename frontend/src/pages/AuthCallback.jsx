@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { api, formatApiErrorDetail } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import KyrenisLogo from "@/components/KyrenisLogo";
+import LandingBackground from "@/components/LandingBackground";
 
 /**
  * Handles the Emergent OAuth callback: reads `session_id` from the URL fragment,
@@ -57,7 +58,8 @@ export default function AuthCallback() {
   }, [location.search, navigate, setUser]);
 
   return (
-    <div className="min-h-screen bg-white text-slate-600 flex items-center justify-center p-6" data-testid="auth-callback">
+    <div className="min-h-screen bg-white text-slate-600 flex items-center justify-center p-6 relative" data-testid="auth-callback">
+      <LandingBackground />
       <div className="k-panel p-10 max-w-md w-full text-center">
         <div className="flex items-center justify-center text-slate-900 mb-6">
           <KyrenisLogo size={56} />

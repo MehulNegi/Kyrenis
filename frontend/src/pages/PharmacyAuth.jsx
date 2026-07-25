@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import KyrenisLogo from "@/components/KyrenisLogo";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import LandingBackground from "@/components/LandingBackground";
 import { Terminal, LogIn, UserPlus, Zap, ArrowLeft } from "lucide-react";
 
 export default function PharmacyAuth() {
@@ -46,7 +47,8 @@ export default function PharmacyAuth() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-600 flex flex-col" data-testid="pharmacy-auth-page">
+    <div className="relative flex flex-col min-h-screen bg-white text-slate-600" data-testid="pharmacy-auth-page">
+      <LandingBackground />
       <div className="border-b border-slate-200">
         <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 text-slate-900" data-testid="auth-home-link">
@@ -74,14 +76,15 @@ export default function PharmacyAuth() {
       <main className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_460px]">
         {/* Left contextual panel */}
         <section
-          className="hidden lg:flex flex-col justify-between px-14 py-16"
+          className="flex-col justify-between hidden py-16 lg:flex px-14"
           style={{ background: "#F8FAFC" }}
         >
-<div>
+          <div>
+            <p className="text-[11px] tracking-[0.2em] uppercase text-emerald-700 ml-2">Pharmacy console sign-in</p>
             <h1 className="font-display font-bold text-slate-900 text-5xl mt-6 leading-[1.05] tracking-tighter">
-               Four sovereign checks.
+               Every intake, verified in <br/> <span className="text-emerald-500"> four sovereign checks. </span>
             </h1>
-            <p className="text-slate-600 mt-6 max-w-md leading-relaxed">
+            <p className="max-w-md mt-6 leading-relaxed text-slate-600">
               Access the operator dashboard to log new inventory through the sealed 4-step
               verification pipeline, run FIFO POS transactions, and monitor cross-network
               anomaly telemetry in real time.
@@ -97,7 +100,7 @@ export default function PharmacyAuth() {
             ].map((x) => (
               <div key={x.k} className="border border-[#E2E8F0]/12 p-4">
                 <p className="k-label">{x.k}</p>
-                <p className="font-mono text-slate-700 text-sm mt-2">{x.v}</p>
+                <p className="mt-2 font-mono text-sm text-slate-700">{x.v}</p>
               </div>
             ))}
           </div>
@@ -105,19 +108,19 @@ export default function PharmacyAuth() {
 
         {/* Right auth panel */}
         <section
-          className="flex items-center justify-center px-6 md:px-10 py-14"
+          className="relative z-10 flex items-center justify-center px-6 md:px-10 py-14"
           style={{
             background: "#F8FAFC",
           }}
         >
           <div className="w-full max-w-[420px]">
-            <div className="k-panel p-8" data-testid="auth-terminal-card">
+            <div className="p-8 k-panel" data-testid="auth-terminal-card">
 <div className="flex items-center gap-2 mb-6">
                  <Terminal size={16} className="text-emerald-700" />
                  <p className="text-[11px] tracking-[0.14em] text-slate-400">Sign in</p>
                </div>
 
-                <div className="flex gap-2 mb-6 border border-slate-200 p-1" data-testid="auth-mode-tabs">
+                <div className="flex gap-2 p-1 mb-6 border border-slate-200" data-testid="auth-mode-tabs">
                   <button
                     onClick={() => setMode("signin")}
                     data-testid="auth-mode-signin"
@@ -146,7 +149,7 @@ export default function PharmacyAuth() {
                 onClick={autofill}
                 disabled={busy}
                 data-testid="auth-autofill-btn"
-                className="w-full mb-4 py-3 border border-emerald-200 text-emerald-700 text-sm inline-flex items-center justify-center gap-2 hover:bg-emerald-50 disabled:opacity-50 transition-colors"
+                className="inline-flex items-center justify-center w-full gap-2 py-3 mb-4 text-sm transition-colors border border-emerald-200 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50"
               >
                 <Zap size={14} />
                 Sign in as demo pharmacy
@@ -212,7 +215,7 @@ export default function PharmacyAuth() {
 
                 {(localError || error) && (
                   <p
-                    className="text-red-700 text-sm font-mono border border-red-200 p-3"
+                    className="p-3 font-mono text-sm text-red-700 border border-red-200"
                     data-testid="auth-error"
                   >
                     {localError || error}
@@ -260,7 +263,7 @@ function Field({ label, testid, value, onChange, type = "text", required, autoCo
         required={required}
         autoComplete={autoComplete}
         data-testid={testid}
-        className="px-3 py-3 bg-white border border-slate-200 text-slate-900 font-mono text-sm focus:border-emerald-700 focus:outline-none transition-colors"
+        className="px-3 py-3 font-mono text-sm transition-colors bg-white border border-slate-200 text-slate-900 focus:border-emerald-700 focus:outline-none"
       />
     </label>
   );
