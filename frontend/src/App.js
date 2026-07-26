@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react"
 import "@/App.css";
 import { AuthProvider, ProtectedRoute } from "@/lib/auth";
 import Landing from "@/pages/Landing";
@@ -67,6 +68,7 @@ function App() {
           />
         </AuthProvider>
       </BrowserRouter>
+      <Analytics />
     </div>
   );
 }
