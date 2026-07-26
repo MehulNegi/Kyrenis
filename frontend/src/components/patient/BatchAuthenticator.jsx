@@ -31,11 +31,18 @@ function saveRecent(list) {
 // back to using the raw scan string if the payload is a plain barcode.
 function parseScanForBatch(text) {
   if (!text) return "";
+  // Handle OCR text like "BATCH NO: XYZ" or "BATCH NUMBER: XYZ"
+  const ocrMatch = text.match(/BATCH\s*(?:NO|NUMBER)?\s*[:]?\s*([A-Z0-9][A-Z0-9\-]{1,20})/i);
+  if (ocrMatch && ocrMatch[1]) {
+    const val = ocrMatch[1].trim();
+    if (!/^(NO|NUMBER)$/i.test(val)) return val;
+  }
+  // Existing GS1 barcode logic
   const gs1 = /\(10\)([A-Za-z0-9\-\/]+)/.exec(text);
   if (gs1 && gs1[1]) return gs1[1].trim();
-  // If the payload starts with 10 after a GTIN, try FNC1-less form: 01<gtin14>10<batch>...
   const m = /10([A-Za-z0-9\-\/]{2,20})(?:17|21|11|$)/.exec(text.replace(/[\s()]/g, ""));
   if (m && m[1]) return m[1].trim();
+  // Fallback: return trimmed text if it looks like a batch number
   return text.trim();
 }
 
