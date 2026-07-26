@@ -1,11 +1,5 @@
 import React from "react";
 
-/**
- * A small "Continue with Google" button that redirects to Emergent's OAuth
- * gateway. `flow` is echoed back in the callback query string so we can route
- * appropriately (pharmacy onboarding vs patient identify-yourself).
- * REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
- */
 export default function GoogleSignInButton({ flow = "pharmacy", label, className = "", testid }) {
   const start = () => {
     const redirectUrl = `${window.location.origin}/auth/callback?flow=${encodeURIComponent(flow)}`;

@@ -3,7 +3,6 @@ import KyrenisHeader from "@/components/KyrenisHeader";
 import LandingBackground from "@/components/LandingBackground";
 import StockIntake from "@/components/pharmacy/StockIntake";
 import POSBilling from "@/components/pharmacy/POSBilling";
-import Replenishment from "@/components/pharmacy/Replenishment";
 import Telemetry from "@/components/pharmacy/Telemetry";
 import SalesHistory from "@/components/pharmacy/SalesHistory";
 import SecurityRecalls from "@/components/pharmacy/SecurityRecalls";

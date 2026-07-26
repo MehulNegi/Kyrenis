@@ -5,12 +5,6 @@ import { useAuth } from "@/lib/auth";
 import KyrenisLogo from "@/components/KyrenisLogo";
 import LandingBackground from "@/components/LandingBackground";
 
-/**
- * Handles the Emergent OAuth callback: reads `session_id` from the URL fragment,
- * exchanges it via /api/auth/google/session, and then routes based on flow +
- * onboarding status. Ref-guarded against StrictMode double-invocation.
- * REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
- */
 export default function AuthCallback() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -58,17 +52,17 @@ export default function AuthCallback() {
   }, [location.search, navigate, setUser]);
 
   return (
-    <div className="min-h-screen bg-white text-slate-600 flex items-center justify-center p-6 relative" data-testid="auth-callback">
+    <div className="relative flex items-center justify-center min-h-screen p-6 bg-white text-slate-600" data-testid="auth-callback">
       <LandingBackground />
-      <div className="k-panel p-10 max-w-md w-full text-center">
-        <div className="flex items-center justify-center text-slate-900 mb-6">
+      <div className="w-full max-w-md p-10 text-center k-panel">
+        <div className="flex items-center justify-center mb-6 text-slate-900">
           <KyrenisLogo size={56} />
         </div>
         {!error ? (
           <>
             <p className="k-label">Signing you in</p>
-            <h1 className="font-display text-slate-900 text-2xl mt-4">Establishing secure session…</h1>
-            <p className="text-slate-500 mt-3 text-sm">
+            <h1 className="mt-4 text-2xl font-display text-slate-900">Establishing secure session…</h1>
+            <p className="mt-3 text-sm text-slate-500">
               Kyrenis is exchanging your Google credentials for a signed session token.
               This takes about a second.
             </p>
@@ -80,8 +74,8 @@ export default function AuthCallback() {
         ) : (
           <>
           <p className="text-[11px] tracking-[0.14em] text-red-700">Sign-in failed</p>
-          <h1 className="font-display text-slate-900 text-2xl mt-4">Could not complete sign-in</h1>
-          <p className="text-slate-600 mt-3 text-sm break-words" data-testid="auth-callback-error">
+          <h1 className="mt-4 text-2xl font-display text-slate-900">Could not complete sign-in</h1>
+          <p className="mt-3 text-sm break-words text-slate-600" data-testid="auth-callback-error">
               {error}
             </p>
             <button

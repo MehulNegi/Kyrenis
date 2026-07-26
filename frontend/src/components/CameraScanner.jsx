@@ -2,12 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Html5Qrcode, Html5QrcodeScannerState } from "html5-qrcode";
 import { Camera, StopCircle, AlertTriangle } from "lucide-react";
 
-/**
- * Compact webcam-based QR/DataMatrix scanner.
- * `onDetected(text)` fires once when a code is decoded (scanner auto-stops).
- * Renders as a compact card that a parent form can embed alongside the
- * text-input simulation fields.
- */
 export default function CameraScanner({ onDetected }) {
   const containerId = useRef(`k-scanner-${Math.random().toString(36).slice(2, 9)}`).current;
   const scannerRef = useRef(null);
@@ -72,7 +66,7 @@ export default function CameraScanner({ onDetected }) {
   };
 
   return (
-    <div     className="border border-slate-200 p-4 flex flex-col gap-3" data-testid="camera-scanner">
+    <div     className="flex flex-col gap-3 p-4 border border-slate-200" data-testid="camera-scanner">
       <div className="flex items-center justify-between">
         <p className="k-label">Live camera scan</p>
         {running ? (
@@ -98,7 +92,7 @@ export default function CameraScanner({ onDetected }) {
         )}
       </div>
 
-      <div className="relative aspect-video border border-slate-200 bg-slate-50 overflow-hidden">
+      <div className="relative overflow-hidden border aspect-video border-slate-200 bg-slate-50">
         <div id={containerId} className="w-full h-full" />
         {!running && (
           <div className="absolute inset-0 flex items-center justify-center text-slate-400 text-xs font-mono tracking-[0.28em] uppercase">
@@ -109,12 +103,12 @@ export default function CameraScanner({ onDetected }) {
 
       {error && (
         <div
-          className="flex items-start gap-2 border border-red-200 p-3"
+          className="flex items-start gap-2 p-3 border border-red-200"
           style={{ background: "#FEF2F2" }}
           data-testid="camera-scanner-error"
         >
           <AlertTriangle size={14} className="text-red-700 mt-0.5" />
-          <p className="text-slate-600 text-xs">
+          <p className="text-xs text-slate-600">
             {error}. Ensure the device has camera access and reload if permissions were denied.
           </p>
         </div>

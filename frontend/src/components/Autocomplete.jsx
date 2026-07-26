@@ -1,21 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, X, Search } from "lucide-react";
 
-/**
- * Kyrenis Autocomplete — searchable typeahead replacement for <select>.
- * Props:
- *   options       Array of items
- *   getLabel      (item) => string  — primary display label
- *   getSublabel   (item) => string  — optional secondary label
- *   getValue      (item) => string  — id/value
- *   value         string            — currently selected value id
- *   onChange      (item|null)       — invoked when user picks (or clears)
- *   placeholder   string
- *   disabled      boolean
- *   testid        string            — data-testid for the input
- *   maxResults    number            — default 8
- *   allowClear    boolean           — default true
- */
 export default function Autocomplete({
   options = [],
   getLabel = (o) => String(o.label ?? o.name ?? ""),
@@ -118,7 +103,7 @@ export default function Autocomplete({
           onFocus={() => setOpen(true)}
           onKeyDown={onKey}
           placeholder={selected ? getLabel(selected) : placeholder}
-          className="flex-1 py-3 bg-transparent text-slate-900 text-sm focus:outline-none placeholder:text-slate-400"
+          className="flex-1 py-3 text-sm bg-transparent text-slate-900 focus:outline-none placeholder:text-slate-400"
         />
         {selected && allowClear && !disabled && (
           <button
@@ -146,7 +131,7 @@ export default function Autocomplete({
           data-testid={testid ? `${testid}-options` : "autocomplete-options"}
         >
           {filtered.length === 0 && (
-            <div className="px-4 py-3 text-slate-400 text-sm">No matches for "{query}".</div>
+            <div className="px-4 py-3 text-sm text-slate-400">No matches for "{query}".</div>
           )}
           {filtered.map((item, i) => {
             const active = i === activeIdx;

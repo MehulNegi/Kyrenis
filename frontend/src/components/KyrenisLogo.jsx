@@ -1,13 +1,5 @@
 import React from "react";
 
-/**
- * Kyrenis inline SVG logo.
- * - Four camera viewfinder brackets frame a central capsule
- * - Capsule top half contains vertical barcode lines
- * - Capsule bottom half is solid with a cut-out checkmark
- * Colors are inherited from `stroke`/`fill` on `currentColor` so it can be
- * rendered stark white on the navy header.
- */
 export default function KyrenisLogo({ size = 44, className = "" }) {
   const s = size;
   return (

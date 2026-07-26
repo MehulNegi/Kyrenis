@@ -205,5 +205,6 @@ Built with ❤️ by
 - **[Rishabh Agrawal](https://github.com/rishabh124122)**
 - **[Swasti Nayak](https://github.com/Swasti-Soumyaa)**
 - **[Vinay Bichchali](https://github.com/vinay34744)**
+- **[Vaibhvi Kataria](https://github.com/vaibhvii)**
 
 ---

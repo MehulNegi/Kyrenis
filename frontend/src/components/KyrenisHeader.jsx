@@ -9,7 +9,6 @@ export default function KyrenisHeader({ variant = "default" }) {
   const navigate = useNavigate();
   const location = useLocation();
   const isPatientSurface = location.pathname.startsWith("/patient");
-  const showUserPill = user && user.designated_role === "PHARMACY_STAFF" && !isPatientSurface;
 
   return (
     <header

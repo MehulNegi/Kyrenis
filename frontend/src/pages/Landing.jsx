@@ -8,9 +8,6 @@ import {
   Building2,
   ShieldCheck,
   Globe,
-  Database,
-  Bell,
-  Users,
   CheckCircle2,
   Store,
 } from "lucide-react";
