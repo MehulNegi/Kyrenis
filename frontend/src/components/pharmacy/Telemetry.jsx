@@ -1,316 +1,329 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { api, formatApiErrorDetail } from "@/lib/api";
-import { toast } from "sonner";
+import React, { useMemo } from "react";
+
 import {
-  BarChart,
+  ComposedChart,
   Bar,
+  Line,
+  Cell,
   XAxis,
   YAxis,
-  ReferenceLine,
   Tooltip,
   ResponsiveContainer,
-  Cell,
-  AreaChart,
-  Area,
   CartesianGrid,
-  Legend,
 } from "recharts";
-import { Radar, AlertTriangle, MapPin, Waves, Download, Activity } from "lucide-react";
 
-export default function Telemetry() {
-  const [volumetric, setVolumetric] = useState([]);
-  const [threshold, setThreshold] = useState(40000);
-  const [spatial, setSpatial] = useState([]);
-  const [alerts, setAlerts] = useState([]);
-  const [recalls, setRecalls] = useState([]);
-  const [timeline, setTimeline] = useState([]);
-  const BACKEND = process.env.REACT_APP_BACKEND_URL;
+import {
+  Radar,
+  AlertTriangle,
+  Waves,
+  Download,
+  ShieldCheck,
+  Clock3,
+  Scale,
+  CheckCircle2,
+  PackageSearch,
+} from "lucide-react";
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const [v, s, a, r, t] = await Promise.all([
-          api.get("/pharmacy/telemetry/volumetric").catch(() => ({ data: { volumetric: [], threshold: 40000 } })),
-          api.get("/pharmacy/telemetry/spatial").catch(() => ({ data: { spatial_anomalies: [] } })),
-          api.get("/pharmacy/security-alerts").catch(() => ({ data: { alerts: [] } })),
-          api.get("/pharmacy/recalls").catch(() => ({ data: { recalls: [] } })),
-          api.get("/pharmacy/telemetry/timeline?hours=168").catch(() => ({ data: { timeline: [] } })),
-        ]);
-        setVolumetric(v?.data?.volumetric ?? []);
-        setThreshold(v?.data?.threshold ?? 40000);
-        setSpatial(s?.data?.spatial_anomalies ?? []);
-        setAlerts(a?.data?.alerts ?? []);
-        setRecalls(r?.data?.recalls ?? []);
-        setTimeline(t?.data?.timeline ?? []);
-      } catch (e) {
-        toast.error(formatApiErrorDetail(e?.response?.data?.detail) || e.message);
-      }
-    })();
-  }, []);
+const BATCH_DATA = [
+  { batch: "SAT240001", medicine: "Paracetamol 650mg", produced: 42000, reported: 48250 },
+  { batch: "SAT240002", medicine: "Metformin HCl 500mg", produced: 35000, reported: 31700 },
+  { batch: "SAT240003", medicine: "Azithromycin 500mg", produced: 44000, reported: 39200 },
+  { batch: "SAT240004", medicine: "Amoxicillin 500mg", produced: 38000, reported: 46800 },
+  { batch: "SAT240005", medicine: "Losartan 50mg", produced: 50000, reported: 27400 },
+  { batch: "SAT240006", medicine: "Atorvastatin 10mg", produced: 41000, reported: 43600 },
+  { batch: "SAT240007", medicine: "Pantoprazole 40mg", produced: 46000, reported: 36100 },
+  { batch: "SAT240008", medicine: "Cefixime 200mg", produced: 43000, reported: 49100 },
+  { batch: "SAT240009", medicine: "Cetirizine 10mg", produced: 37000, reported: 33500 },
+  { batch: "SAT240010", medicine: "Glimepiride 2mg", produced: 48000, reported: 44300 },
+  { batch: "SAT240011", medicine: "Montelukast 10mg", produced: 33000, reported: 29100 },
+  { batch: "SAT240012", medicine: "Telmisartan 40mg", produced: 45000, reported: 40200 },
+  { batch: "SAT240013", medicine: "Doxycycline 100mg", produced: 39000, reported: 35200 },
+  { batch: "SAT240014", medicine: "Amlodipine 5mg", produced: 47000, reported: 41900 },
+  { batch: "SAT240015", medicine: "Omeprazole 20mg", produced: 36000, reported: 38900 },
+  { batch: "SAT240016", medicine: "Levocetirizine 5mg", produced: 43000, reported: 37400 },
+];
 
-  const exceededBatches = volumetric.filter((v) => v.threshold_exceeded);
-  const chartData = useMemo(
-    () =>
-      volumetric.slice(0, 12).map((v) => ({
-        batch: v.batch_number,
-        total: v.total_units,
-        exceeded: v.threshold_exceeded,
-      })),
-    [volumetric]
-  );
+const DEMO_RECALLS = [
+  { id: "recall-1", medicine: "Paracetamol 650mg", batch: "PCM240721", units: 18, reason: "Quality / composition alert", date: "28 Jul 2026" },
+  { id: "recall-2", medicine: "Losartan 50mg", batch: "LSR00815", units: 9, reason: "Regulatory quality alert", date: "27 Jul 2026" },
+  { id: "recall-3", medicine: "Cefixime 200mg", batch: "CFX24031", units: 12, reason: "Batch quality failure", date: "26 Jul 2026" },
+  { id: "recall-4", medicine: "ORS Sachet", batch: "ORS25018", units: 21, reason: "Product quality alert", date: "25 Jul 2026" },
+];
+
+const OTHER_RISK_ALERTS = [
+  { id: "risk-recall-1", alert_type: "Recall Match", target_batch_number: "PCM240721", target_medicine_name: "Paracetamol 650mg", severity: "Critical" },
+  { id: "risk-expiry-1", alert_type: "Expiry Risk", target_batch_number: "AZM25014", target_medicine_name: "Azithromycin 500mg", severity: "High" },
+  { id: "risk-stock-1", alert_type: "Stock Discrepancy", target_batch_number: "MET55003", target_medicine_name: "Metformin HCl 500mg", severity: "High" },
+  { id: "risk-recall-2", alert_type: "Recall Match", target_batch_number: "LSR00815", target_medicine_name: "Losartan 50mg", severity: "Critical" },
+  { id: "risk-verification-1", alert_type: "Verification Failure", target_batch_number: "AMX24018", target_medicine_name: "Amoxicillin 500mg", severity: "High" },
+  { id: "risk-mismatch-1", alert_type: "Batch Data Mismatch", target_batch_number: "PAN25007", target_medicine_name: "Pantoprazole 40mg", severity: "High" },
+];
+
+const TODAY_IMPACT = {
+  recallMatches: 4,
+  nearExpiryUnits: 31,
+  stockDiscrepancies: 3,
+  risksResolved: 6,
+  risksOpen: 4,
+};
+
+function severityStyle(severity) {
+  if (severity === "Critical") {
+    return { borderColor: "#EF4444", color: "#DC2626", background: "#FEF2F2" };
+  }
+  return { borderColor: "#F59E0B", color: "#D97706", background: "#FFFBEB" };
+}
+
+function BatchTooltip({ active, payload, label }) {
+  if (!active || !payload || payload.length === 0) return null;
+  const data = payload[0]?.payload;
+  if (!data) return null;
+
+  const exceeded = data.reported > data.produced;
+  const excess = Math.max(0, data.reported - data.produced);
+  const remaining = Math.max(0, data.produced - data.reported);
+  const percentage = Math.round((data.reported / data.produced) * 100);
 
   return (
-    <div className="flex flex-col gap-6 bg-white" data-testid="telemetry-view">
-      {/* CSV export bar */}
+    <div style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "14px", boxShadow: "0 4px 14px rgba(15,23,42,0.10)", minWidth: "240px" }}>
+      <p style={{ color: "#0B192C", fontWeight: 700, fontSize: "12px" }}>{label}</p>
+      <p style={{ color: "#64748B", fontSize: "10px", marginTop: "2px", marginBottom: "12px" }}>{data.medicine}</p>
+
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "20px", fontSize: "11px", marginBottom: "6px" }}>
+        <span style={{ color: "#64748B" }}>Manufacturer Produced</span>
+        <span style={{ color: "#0B192C", fontWeight: 600 }}>{data.produced.toLocaleString()}</span>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "20px", fontSize: "11px", marginBottom: "6px" }}>
+        <span style={{ color: "#64748B" }}>Kyrenis Reported</span>
+        <span style={{ color: "#0B192C", fontWeight: 600 }}>{data.reported.toLocaleString()}</span>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "20px", fontSize: "11px", marginBottom: "10px" }}>
+        <span style={{ color: "#64748B" }}>Production Utilization</span>
+        <span style={{ color: exceeded ? "#DC2626" : "#475569", fontWeight: 600 }}>{percentage}%</span>
+      </div>
+
+      {exceeded ? (
+        <div style={{ borderTop: "1px solid #FECACA", paddingTop: "9px" }}>
+          <p style={{ color: "#DC2626", fontSize: "10px", fontWeight: 700 }}>+{excess.toLocaleString()} units above declared production</p>
+          <p style={{ color: "#991B1B", fontSize: "9px", marginTop: "3px" }}>Potential batch cloning or supply-chain discrepancy</p>
+        </div>
+      ) : (
+        <div style={{ borderTop: "1px solid #D1FAE5", paddingTop: "9px" }}>
+          <p style={{ color: "#059669", fontSize: "10px", fontWeight: 600 }}>Within manufacturer production</p>
+          <p style={{ color: "#64748B", fontSize: "9px", marginTop: "3px" }}>{remaining.toLocaleString()} units below declared quantity</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Telemetry() {
+  const BACKEND = process.env.REACT_APP_BACKEND_URL;
+
+  const volumetricAlerts = useMemo(
+    () =>
+      BATCH_DATA.filter((batch) => batch.reported > batch.produced).map((batch) => ({
+        id: `volume-${batch.batch}`,
+        alert_type: "Volumetric Saturation",
+        target_batch_number: batch.batch,
+        target_medicine_name: batch.medicine,
+        severity: "Critical",
+        excess: batch.reported - batch.produced,
+      })),
+    []
+  );
+
+  const riskAlerts = useMemo(() => [...volumetricAlerts, ...OTHER_RISK_ALERTS], [volumetricAlerts]);
+  const criticalAlerts = useMemo(() => riskAlerts.filter((alert) => alert.severity === "Critical"), [riskAlerts]);
+  const highAlerts = useMemo(() => riskAlerts.filter((alert) => alert.severity === "High"), [riskAlerts]);
+
+  const affectedRecallUnits = useMemo(() => DEMO_RECALLS.reduce((total, recall) => total + recall.units, 0), []);
+
+  return (
+    <div className="flex flex-col gap-6" data-testid="telemetry-view">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="k-label">// Network Telemetry Grid</p>
+          <p className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase text-[#64748B]">// Pharmacy Safety Telemetry</p>
+          <p className="text-[#64748B] text-sm mt-1">Real-time safety and supply-chain intelligence · {riskAlerts.length} active risks.</p>
         </div>
-        <a
-          href={`${BACKEND}/api/pharmacy/export/audit-log.csv`}
-          data-testid="telemetry-export-csv"
-          className="inline-flex items-center gap-2 border border-emerald-200 text-emerald-700 px-4 py-2 font-mono text-[10px] tracking-[0.25em] uppercase hover:bg-emerald-50 transition-colors"
-        >
+        <a href={`${BACKEND}/api/pharmacy/export/audit-log.csv`} data-testid="telemetry-export-csv" className="inline-flex items-center gap-2 border border-[#10B981]/50 text-[#059669] px-4 py-2 font-mono text-[10px] tracking-[0.25em] uppercase hover:bg-[#ECFDF5] transition-colors">
           <Download size={12} />
           Export Audit CSV
         </a>
       </div>
 
-      {/* Volumetric Saturation Banner */}
-      {exceededBatches.length > 0 && (
-        <div
-          className="flex items-start gap-3 p-4 border"
-          style={{ borderColor: "#EF4444", background: "#FEF2F2" }}
-          data-testid="volumetric-critical-banner"
-        >
-          <AlertTriangle size={20} className="text-red-700 mt-0.5" />
-          <div>
-            <p className="font-medium text-slate-900">
-              CRITICAL: Volumetric Threshold Exceeded (Suspected Batch Cloning Ring)
-            </p>
-            <p className="mt-1 text-sm text-slate-600">
-              {exceededBatches.length} batch(es) have surpassed 40,000 units cumulative — suspected clone circulation.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Timeline area chart */}
-      <div className="relative z-10 p-6 bg-white k-panel md:p-8" data-testid="telemetry-timeline-panel">
-        <div className="flex items-center gap-3 mb-6">
-          <Activity size={18} className="text-emerald-700" />
-          <h2 className="text-xl font-display text-slate-900">Scan Activity · Last 7 Days</h2>
-        </div>
-        {timeline.length === 0 ? (
-          <p className="text-sm text-slate-400">No recent scan activity.</p>
-        ) : (
-          <div className="h-[220px]" data-testid="timeline-chart">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={timeline} margin={{ top: 10, right: 12, bottom: 24, left: 8 }}>
-                <defs>
-                  <linearGradient id="k-safe" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10B981" stopOpacity={0.55} />
-                    <stop offset="100%" stopColor="#10B981" stopOpacity={0.05} />
-                  </linearGradient>
-                  <linearGradient id="k-anom" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#EF4444" stopOpacity={0.55} />
-                    <stop offset="100%" stopColor="#EF4444" stopOpacity={0.05} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="#E2E8F0" vertical={false} />
-                <XAxis
-                  dataKey="hour"
-                  tick={{ fill: "#64748B", fontFamily: "JetBrains Mono", fontSize: 9 }}
-                  tickFormatter={(h) => (typeof h === "string" ? h.slice(5) : h)}
-                  interval={Math.max(Math.floor(timeline.length / 12), 1)}
-                />
-                <YAxis
-                  tick={{ fill: "#64748B", fontFamily: "JetBrains Mono", fontSize: 10 }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    background: "#FFFFFF",
-                    border: "1px solid #E2E8F0",
-                    fontFamily: "JetBrains Mono",
-                    fontSize: 12,
-                    color: "#0F172A",
-                  }}
-                />
-                <Legend
-                  wrapperStyle={{ fontFamily: "JetBrains Mono", fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: "#64748B" }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="valid"
-                  name="Valid Scans"
-                  stroke="#10B981"
-                  strokeWidth={2}
-                  fill="url(#k-safe)"
-                  stackId="1"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="anomaly"
-                  name="Anomaly Flagged"
-                  stroke="#EF4444"
-                  strokeWidth={2}
-                  fill="url(#k-anom)"
-                  stackId="1"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-6">
-        {/* Volumetric chart */}
-        <div className="relative z-10 p-6 bg-white k-panel md:p-8" data-testid="volumetric-chart-panel">
-          <div className="flex items-center gap-3 mb-6">
-          <Waves size={18} className="text-emerald-700" />
-          <h2 className="text-xl font-display text-slate-900">Batch Volume Distribution</h2>
-          </div>
-          <div className="h-[340px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 10, right: 12, bottom: 40, left: 8 }}>
-                <XAxis
-                  dataKey="batch"
-                  tick={{ fill: "#E2E8F0", fontFamily: "JetBrains Mono", fontSize: 10 }}
-                  angle={-38}
-                  textAnchor="end"
-                  interval={0}
-                />
-                <YAxis
-                  tick={{ fill: "#64748B", fontFamily: "JetBrains Mono", fontSize: 10 }}
-                />
-                <Tooltip
-                  cursor={{ fill: "rgba(226, 232, 240, 0.4)" }}
-                  contentStyle={{
-                    background: "#FFFFFF",
-                    border: "1px solid #E2E8F0",
-                    fontFamily: "JetBrains Mono",
-                    fontSize: 12,
-                    color: "#0F172A",
-                  }}
-                />
-                <ReferenceLine
-                  y={threshold}
-                  stroke="#EF4444"
-                  strokeDasharray="4 4"
-                  label={{
-                    value: `Threshold ${threshold.toLocaleString()}`,
-                    fill: "#EF4444",
-                    fontSize: 11,
-                    fontFamily: "JetBrains Mono",
-                    position: "insideTopRight",
-                  }}
-                />
-                <Bar dataKey="total" radius={[2, 2, 0, 0]}>
-                  {chartData.map((entry, idx) => (
-                    <Cell
-                      key={idx}
-                      fill={entry.exceeded ? "#EF4444" : "#E2E8F0"}
-                      stroke={entry.exceeded ? "#EF4444" : "#E2E8F0"}
-                      strokeOpacity={0.25}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Spatial teleportation list */}
-        <div className="relative z-10 p-6 bg-white k-panel md:p-8" data-testid="spatial-panel">
-          <div className="flex items-center gap-3 mb-6">
-          <MapPin size={18} className="text-red-700" />
-          <h2 className="text-xl font-display text-slate-900">Verification Trends by City</h2>
-          </div>
-          {spatial.length === 0 ? (
-            <p className="text-sm text-slate-400">No spatial anomalies within 12h window.</p>
-          ) : (
-            <div className="flex flex-col gap-3 max-h-[300px] overflow-auto pr-1" data-testid="spatial-list">
-              {spatial.slice(0, 10).map((a, i) => (
-                <div
-                  key={i}
-                  className="p-3 border border-red-200"
-                  style={{ background: "#FEF2F2" }}
-                  data-testid={`spatial-item-${a.batch_number}`}
-                >
-                  <p className="text-sm font-medium text-slate-900">{a.batch_number}</p>
-                  <p className="mt-1 text-xs text-slate-600">
-                    {a.from_city} → {a.to_city}
-                  </p>
-                  <p className="font-mono text-[10px] text-red-700 mt-1">
-                    Gap {a.gap_hours}h
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
+      <div className="border border-[#EF4444]/60 bg-[#FEF2F2] p-4 flex items-start gap-3 rounded-lg relative z-10" data-testid="critical-threat-banner">
+        <AlertTriangle size={20} className="text-[#EF4444] mt-0.5 shrink-0" />
+        <div>
+          <p className="text-[#991B1B] font-semibold">CRITICAL: Potential Batch Cloning Activity Detected</p>
+          <p className="text-[#7F1D1D]/75 text-sm mt-1">{volumetricAlerts.length} batches have exceeded their individual manufacturer-declared production quantities across Kyrenis network stock-intake records.</p>
         </div>
       </div>
 
-      {/* Security alerts + CDSCO */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="relative z-10 p-6 bg-white k-panel md:p-8" data-testid="security-alerts-panel">
-          <div className="flex items-center gap-3 mb-6">
-          <Radar size={18} className="text-red-700" />
-          <h2 className="text-xl font-display text-slate-900">Risk Alerts</h2>
-          </div>
-          {alerts.length === 0 ? (
-            <p className="text-sm text-slate-400">Network clean.</p>
-          ) : (
-            <div className="flex flex-col gap-2 max-h-[300px] overflow-auto pr-1">
-              {alerts.slice(0, 20).map((a) => (
-                <div
-                  key={a.id}
-                  className="flex items-center justify-between p-3 border border-slate-200"
-                  data-testid={`alert-${a.target_batch_number}`}
-                >
-                  <div>
-                    <p className="text-sm text-slate-900">{a.alert_type}</p>
-                    <p className="font-mono text-[10px] text-slate-500 mt-1">
-                      {a.target_batch_number} · {a.target_medicine_name || "—"}
-                    </p>
-                  </div>
-                  <span
-                    className="font-mono text-[10px] tracking-[0.25em] uppercase px-2 py-1 border"
-                    style={{
-                      borderColor:
-                        a.severity === "Critical" ? "#EF4444" : "#F59E0B",
-                      color: a.severity === "Critical" ? "#EF4444" : "#F59E0B",
-                      backgroundColor: a.severity === "Critical" ? "#EF44440a" : "F59E0B0a"
-                    }}
-                  >
-                    {a.severity}
-                  </span>
-                </div>
-              ))}
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <div className="xl:col-span-2 bg-white relative z-10 border border-[#E2E8F0] rounded-xl p-6 md:p-8" data-testid="security-alerts-panel">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <div className="flex items-start gap-3">
+              <Radar size={18} className="text-[#EF4444] mt-1 shrink-0" />
+              <div>
+                <h2 className="font-display text-[#0B192C] text-xl font-semibold">Risk Alerts</h2>
+                <p className="text-[#64748B] text-xs mt-1">Active safety and supply-chain risks requiring attention.</p>
+              </div>
             </div>
-          )}
-        </div>
-
-        <div className="relative z-10 p-6 bg-white k-panel md:p-8" data-testid="cdsco-panel">
-          <div className="flex items-center gap-3 mb-6">
-          <AlertTriangle size={18} className="text-amber-600" />
-          <h2 className="text-xl font-display text-slate-900">Recall Intelligence</h2>
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <span className="font-mono text-[9px] tracking-[0.16em] uppercase px-2.5 py-1.5 border border-[#FECACA] bg-[#FEF2F2] text-[#DC2626] rounded">{criticalAlerts.length} Critical</span>
+              <span className="font-mono text-[9px] tracking-[0.16em] uppercase px-2.5 py-1.5 border border-[#FDE68A] bg-[#FFFBEB] text-[#D97706] rounded">{highAlerts.length} High</span>
+            </div>
           </div>
-          <div className="flex flex-col gap-2 max-h-[300px] overflow-auto pr-1">
-            {recalls.map((r) => (
-              <div
-                key={r.id}
-                  className="p-3 border border-amber-200 bg-amber-50"
-                data-testid={`recall-${r.target_batch_number}`}
-              >
-                <p className="text-sm text-slate-900">{r.target_medicine_name}</p>
-                <p className="font-mono text-[10px] text-amber-600 mt-1">
-                  Batch {r.target_batch_number} · {r.date_published}
-                </p>
-                  <p className="mt-1 text-xs text-slate-500">{r.hazard_classification}</p>
+
+          <div className="flex flex-col gap-3 max-h-[410px] overflow-auto pr-1">
+            {riskAlerts.map((alert) => (
+              <div key={alert.id} className="border border-[#E2E8F0] bg-[#F8FAFC] rounded-lg p-4 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-[#0B192C] text-sm font-semibold">{alert.alert_type}</p>
+                  <p className="font-mono text-[10px] text-[#64748B] mt-1">{alert.target_batch_number} · {alert.target_medicine_name}</p>
+                  {alert.excess > 0 && <p className="font-mono text-[9px] text-[#DC2626] mt-1.5">+{alert.excess.toLocaleString()} units above declared production</p>}
+                </div>
+                <span className="font-mono text-[10px] tracking-[0.18em] uppercase px-2 py-1 border rounded shrink-0" style={severityStyle(alert.severity)}>{alert.severity}</span>
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="bg-white relative z-10 border border-[#E2E8F0] rounded-xl p-6 md:p-8" data-testid="recall-intelligence-panel">
+          <div className="flex items-start gap-3">
+            <AlertTriangle size={18} className="text-[#F59E0B] mt-1 shrink-0" />
+            <div>
+              <h2 className="font-display text-[#0B192C] text-xl font-semibold">Recall Intelligence</h2>
+              <p className="text-[#64748B] text-xs mt-1">Recall matches affecting your inventory.</p>
+            </div>
+          </div>
+
+          <div className="border border-[#FECACA] bg-[#FEF2F2] rounded-lg p-4 mt-6">
+            <p className="font-mono text-[9px] tracking-[0.18em] uppercase text-[#DC2626]">Inventory Impact</p>
+            <p className="text-[#991B1B] font-semibold mt-1">4 recalls match your stock</p>
+            <p className="text-[#7F1D1D]/75 text-xs mt-1">{affectedRecallUnits} units currently require review.</p>
+          </div>
+
+          <div className="flex flex-col gap-3 max-h-[300px] overflow-auto pr-1 mt-4">
+            {DEMO_RECALLS.map((recall) => (
+              <div key={recall.id} className="border border-[#FDE68A] bg-[#FFFBEB] rounded-lg p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-[#0B192C] text-sm font-semibold">{recall.medicine}</p>
+                  <span className="font-mono text-[9px] text-[#DC2626] bg-[#FEF2F2] border border-[#FECACA] px-2 py-1 rounded shrink-0">{recall.units} units</span>
+                </div>
+                <p className="font-mono text-[10px] text-[#D97706] mt-2">Batch {recall.batch}</p>
+                <p className="text-[#64748B] text-xs mt-2">{recall.reason}</p>
+                <p className="font-mono text-[9px] text-[#94A3B8] mt-3">Published {recall.date}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full bg-white relative z-10 border border-[#E2E8F0] rounded-xl p-6 md:p-8" data-testid="batch-volume-panel">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3">
+              <Waves size={18} className="text-[#10B981]" />
+              <h2 className="font-display text-[#0B192C] text-xl font-semibold">Batch Volume Distribution</h2>
+            </div>
+            <p className="text-[#64748B] text-xs mt-2 ml-[30px]">Manufacturer production vs quantities reported through Kyrenis network stock intake.</p>
+          </div>
+          <div className="flex items-center gap-5 flex-wrap font-mono text-[9px] tracking-[0.12em] uppercase text-[#64748B]">
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#10B981]" /> Within Limit</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#EF4444]" /> Exceeded</span>
+            <span className="flex items-center gap-1.5"><span className="w-5 border-t-2 border-dashed" style={{ borderColor: "#1E2B4E" }} /> Manufacturer Produced</span>
+          </div>
+        </div>
+
+        <div className="mt-5 border border-[#E2E8F0] bg-[#F8FAFC] rounded-lg px-4 py-3">
+          <p className="text-[#475569] text-xs leading-relaxed">The line represents each batch's manufacturer-declared production quantity. Bars represent quantities reported through unique stock-intake transactions across the Kyrenis network. Repeated barcode scans do not increase these totals.</p>
+        </div>
+
+        <div className="h-[460px] mt-4" data-testid="batch-volume-chart">
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={BATCH_DATA} margin={{ top: 25, right: 30, left: 20, bottom: 60 }}>
+              <CartesianGrid stroke="#E2E8F0" strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="batch" angle={-35} textAnchor="end" interval={0} height={80} tick={{ fill: "#475569", fontFamily: "JetBrains Mono", fontSize: 9 }} axisLine={{ stroke: "#CBD5E1" }} tickLine={{ stroke: "#CBD5E1" }} />
+              <YAxis domain={[0, 55000]} tickFormatter={(value) => `${value / 1000}k`} tick={{ fill: "#475569", fontFamily: "JetBrains Mono", fontSize: 10 }} axisLine={{ stroke: "#CBD5E1" }} tickLine={{ stroke: "#CBD5E1" }} label={{ value: "Units", angle: -90, position: "insideLeft", fill: "#94A3B8", fontSize: 10 }} />
+              <Tooltip cursor={{ fill: "#F8FAFC" }} content={<BatchTooltip />} />
+              <Bar dataKey="reported" name="Kyrenis Reported" radius={[5, 5, 0, 0]} strokeWidth={1} barSize={42}>
+                {BATCH_DATA.map((entry, index) => {
+                  const exceeded = entry.reported > entry.produced;
+                  return <Cell key={`batch-${index}`} fill={exceeded ? "#EF4444" : "#10B981"} stroke={exceeded ? "#DC2626" : "#059669"} />;
+                })}
+              </Bar>
+              <Line type="monotone" dataKey="produced" name="Manufacturer Produced" stroke="#1E2B4E" strokeWidth={2.5} dot={{ r: 4, fill: "#FFFFFF", stroke: "#1E2B4E", strokeWidth: 2 }} activeDot={{ r: 6, fill: "#FFFFFF", stroke: "#1E2B4E", strokeWidth: 2 }} />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="border-t border-[#E2E8F0] pt-4 flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p className="font-mono text-[9px] tracking-[0.16em] uppercase text-[#64748B]">Volumetric Saturation Detector</p>
+            <p className="text-[#94A3B8] text-[10px] mt-1">Production quantities are evaluated independently for every batch.</p>
+          </div>
+          <p className="text-[#64748B] text-xs"><span className="text-[#EF4444] font-semibold">{volumetricAlerts.length} batches</span> currently exceed declared production.</p>
+        </div>
+      </div>
+
+      <div className="bg-white relative z-10 border border-[#E2E8F0] rounded-xl p-6 md:p-8" data-testid="todays-impact-panel">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3">
+              <ShieldCheck size={19} className="text-[#10B981]" />
+              <h2 className="font-display text-[#0B192C] text-xl font-semibold">Today's Impact</h2>
+            </div>
+            <p className="text-[#64748B] text-xs mt-2 ml-[31px]">Safety and inventory issues Kyrenis identified today.</p>
+          </div>
+          <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-[#059669] border border-[#A7F3D0] bg-[#ECFDF5] px-3 py-1.5 rounded">Today</span>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5 mt-7">
+          <div className="border border-[#FECACA] bg-[#FEF2F2] rounded-lg p-5">
+            <AlertTriangle size={18} className="text-[#EF4444]" />
+            <p className="font-display text-3xl font-semibold text-[#991B1B] mt-5">{TODAY_IMPACT.recallMatches}</p>
+            <p className="text-[#7F1D1D] text-sm font-medium mt-1">Recall Matches</p>
+            <p className="text-[#991B1B]/60 text-xs mt-2">Recalled batches detected in stock.</p>
+          </div>
+
+          <div className="border border-[#FDE68A] bg-[#FFFBEB] rounded-lg p-5">
+            <Clock3 size={18} className="text-[#D97706]" />
+            <p className="font-display text-3xl font-semibold text-[#92400E] mt-5">{TODAY_IMPACT.nearExpiryUnits}</p>
+            <p className="text-[#92400E] text-sm font-medium mt-1">Near-Expiry Units</p>
+            <p className="text-[#92400E]/60 text-xs mt-2">Units flagged for expiry attention.</p>
+          </div>
+
+          <div className="border border-[#FED7AA] bg-[#FFF7ED] rounded-lg p-5">
+            <Scale size={18} className="text-[#EA580C]" />
+            <p className="font-display text-3xl font-semibold text-[#9A3412] mt-5">{TODAY_IMPACT.stockDiscrepancies}</p>
+            <p className="text-[#9A3412] text-sm font-medium mt-1">Stock Discrepancies</p>
+            <p className="text-[#9A3412]/60 text-xs mt-2">Inventory differences identified.</p>
+          </div>
+
+          <div className="border border-[#A7F3D0] bg-[#ECFDF5] rounded-lg p-5">
+            <CheckCircle2 size={18} className="text-[#059669]" />
+            <p className="font-display text-3xl font-semibold text-[#065F46] mt-5">{TODAY_IMPACT.risksResolved}</p>
+            <p className="text-[#065F46] text-sm font-medium mt-1">Risks Resolved</p>
+            <p className="text-[#065F46]/60 text-xs mt-2">Issues addressed today.</p>
+          </div>
+
+          <div className="border border-[#E2E8F0] bg-[#F8FAFC] rounded-lg p-5">
+            <PackageSearch size={18} className="text-[#475569]" />
+            <p className="font-display text-3xl font-semibold text-[#0B192C] mt-5">{TODAY_IMPACT.risksOpen}</p>
+            <p className="text-[#0B192C] text-sm font-medium mt-1">Need Attention</p>
+            <p className="text-[#64748B] text-xs mt-2">Risks still awaiting action.</p>
+          </div>
+        </div>
+
+        <div className="mt-5 border border-[#D1FAE5] bg-[#F0FDF4] rounded-lg px-5 py-4 flex items-center gap-3">
+          <ShieldCheck size={17} className="text-[#059669] shrink-0" />
+          <p className="text-[#166534] text-sm">
+            <span className="font-semibold">Kyrenis identified {TODAY_IMPACT.risksResolved + TODAY_IMPACT.risksOpen} inventory risks today.</span> {TODAY_IMPACT.risksResolved} have been resolved, while {TODAY_IMPACT.risksOpen} still require attention.
+          </p>
         </div>
       </div>
     </div>
